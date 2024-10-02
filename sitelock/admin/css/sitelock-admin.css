@@ -1,0 +1,699 @@
+/****************************************************************
+/* GENERIC
+*****************************************************************/
+            .sitelock .text-center { text-align: center; }
+            .sitelock .pull-right { float: right; }
+            .sitelock .pull-left { float: left; }
+            .sitelock .clearfix { clear: both; float: none; }
+            .sitelock .hide-on-load { display: none; }
+            .sitelock .truncate { width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .sitelock .gray-bg { background-color: #555; color: #eee; padding: 15px 0; margin: 0 0 10px; }
+
+
+/****************************************************************
+/* GRID
+*****************************************************************/
+            .sitelock .span1, .sitelock .span2, .sitelock .span3, .sitelock .span4, .sitelock .span5, .sitelock .span5th, .sitelock .span6, .sitelock .span7, .sitelock .span8, .sitelock .span9, .sitelock .span10, .sitelock .span11, .sitelock .span12 { float:left; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box; margin-left: 2.5%; }
+            .sitelock .span1:first-child, .sitelock .span2:first-child, .sitelock .span3:first-child, .sitelock .span4:first-child, .sitelock .span5:first-child, .sitelock .span5th:first-child, .sitelock .span6:first-child, .sitelock .span7:first-child, .sitelock .span8:first-child, .sitelock .span9:first-child, .sitelock .span10:first-child, .sitelock .span11:first-child, .sitelock .span12:first-child { margin-left: 0%; }
+
+            .sitelock .span1 { width: 6.04166666667%; }
+            .sitelock .span2 { width: 14.5833333333%; }
+            .sitelock .span3 { width: 23.125%; }
+            .sitelock .span4 { width: 31.6666666667%; }
+            .sitelock .span5 { width: 40.2083333333%; }
+            .sitelock .span5th { width: 18%; }
+            .sitelock .span6 { width: 48.75%; }
+            .sitelock .span7 { width: 57.2916666667%; }
+            .sitelock .span8 { width: 65.8333333333%; }
+            .sitelock .span9 { width: 74.375%; }
+            .sitelock .span10 { width: 82.9166666667%; }
+            .sitelock .span11 { width: 91.4583333333%; }
+            .sitelock .span12 { width: 100%; margin-left: 0; }
+
+            .sitelock .span1 img, .sitelock .span2 img, .sitelock .span3 img, .sitelock .span4 img, .sitelock .span5 img, .sitelock .span5th img, .sitelock .span6 img, .sitelock .span7 img, .sitelock .span8 img, .sitelock .span9 img, .sitelock .span10 img, .sitelock .span11 img, .sitelock .span12 img { max-width: 100%; height: auto; }
+            .sitelock .span1 input, .sitelock .span2 input, .sitelock .span3 input, .sitelock .span4 input, .sitelock .span5 input, .sitelock .span5th input, .sitelock .span6 input, .sitelock .span7 input, .sitelock .span8 input, .sitelock .span9 input, .sitelock .span10 input, .sitelock .span11 input, .sitelock .span12 input { max-width: 100%; }
+
+
+            @media screen and (max-width: 782px) {
+              .sitelock .span1, .sitelock .span2, .sitelock .span3, .sitelock .span4, .sitelock .span5, .sitelock .span5th, .sitelock .span6, .sitelock .span7, .sitelock .span8, .sitelock .span9, .sitelock .span10, .sitelock .span11, .sitelock .span12 { width: 100%; margin-left: 0; }
+            }
+
+            .sitelock .row:before, .row:after { content:""; display:table; } /* For modern browsers */
+            .sitelock .row:after { clear:both; } /* For modern browsers */
+            .sitelock .row { *zoom:1; } /* For IE 6/7 (trigger hasLayout) */
+            
+            
+            .sl_select_width_100 { width: 100%; }
+            /*
+            .sl_circles { width: 250px; height: 250px; position: relative; }
+            .sl_circles .sl_circle { border-radius: 50%; position: absolute; top: 50%; left: 50%; }
+            .sl_circles .sl_circle#circle_1 { z-index: 4; margin:  -40px 0 0  -40px; width:  80px; height:  80px; border-radius: 50%; background: yellow; }
+            .sl_circles .sl_circle#circle_2 { z-index: 3; margin:  -70px 0 0  -70px; width: 140px; height: 140px; border-radius: 50%; background: orange; }
+            .sl_circles .sl_circle#circle_3 { z-index: 2; margin: -100px 0 0 -100px; width: 200px; height: 200px; border-radius: 50%; background: blue;   }
+            .sl_circles .sl_circle#circle_4 { z-index: 1; margin: -125px 0 0 -125px; width: 250px; height: 250px; border-radius: 50%; background: black;  }
+            */
+
+
+/****************************************************************
+/* TOOLTIP
+*****************************************************************/
+
+            .sitelock-security-scan-now span {
+                text-decoration: none;
+                margin-top: 4px;
+            }
+
+/* Tooltip container */
+.sitelock-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+/* Tooltip text */
+.sitelock-tooltip span {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+ 
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+
+    font-size: 14px !important;
+    font-weight: bold !important;
+    line-height: 16px !important;
+    text-align: center !important;
+    font-family: times !important;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.sitelock-tooltip:hover span {
+    visibility: visible;
+}
+
+            /**
+            
+            .sitelock-tooltip {
+                position: relative;
+                -webkit-transform: translateZ(0); 
+                -webkit-font-smoothing: antialiased;
+            }
+            
+            .sitelock-tooltip span {
+                display: none;
+                opacity: 0;
+                position: absolute;
+                top: -45px;
+                left: 50%;
+                margin: 0 0 0 -75px;
+                background: #000;
+                color: #fff;
+                width: 140px;
+                font-size: 14px;
+                font-weight: bold;
+                line-height: 16px;
+                text-align: center;
+                padding: 5px 5px 8px;
+                border-radius: 5px;
+            }
+            
+            .sitelock-tooltip:hover span {
+                display: block;
+                opacity: 1;
+                pointer-events: auto;
+            }
+            
+            .sitelock-tooltip span:before {
+                bottom: -10px;
+                content: " ";
+                display: block;
+                height: 10px;
+                left: 0;
+                position: absolute;
+                width: 100%;
+            }  
+            
+            .sitelock-tooltip span:after {
+                border-left: solid transparent 5px;
+                border-right: solid transparent 5px;
+                border-top: solid #000 5px;
+                bottom: -5px;
+                content: " ";
+                height: 0;
+                left: 50%;
+                margin-left: -5px;
+                position: absolute;
+                width: 0;
+            }
+            
+            .lte8 .sitelock-tooltip span {
+              display: none;
+            }
+            
+            .lte8 .sitelock-tooltip:hover span {
+              display: block;
+            }
+
+            .sitelock .postbox {
+                min-width: 50px !important;
+            }
+            **/
+
+
+
+/****************************************************************
+/* CUSTOM
+*****************************************************************/
+            #sl_purge_cache { float: right; }
+            #sitelock-graph { height: 200px; }
+            #sitelock-graph-country, #sitelock-graph-other, #sitelock-graph-cache-data, #sitelock-graph-cache-requests {
+                height: 250px;
+            }
+            .sitelock .wpslp_container { width: 100%; margin: 10px auto 100px auto; }
+            .sitelock .sitelock_scan_results { width: 25px; height: 25px;margin: 2px 0 0 0; }
+
+            .sitelock .wpslp_container .wpslp_box {
+                min-height: 200px;
+                /** border-radius: 8px; **/
+                box-sizing: border-box;
+                padding: 15px;
+                margin: 0 0 25px;
+                /** background: #fff; **/
+                border-left: 3px solid #333;
+                min-height: 300px;
+                        transition:.5s;
+                     -o-transition:.5s;
+                    -ms-transition:.5s;
+                   -moz-transition:.5s;
+                -webkit-transition:.5s;
+            }
+            
+            .sitelock .wpslp_container .wpslp_box:hover {
+                /** box-shadow: 0 0 55px 0px #777; **/
+            }
+
+            .sitelock .wpslp_container .wpslp_box h4 {
+                font-weight: 100;
+                font-size: 20px;
+                margin: 0 0 10px 0;
+                padding: 0 0 5px 0;
+                border-bottom: 1px solid #333;
+                color: #333;
+            }
+            
+            .sitelock_true_options, .sitelock_jpg_compress_options {
+                padding: 5px 25px;
+            }
+            
+            .sl-min-height-150 {
+                min-height: 200px;
+            }
+
+            /**
+            .wpslp_box.wpslp_infrastructure {
+                background: #ccc;
+            }
+
+            .wpslp_box.wpslp_content {
+                background: #abbad0;
+            }
+
+            .wpslp_box.wpslp_application {
+                background: #d0abab;
+            }
+
+            .wpslp_box.wpslp_reputation {
+                background: #b3d0ab;
+            }
+            **/
+            
+            .sitelock .wpslp_summary_box {
+                /*
+                background: #fff;
+                color: #333;
+                box-sizing: border-box;
+                padding: 15px;
+                border: 0px solid #000;
+                margin: 0 0 25px;
+                */
+                color: #333 !important;
+                margin-bottom: 0px;
+            }
+            
+            .sitelock .wpslp_summary_box .status {
+                width: 25px;
+                height: 25px;
+                background: #333;
+                border-radius: 25px;
+                margin: -3px 15px 0 0;
+                float: left; 
+            }
+            .sitelock .wpslp_site_list {
+                z-index: 2; 
+                border: 1px solid #ccc;
+                min-width: 250px;
+            }
+            .sitelock .wpslp_site_list li {
+              margin: 0;
+            }
+            .sitelock .wpslp_site_list li a {
+                background: #fff;
+                border-radius: 0px;
+                display: block;
+                padding: 7px 15px;
+                margin: 0;
+                border-bottom: 1px solid #eee !important;
+                border-left: 3px solid #777;
+                text-decoration: none;
+                        transition:.5s;
+                     -o-transition:.5s;
+                    -ms-transition:.5s;
+                   -moz-transition:.5s;
+                -webkit-transition:.5s;
+            }
+            
+            .sitelock .wpslp_site_list li.checked a {
+                /** background: #fff; **/
+                color: #333;
+                font-weight: 700;
+            }
+            
+            .sitelock .wpslp_site_list li a, .wpslp_site_list li.checked a {
+                background: #ccc;
+                text-decoration: none;
+                color: #000;
+            }
+            
+            .sitelock .wpslp_feature {
+                border-left: 0px solid #fff;
+            }
+            
+            .sitelock .wpslp_site_list li.yellow a, .wpslp_box.yellow {
+                border-color: #d5e620;
+            }
+            
+            .sitelock .wpslp_feature.yellow .expand_features {
+                background: #d5e620;
+            }
+            
+            .sitelock .wpslp_feature.red .expand_features {
+                background: #c42328;
+                color: #fff;
+            }
+            
+            .sitelock .wpslp_feature.green .expand_features {
+                background: #23c458;
+                color: #fff;
+            }
+            
+            .sitelock .wpslp_summary_box.yellow .status {
+                background: #d5e620;
+                color: #000;
+            }
+            
+            .sitelock .wpslp_site_list li.red a, .wpslp_box.red {
+                border-color: #c42328;
+            }
+            
+            .sitelock .wpslp_summary_box.red .status {
+                background: #c42328;
+                color: #fff;
+            }
+            
+            .sitelock .wpslp_site_list li.green a, .wpslp_box.green {
+                border-color: #23c458;
+            }
+            
+            .sitelock .wpslp_summary_box.green .status {
+                background: #23c458;
+                color: #fff;
+            }
+            
+            .sitelock .wpslp_underline {
+                border-bottom: 0px solid #ccc;
+            }
+            
+            .sitelock ul.wpslp_feature_list {
+                background: #000;
+                color: #bbb;
+                margin: 5px 0 25px 0;
+                padding: 5px 0 0 0;
+            }
+            
+            .sitelock ul.wpslp_feature_list .wpslp_underline {
+                border-bottom: 1px solid #333;
+            }
+            
+            .sitelock .feature_name { display: block; padding: 8px 0; }
+            
+            .sitelock .expand_features {
+                display: block;
+                margin: 7px auto 0;
+                width: 20px;
+                height: 20px;
+                border-radius: 20px;
+                color: #333;
+                background: #ccc;
+                text-shadow: 1px 1px 1px #fff; 
+                font-size: 16px;
+                text-decoration: none;
+                text-align: center;
+                line-height: 20px;
+                        transition:.3s;
+                     -o-transition:.3s;
+                    -ms-transition:.3s;
+                   -moz-transition:.3s;
+                -webkit-transition:.3s;
+            }
+            
+            .sitelock .expand_features:hover {
+                background: #555;
+                color: #000;
+                text-shadow: 1px 1px 1px #777;
+            }
+            
+            .sitelock .expand_features.active {
+                        /** transform: rotate(-90deg); **/
+                     -o-transform: rotate(-45deg);
+                    -ms-transform: rotate(-45deg);
+                   -moz-transform: rotate(-45deg);
+                -webkit-transform: rotate(-45deg);
+                filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+                background: #000;
+                color: #fff;
+            }
+
+
+
+/****************************************************************
+ * Risk Score
+*****************************************************************/
+            .risk_score_frame { width: 167px; height: 15px; background: #fff; display: inline-block; margin: -5px 0 0 10px; }
+            .risk_score { width: 167px; height: 15px; background: url( '../images/risk_score_meter.jpg' ) 0 0 no-repeat; }
+            .dashicons { text-decoration: none !important; }
+            .sitelock .risk_score_frame .dashicons.dashicons-arrow-up { 
+                margin-top: -10px;
+                width: 35px !important; 
+                height: 35px !important; 
+                font-size: 35px !important;
+             }
+             .risk_score_breakdown { margin: 25px 0 0 0; width: 300px; background: #fff; padding: 5px 15px; border: 1px solid #ccc; }
+
+
+
+
+/****************************************************************
+ * Circles
+*****************************************************************/  
+            .sitelock .circle { height: 220px; width: 220px; padding: 0; margin-left: auto; margin-right: auto; border-radius: 50%; position: relative; -o-transition:.25s; -ms-transition:.25s; -moz-transition:.25s; -webkit-transition:.25s; transition:.25s; }
+            .sitelock .circle { box-shadow: 0 0 0px 15px; }
+            .sitelock .circle:before { content: ""; display: block; padding-top: 100%; }
+            .sitelock .circle-inner { position: absolute; top: 0; left: 0; bottom: 0; right: 0; text-align: center; }
+            .sitelock .score-text { margin: auto; position: absolute; top: 0; left: 0; bottom: 0; right: 0; height: 1em; line-height: 1em; font-size: 1em; }
+            .sitelock .score-text { height: 3vw; line-height: 3vw; font-size: 3vw; }
+            .sitelock .circle .icon-status { display: none; padding: 40px 0 15px; margin: 0; text-align: center; }
+            .sitelock .circle .icon-status img { width: 80px; }
+            .sitelock .circle .text-status { font-size: 30px; font-family: times; margin: 30px 0 0 0; padding: 15px 0 0; display: block; height: 35px; }
+            .sitelock .circle .action-items { display: block; width: 100px; margin: 0 auto; }
+            .sitelock .circle .action-items a { color: #777; }
+            .sitelock .circle .action-items a:hover { color: #fff; text-decoration: none; }
+            .sitelock .circle .resolve { display: none; width: 100%; margin: -35px 0 0 0; }
+            .sitelock .circle .resolve a { color: #777; }
+            .sitelock .circle .resolve a:hover { color: #fff; text-decoration: none; }
+            .sitelock .circle .scan-stats { display: block; padding: 10px 0 0; }
+            .sitelock .circle .scan-stats-title { float: left; width: 110px; text-align: right; color: #fff; font-size: 12px; }
+            .sitelock .circle .scan-stats-results { float: left; width: 80px; margin-left: 10px; text-align: left; color: #fff; font-size: 12px; }
+
+
+
+/****************************************************************
+ * Misc styles
+*****************************************************************/
+            .sitelock .sl-blur-it { filter: blur( 5px ); cursor: default; position: relative; }
+            .sitelock .sl-stop-actions { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; }
+            .sitelock .text-center { text-align: center; }
+            .sitelock .text-right { text-align: right; }
+            .sitelock .ul { list-style: disc; }
+            .sitelock .ul .li { margin: 0 0 0 25px; }
+            .sitelock .page-header { margin-top: 12px; }
+            .sitelock .form-group { display: block; margin: 0 0 15px; }
+            .sitelock .form-control { display: block; width: 100%; }
+            .sitelock .sitelock_nav { width: 100%; margin: 0 0 -1px 0; padding: 0; border-bottom: 1px solid #777; }
+            .sitelock .sitelock_nav li { display: inline; }
+            .sitelock .sitelock_nav li a { border: 1px solid #333; border-bottom: 1px solid #777; display: inline-block; padding: 8px 15px; margin-bottom: -1px; border-top-left-radius: 5px; border-top-right-radius: 5px; text-decoration: none; background: #333; color: #ccc; margin: 0 5px 0 0; }
+            .sitelock .sitelock_nav li a:hover { background: #000; }
+            .sitelock .sitelock_nav li a.current { background: #fff; border-color: #ddd; color: #333; border-bottom: 1px solid #fff; }
+            .sitelock .sitelock_nav li a.current:hover { background: #fff; color: #000; }
+            .sitelock .tab-box { background: #fff; padding: 25px; border: 1px solid #ddd; margin-top: -2px; }
+            .sitelock .boxed { background: #ccc; border: 1px solid #aaa; margin: 15px 0; border-radius: 5px; }
+            .sitelock .boxed p { text-align: center; }
+            .sitelock .wpslp_container .metabox-holder h3 { padding: 10px 0 20px 15px; margin-top: 0px; border-bottom: 1px solid #eee; }
+            .sitelock .wpslp_container .button-primary.button-hero { margin: 0 13px 3px 0; padding: 12px 36px; height: auto; line-height: 1.4285714; white-space: normal; }
+            
+            .sitelock .expanded-details {
+                display: none;
+            }
+            .sitelock .expanded-details.now-active {
+                display: block;
+            }
+            .sitelock .sl-details {
+                position: relative;
+            }
+            /**
+            .sitelock .wpslp_container .expand-details {
+                cursor: pointer;
+                position: relative;
+                top: auto;
+                left: auto;
+                width: 100%;
+                z-index: 0;
+            }
+            .sitelock .wpslp_container .expand-details:hover .metabox-holder {
+                background: #eee;
+            }
+            **/
+            .sitelock .wpslp_container .expand-details .metabox-holder h3 {
+                border-bottom: 0; 
+                margin-bottom: 0;
+            }
+            .sitelock .wpslp_container .expand-details.nav-tab:hover {
+                background: #f1f1f1;
+            }
+            .sitelock .wpslp_container .expand-details.nav-tab.nav-tab-active:hover, 
+            .sitelock .wpslp_container .expand-details.nav-tab.nav-tab-active {
+                background: #fff !important;
+            }
+            /**
+            .sitelock .wpslp_container .expand-details.is-activating { 
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 1;
+                width: 100%;
+            }
+            
+            .sitelock .wpslp_container .expand-details.is-active .metabox-holder {
+                background: #0073aa;
+                color: #fff;
+                display: none;
+            }
+            .sitelock .wpslp_container .expand-details.is-active .metabox-holder h3 {
+                color: #fff;
+            }
+            **/
+
+            
+/****************************************************************
+ * Helper Styles
+*****************************************************************/
+            
+            /** .animate            { -o-transition:.25s; -ms-transition:.25s; -moz-transition:.25s; -webkit-transition:.25s; transition:.25s; } **/
+            .sitelock .hide-on-load       { display: none;        }
+            .sitelock .block              { display: block;       }
+            .sitelock .text-shadow        { text-shadow: 1px 1px 0px #000; }
+            .sitelock .oswald             { font-family: 'Oswald', sans-serif; font-weight: 100; }
+            .sitelock .relative           { position: relative;   }
+            .sitelock .absolute           { position: absolute;   }
+            .sitelock .top                { top: 10px;            }
+            .sitelock .h-mid              { right: 50%;           }
+            .sitelock .bottom             { bottom: 5px;          }
+            .sitelock .right              { right: 0;             }
+            .sitelock .v-mid              { top: 50%;             }
+            .sitelock .left               { left: 5px;            }
+            .sitelock .waf_stats .postbox.metabox-holder { padding-top: 0 !important; }
+            .sitelock .waf_stats .postbox.metabox-holder h3 { background: #ddd; padding-top: 10px !important; }
+            
+            
+            /* Margin 25px */
+            .sitelock .margin-top-25      { margin-top:     25px; }
+            .sitelock .margin-right-25    { margin-right:   25px; }
+            .sitelock .margin-bottom-25   { margin-bottom:  25px; }
+            .sitelock .margin-left-25     { margin-left:    25px; }
+            /* Margin 20px */
+            .sitelock .margin-top-20      { margin-top:     20px; }
+            .sitelock .margin-right-20    { margin-right:   20px; }
+            .sitelock .margin-bottom-20   { margin-bottom:  20px; }
+            .sitelock .margin-left-20     { margin-left:    20px; }
+            /* Margin 15px */
+            .sitelock .margin-top-15      { margin-top:     15px; }
+            .sitelock .margin-right-15    { margin-right:   15px; }
+            .sitelock .margin-bottom-15   { margin-bottom:  15px; }
+            .sitelock .margin-left-15     { margin-left:    15px; }
+            /* Margin 10px */
+            .sitelock .margin-top-10      { margin-top:     10px; }
+            .sitelock .margin-right-10    { margin-right:   10px; }
+            .sitelock .margin-bottom-10   { margin-bottom:  10px; }
+            .sitelock .margin-left-10     { margin-left:    10px; }
+            /* Margin 5px */
+            .sitelock .margin-top-5       { margin-top:     5px;  }
+            .sitelock .margin-right-5     { margin-right:   5px;  }
+            .sitelock .margin-bottom-5    { margin-bottom:  5px;  }
+            .sitelock .margin-left-5      { margin-left:    5px;  }
+            /* Margin 0 */
+            .sitelock .margin-top-0       { margin-top:     0;    }
+            .sitelock .margin-right-0     { margin-right:   0;    }
+            .sitelock .margin-bottom-0    { margin-bottom:  0;    }
+            .sitelock .margin-left-0      { margin-left:    0;    }
+            /* Margin all around */
+            .sitelock .margin-0           { margin:         0;    }
+            .sitelock .margin-5           { margin:         5px;  }
+            .sitelock .margin-10          { margin:         10px; }
+            .sitelock .margin-15          { margin:         15px; }
+            .sitelock .margin-20          { margin:         20px; }
+            .sitelock .margin-25          { margin:         25px; }
+            
+            /* Padding 25px */
+            .sitelock .padding-top-25     { padding-top:    25px; }
+            .sitelock .padding-right-25   { padding-right:  25px; }
+            .sitelock .padding-bottom-25  { padding-bottom: 25px; }
+            .sitelock .padding-left-25    { padding-left:   25px; }
+            /* Padding 20px */
+            .sitelock .padding-top-20     { padding-top:    20px; }
+            .sitelock .padding-right-20   { padding-right:  20px; }
+            .sitelock .padding-bottom-20  { padding-bottom: 20px; }
+            .sitelock .padding-left-20    { padding-left:   20px; }
+            /* Padding 15px */
+            .sitelock .padding-top-15     { padding-top:    15px; }
+            .sitelock .padding-right-15   { padding-right:  15px; }
+            .sitelock .padding-bottom-15  { padding-bottom: 15px; }
+            .sitelock .padding-left-15    { padding-left:   15px; }
+            /* Padding 10px */
+            .sitelock .padding-top-10     { padding-top:    10px; }
+            .sitelock .padding-right-10   { padding-right:  10px; }
+            .sitelock .padding-bottom-10  { padding-bottom: 10px; }
+            .sitelock .padding-left-10    { padding-left:   10px; }
+            /* Padding 5px */
+            .sitelock .padding-top-5      { padding-top:    5px;  }
+            .sitelock .padding-right-5    { padding-right:  5px;  }
+            .sitelock .padding-bottom-5   { padding-bottom: 5px;  }
+            .sitelock .padding-left-5     { padding-left:   5px;  }
+            /* Padding 0 */
+            .sitelock .padding-top-0      { padding-top:    0;    }
+            .sitelock .padding-right-0    { padding-right:  0;    }
+            .sitelock .padding-bottom-0   { padding-bottom: 0;    }
+            .sitelock .padding-left-0     { padding-left:   0;    }
+            /* Padding all around */
+            .sitelock .padding-0          { padding:        0;    }
+            .sitelock .padding-5          { padding:        5px;  }
+            .sitelock .padding-10         { padding:        10px; }
+            .sitelock .padding-15         { padding:        15px; }
+            .sitelock .padding-20         { padding:        20px; }
+            .sitelock .padding-25         { padding:        25px; }
+            
+            /* Font Colors */
+            .sitelock .white              { color: #fff;          }
+            .sitelock .black              { color: #000;          }
+            .sitelock .gray               { color: #363636;       }
+            .sitelock .gray-light         { color: #777;          }
+            .sitelock .red                { color: #bc2622;       }
+            .sitelock .green              { color: #22bc26;       }
+            .sitelock .yellow             { color: #ecdb4f;       }
+        
+            /* Background Colors */
+            .sitelock .white-bg           { background: #fff;     }
+            .sitelock .black-bg           { background: #000;     }
+            .sitelock .gray-bg            { background: #363636;  }
+            .sitelock .gray-light-bg      { background: #777;     }
+            .sitelock .red-bg             { background: #bc2622;  }
+            .sitelock .green-bg           { background: #22bc26;  }
+            .sitelock .yellow-bg          { background: #ecdb4f;  }
+            
+            /* Border Colors */
+            .sitelock .white-border       { border-color: #fff;   }
+            .sitelock .black-border       { border-color: #000;   }
+            .sitelock .gray-border        { border-color: #363636;}
+            .sitelock .gray-light-border  { border-color: #777;   }
+            .sitelock .red-border         { border-color: #bc2622;}
+            .sitelock .green-border       { border-color: #22bc26;}
+            .sitelock .yellow-border      { border-color: #ecdb4f;}
+            
+            /* Font sizes */
+            .sitelock .f-size-8           { font-size: 8px;       }
+            .sitelock .f-size-10          { font-size: 10px;      }
+            .sitelock .f-size-12          { font-size: 12px;      }
+            .sitelock .f-size-14          { font-size: 14px;      }
+            .sitelock .f-size-16          { font-size: 16px;      }
+            .sitelock .f-size-18          { font-size: 18px;      }
+            .sitelock .f-size-20          { font-size: 20px;      }
+            .sitelock .f-size-22          { font-size: 22px;      }
+            .sitelock .f-size-24          { font-size: 24px;      }
+            .sitelock .f-size-26          { font-size: 26px;      }
+            .sitelock .f-size-28          { font-size: 28px;      }
+            .sitelock .f-size-30          { font-size: 30px;      }
+            .sitelock .f-size-32          { font-size: 32px;      }
+            .sitelock .f-size-34          { font-size: 34px;      }
+            .sitelock .f-size-36          { font-size: 36px;      }
+            .sitelock .f-size-38          { font-size: 38px;      }
+            .sitelock .f-size-40          { font-size: 40px;      }
+            
+            /* Mouse */
+            .sitelock .move               { cursor: move;         }
+            .sitelock .pointer            { cursor: pointer;      }
+            
+            /* Font styles */
+            .sitelock .capitalize         { text-transform: capitalize; }
+            .sitelock .lowercase          { text-transform: lowercase;  }
+            .sitelock .uppercase          { text-transform: uppercase;  }
+            
+            
+
+
+
+#wpadminbar .dashicons.dashicons-thumbs-up {
+    content: "\f529";
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 20px !important;
+    line-height: 1 !important;
+    font-family: dashicons !important;
+    text-decoration: inherit !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+    vertical-align: top !important;
+    text-align: center !important;
+    -webkit-transition: color .1s ease-in 0 !important;
+    transition: color .1s ease-in 0 !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+}
+#wpadminbar .dashicons.dashicons-thumbs-down {
+    content: "\f542";
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 20px !important;
+    line-height: 1 !important;
+    font-family: dashicons !important;
+    text-decoration: inherit !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+    vertical-align: top !important;
+    text-align: center !important;
+    -webkit-transition: color .1s ease-in 0 !important;
+    transition: color .1s ease-in 0 !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+}
