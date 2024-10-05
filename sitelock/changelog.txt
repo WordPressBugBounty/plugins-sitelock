@@ -1,10 +1,16 @@
 == Changelog ==
 
+= 4.2.4 = 
+_Release Date July 31, 2024_
+
+* This release improves compatibility with WordPress 6.6.
+* Now requires a minimum PHP version of 7.2
+
 = 4.2.3 = 
 _Release Date October 12, 2023_
 
 * This release improves compatibility with WordPress 6.3.
-* now require minimum php 7.0
+* Now requires a minimum PHP version of 7.0
 
 = 4.2.2 = 
 _Release Date October 28, 2022_

@@ -16,7 +16,7 @@
  * Plugin Name:       SiteLock
  * Plugin URI:        https://www.sitelock.com/wordpress
  * Description:       Offers deep scan and site compliance
- * Version:           4.2.3
+ * Version:           4.2.4
  * Author:            SiteLock
  * Author URI:        https://www.sitelock.com
  * License:           GPL-2.0+

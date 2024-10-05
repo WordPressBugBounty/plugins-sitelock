@@ -2,9 +2,9 @@
 Contributors: SiteLockSecurity, SiteLock, tlow, awarner20, logankipp
 Tags: malware, security, firewall, web application firewall, scan, spam, virus, sitelock, WordPress Security, SQL Injection, XSS, CSRF
 Requires at least: 3.8.1
-Tested up to: 6.3.2
-Requires PHP: 7.0
-Stable tag: 4.2.3
+Tested up to: 6.6.1
+Requires PHP: 7.2
+Stable tag: 4.2.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,11 +26,19 @@ Secure Your Word™.  SiteLock WordPress Plugin provides complete website securi
 
 == Changelog ==
 
+= 4.2.4 = 
+_Release Date July 31, 2024_
+
+* This release improves compatibility with WordPress 6.6.
+* Now requires a minimum PHP version of 7.2
+
+
 = 4.2.3 = 
 _Release Date October 12, 2023_
 
 * This release improves compatibility with WordPress 6.3.
-* now require minimum php 7.0
+* Now requires a minimum PHP version of 7.0
+
 
 = 4.2.2 = 
 _Release Date August 18, 2022_

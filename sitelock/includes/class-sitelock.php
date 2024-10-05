@@ -56,7 +56,7 @@ class Sitelock {
 	public function __construct() {
 
 		$this->plugin_name = 'sitelock';
-		$this->version = '4.2.3';
+		$this->version = '4.2.4';
 
 		$this->load_dependencies();
 		$this->set_locale();
