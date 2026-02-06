@@ -10,17 +10,17 @@
  * @subpackage Sitelock/includes
  * @author     Todd Low <tlow@sitelock.com>
  */
-class Sitelock_Deactivator {
-
-	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
-	 *
-	 * @since    1.9.0
-	 */
-	public static function deactivate() {
-
-	}
-
+class Sitelock_Deactivator
+{
+    /**
+     * Short Description. (use period)
+     *
+     * Long Description.
+     *
+     * @since    1.9.0
+     */
+    public static function deactivate()
+    {
+        delete_option('wpslp_options');
+    }
 }

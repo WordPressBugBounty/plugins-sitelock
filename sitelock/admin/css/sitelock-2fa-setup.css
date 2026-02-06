@@ -1,0 +1,28 @@
+/* 2fa profile page style start */
+
+._2fa-profile-page {
+  margin-top: 10px;
+}
+
+._2fa-profile-page-title {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 20px;
+  color: #000000;
+}
+
+._2fa-profile-page-description {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  color: #000000;
+  margin-top: -10px;
+}
+
+._2fa-profile-page-activation,
+._2fa-profile-page-manage-users {
+  margin-bottom: 8px;
+  color: #2271b1;
+}
+
+/* 2fa profile page style ends */

@@ -1,0 +1,16 @@
+/* latin-ext */
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url(../font/SourceSans3-Italic-VariableFont_wght.ttf) format('truetype');
+}
+/* latin */
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url(../font/SourceSans3-VariableFont_wght.ttf) format('truetype');
+}

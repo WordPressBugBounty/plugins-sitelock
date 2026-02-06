@@ -1,87 +1,284 @@
-=== SiteLock Security ===
-Contributors: SiteLockSecurity, SiteLock, tlow, awarner20, logankipp
-Tags: malware, security, firewall, web application firewall, scan, spam, virus, sitelock, WordPress Security, SQL Injection, XSS, CSRF
-Requires at least: 3.8.1
-Tested up to: 6.6.1
+=== SiteLock Security – WP Hardening, Login Security & Malware Scans ===
+Contributors: SiteLockSecurity, SiteLock, tlow
+Tags: wordpress-security, malware-scan, vulnerability-scanner, login-security, site-health
+Requires at least: 3.8
+Tested up to: 6.9
 Requires PHP: 7.2
-Stable tag: 4.2.4
+Stable tag: 5.0.2
+Language: English
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
+Free, lightweight WordPress security. WP Hardening, login protection and Site Health & on‑demand checks without slowing your site. Setup in minutes.
+
 == Description ==
 
-Secure Your Word™.  SiteLock WordPress Plugin provides complete website security management without leaving WordPress. Users can access their SiteLock Dashboard from within WordPress, allowing you to focus on what's most important—your business, your passion, your word. 
+>= 🌟 Completely Redesigned in Version 5.0 (November 2025) 🌟 =
+>
+>This November marks a milestone: the SiteLock WordPress Plugin has been rebuilt with three goals: make it faster, make it clearer and move the heavy work to the cloud. We built a cloud-first architecture, modernized UI, expanded security controls and stripped out everything that didn't need to be there.
+>
+>**The big changes:**
+>- 🔒 Enhanced WordPress-specific hardening and login security controls
+>- ☁️ Cloud-powered scanning architecture for zero performance impact
+>- 🩺 New Site Health interface that shows you what matters in one view
+>- ⚡ Streamlined controls (fewer clicks to get protected)
+>- ✨ Modern codebase built for the WordPress you're actually using today
+>- 🔢 Future-ready foundation (2FA coming soon)
+>
+>If you used the old plugin: this is a different tool. If you're new: you're starting with the cleanest, fastest version of the plugin.
 
-= Major Features in SiteLock Include: =
-* Real-time updates allow minimal latency between identifying and correcting issues.
-* Ensure the security of your site by scanning pages in draft mode.
-* Identify specific vulnerabilities in order to remediate them as quickly as possible.
-* Manage SiteLock Trust Seal settings from your WordPress Dashboard.
+Your website deserves protection that’s simple, fast and built for WordPress. SiteLock WordPress Security focuses on the everyday controls that matter most and helps you establish a secure baseline in minutes — WordPress-specific hardening, login protection and a clear Site Health dashboard that keeps you in control without slowing your site down.
+It’s lightweight, action-first protection that complements your host defenses: essential safeguards run inside WordPress while deeper checks happen securely in the SiteLock cloud. Skip heavy on-server scans and alert fatigue — run on-demand checks when you need extra assurance, so you can ship updates with confidence.
+
+= Security that grows with you =
+Our goal is straightforward: maintain a strong baseline with minimal overhead while giving you clear visibility and room to grow as your needs evolve.
+And because security is never static, this plugin keeps pace. Next up: Two-Factor Authentication (2FA) to strengthen login security (coming soon).
+
+= Commercial plugin =
+This plugin is free but offers additional paid commercial upgrades or support.
+
+== What’s included ==
+
+= WordPress Hardening: Cut common attack paths in just a few clicks. =
+- Disable directory listing.
+- Restrict PHP execution in upload folders.
+- Limit unsafe script types.
+- Force strong configuration defaults to close risky gaps.
+
+_All options are toggle-based and reversible — safe to enable, easy to test and lightweight on performance._
+
+= Login Security: Protect what matters most — your access =
+- **Brute-force defense**: Blocks repeated failed logins and temporarily locks abusive IPs.
+- **Password policy prompts**: Encourage stronger credentials without breaking workflows.
+- **Session timeouts**: Automatically end idle sessions to prevent account hijacks.
+- **Activity awareness**: View recent logins and admin changes in the **Activity Log**.
+
+**_Heads-up:_ Two-Factor Authentication (2FA)** — a second layer of verification for even greater login protection. It’s already in development and will arrive as part of the next plugin milestone.
+
+= Site Health & Cloud Checks: Clarity without noise. =
+- **Site Health Dashboard**: Surface key signals in one view — WordPress hardening status, last scan timestamp and actionable indicators
+- **Cloud Checks**: Connect your free SiteLock account to enable recurring off-server checks (Webpage Scan, SSL Verification, Email Reputation and more)
+- **Scan Now**: Run on-demand checks after updates or changes for instant assurance -no heavy, always-on local scanners
+- **Activity Log**: Track what’s happening across your WordPress admin. See admin/login events at a glance making it easy to spot anomalies early and keep accountability clear.
+
+= Why Choose SiteLock WordPress Security? =
+- **Lightweight by design**: All high-impact protections, no unnecessary load
+- **Real visibility**: Know your security posture in seconds with Site Health
+- **Cloud-powered assurance**: Checks run off-server, protecting performance
+- **Flexible setup**: Use standalone or connect a SiteLock account for added layers
+- **Future-ready**: Two-Factor Authentication and enhanced security features are already on the horizon
+- **Trusted heritage**: From the global leader in SMB website security backed by continuous innovation and research
+- **Aligned to WordPress**: Designed to stay out of your way and keep performance priorities intact
+
+= Who It’s For =
+* Small businesses & startups
+* Portfolio & personal brand sites
+* WooCommerce shops & small e-commerce
+* Agencies & website maintenance services
+* Freelance developers & web designers
+* Bloggers, creators & publishers
+* Community & membership sites
+* Nonprofits & educational sites
+
+_If you manage a WordPress website, SiteLock gives you confidence and control whether you run one site or hundreds._
+
+= Can I Fix an Already-Infected Site with This Plugin? =
+The plugin focuses on prevention, posture and visibility — not full malware removal. It isn’t designed to fully clean up sites that were infected before it was active.
+If your site is already compromised, act quickly, we recommend:
+
+- Restoring from a clean backup if available
+- Remove malicious files manually or with professional help
+- For urgent assistance, consider [SiteLock 911 – Emergency Malware Removal](https://www.sitelock.com/products/fix-hacked-site/) for rapid cleanup
+- For ongoing defense, consider [choosing a comprehensive SiteLock plan](https://www.sitelock.com/pricing/)
+
+= Don’t Know Where To Start? Try This =
+Here are common first moves teams take with SiteLock. Order isn’t enforced — choose what fits your site and workflow:
+
+- Enable WordPress hardening that matches your hosting and theme setup
+- Turn on Login Security controls: brute-force lockouts, session timeouts, and password-hygiene prompts
+- Connect a free SiteLock account, then use Scan Now to run an on-demand check after plugin/theme updates
+- Review the Activity Log after major changes to spot unexpected admin/login events quickly
+Make one change at a time, validate and roll back any toggle that conflicts with your stack.
+
+= Need Help with Setup or Fixes? =
+- Visit [Help Center – WordPress](https://www.sitelock.com/help-center/?topics=wordpress-plugin) for plugin specific help
+- For broader topics explore the [SiteLock Help Center](https://www.sitelock.com/help-center/)
+
+
+== Frequently Asked Questions ==
+
+= Will this slow my site? =
+
+No, the plugin is designed to be lightweight. SiteLock security scans run in the SiteLock cloud, so both recurring scans and on-demand checks are processed off-site, keeping the resource impact on your WordPress site minimal.
+Locally, the plugin applies optional website hardening and login hygiene. These actions are event-driven with negligible impact on typical page loads.
+Bottom line: cloud-powered scanning plus low-overhead local controls deliver ongoing monitoring with minimal footprint in WordPress.
+
+= Does this plugin run constant background scans? =
+
+No. The plugin focuses on low-impact protections and on-demand checks you control.
+
+= Where do I see results inside WordPress? =
+
+The Site Health view shows status at-a-glance. The Cloud Services panel shows your latest cloud scan status and findings. For full history, use your SiteLock dashboard.
+
+= Can I use the plugin without a SiteLock account? =
+
+Yes, you can use the free plugin features without an account. Core hardening and login security work out of the box. Connect a free SiteLock account to unlock Site Health, Scan Now and recurring Cloud Checks. Paid SiteLock plans add deeper malware and vulnerability scans.
+
+= What happens if I disconnect my SiteLock account? =
+
+Local protections continue to work. Cloud scans, if configured, will continue to operate but data will not be pulled into the plugin unless they’re connected with a license key.
+
+= What’s included in the free SiteLock tier vs paid? =
+
+The free plugin includes WordPress Hardening and Login Security. Connect a free SiteLock account to unlock the Site Health view, enable recurring Email Reputation Scan, SSL Monitoring, Webpage and Vulnerability scans + Scan Now on-demand checks. Paid plans add SMART File and SMART Database scans.
+
+= Can I safely disable features? =
+
+Yes. Every hardening toggle is reversible — disable and retest anytime.
+
+= Does this replace my firewall or CDN? =
+
+No. This plugin sets your on-site baseline. For active blocking and performance protection, connect a full SiteLock plan to enable the SiteLock Firewall (WAF) and CDN.
+
+= What about Two-Factor Authentication (2FA)? =
+
+Enhanced protection is on the horizon — stay tuned for the update! 2FA is actively in development. It’s designed to layer on top of our current login protections bringing stronger, verification-based defense without adding friction for site owners.
+
+= What changes does this plugin make that could affect my site? =
+
+Nothing changes until you enable a setting. Login features don’t alter your theme or content. Some hardening options intentionally tighten execution rules and may impact edge cases, for example:
+- Deny Access to Unsafe Script Extensions: blocks execution of unexpected script types (phtml, phar, cgi, pl, py, asp, aspx, jsp). If your site needs one of these, don’t enable this toggle.
+- Harden Writable Directories: blocks PHP execution in /wp-content/uploads. Plugins/themes that execute PHP there may stop working.
+**Best practice**: enable settings gradually, test and revert any toggle that conflicts with your stack.
+
+= What is the Site Health view? =
+
+It’s a simple, low-impact status view of key checks.
+
+= What is “Scan Now”? =
+
+An on-demand check for key items — useful after you update plugins/themes or change configuration. It does not perform heavy on-server scans.
+
+
+== Screenshots ==
+
+1. **Dashboard** — overview with Site Health
+2. **Login Security** — brute-force defense, password hygiene and session timeouts
+3. **WordPress Hardening** — one-click toggles for secure defaults
+4. **Activity Log** — recent admin/login events at a glance
+5. **Cloud Checks** — on-demand and recurring scans from the SiteLock cloud
+
 
 == Installation ==
 
-1. Upload `sitelock` to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Click on "SiteLock Security" from the top menu bar or within the Tools menu.
+= Getting Started =
+1.	In Plugins → Add New, search “SiteLock Security”, then Install and Activate
+2.	Open SiteLock from the left menu
+3.	Choose your setup path:
+    a.	Use free baseline protections (no account required) or
+    b.	Connect your SiteLock account (or create one) to enable cloud checks and add broader protections (optional)
+4.	Toggle the WordPress hardening and login protections that fit your site
+5.	After you’ve connected a SiteLock account (free tier supported), Scan Now runs an on-demand check and recurring scans run by default to keep your site monitored at all times
+
 
 == Changelog ==
 
-= 4.2.4 = 
+= 5.0.2 =
+_Release Date December 12, 2025_
+
+* Feature: Queue new cloud scans directly from plugin
+* Fix: Support license key activation on subdirectory installs
+* Fix: Minor admin UI improvements
+* Fix: Improve admin load times
+
+= 5.0.1 =
+_Release Date November 10, 2025_
+
+* Security updates.
+
+= 5.0.0 =
+_Release Date November 4, 2025_
+
+**Enhancements**
+
+- License key–based connection flow (SSO-compatible) replacing legacy auth.
+- Full UI redesign aligned with SiteLock dashboard + WordPress admin standards.
+- WordPress Hardening features:
+    - Disable directory listing.
+    - Block execution of unsafe script extensions.
+    - Basic XSS / SQL Injection request filtering.
+    - Block PHP execution inside writable asset directories (e.g. 'wp-content/uploads').
+- Login Security features:
+    - Login lockout (rate limiting after repeated failures).
+    - Forced logout time controls by role.
+    - Password strength enforcement (new users & password changes).
+    - Login Activity Log (role-aware).
+    - Admin Audit Log (tracks privilege & role changes).
+- In-dashboard Security Report providing an overview of your latest SiteLock security scans.
+- Site Health score indicator in wp-admin.
+- Improved signup flow for new users.
+
+**Deprecated**
+
+- SiteLock Trust Seal HTML embed.
+- Post scanning functionality (legacy).
+- Admin Dashboard Widget, Admin Bar dropdown.
+- Post editor metaboxes.
+- WAF & CDN settings panel (SiteLock Dashboard preferred).
+
+**Migration / Upgrade Notes**
+
+- After updating, go to: SiteLock > Settings > SiteLock Plan & License and enter your new license key (required going forward).
+
+= 4.2.4 =
 _Release Date July 31, 2024_
 
 * This release improves compatibility with WordPress 6.6.
-* Now requires a minimum PHP version of 7.2
+* Now requires a minimum PHP version of 7.2.
 
-
-= 4.2.3 = 
+= 4.2.3 =
 _Release Date October 12, 2023_
 
 * This release improves compatibility with WordPress 6.3.
-* Now requires a minimum PHP version of 7.0
+* Now requires a minimum PHP version of 7.0.
 
+= 4.2.2 =
+_Release Date October 28, 2022_
 
-= 4.2.2 = 
-_Release Date August 18, 2022_
+* Security updates.
 
-* Security updates
-
-
-= 4.2.0 = 
+= 4.2.0 =
 _Release Date July 6, 2022_
 
-* Updated to support WordPress 6.0
+* Updated to support WordPress 6.0.
 * SiteLock WordPress Plugin provides complete website security management without leaving WordPress.
 
-
-= 4.1.0 = 
+= 4.1.0 =
 _Release date: November 9, 2020_
 
-* Updated to support PHP 7.4 and WordPress 5.5
-* Support for new SiteLock API improvements
-* Better error handling for sites without an active subscription
-* Fixed various minor PHP notices
-* Regained access to our account so we can continue providing updates!
+* Updated to support PHP 7.4 and WordPress 5.5.
+* Support for new SiteLock API improvements.
+* Better error handling for sites without an active subscription.
+* Fixed PHP notices.
+* Regained access to our account, so we can continue providing updates!
 
-
-= 4.0.5 = 
+= 4.0.5 =
 _Release date: April 20, 2017_
 
-* Resolved minor php warning message
-
+* Resolved minor PHP warning message.
 
 = 4.0.4 =
 _Release date: December 8, 2016_
 
-* Resolves bug with badge settings
-
+* Resolves bug with badge settings.
 
 = 4.0.3 =
 _Release date: December 6, 2016_
 
 * This release improves compatibility with WordPress 4.7.
 
-
 = 4.0.2 =
 _Release date: December 3, 2016_
 
-* Restores missing file needed for source code scan
+* Restores missing file needed for source code scan.

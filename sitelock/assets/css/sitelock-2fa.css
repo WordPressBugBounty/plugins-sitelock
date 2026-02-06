@@ -1,0 +1,228 @@
+/* latin-ext */
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url('../../admin/font/SourceSans3-VariableFont_wght.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('../fonts/Roboto-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Basic responsive card */
+.sitelock-verify-page {
+  background: #f0f0f1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  font-family: 'Source Sans 3';
+}
+.sitelock-card {
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.06);
+  border: 1px solid #dddddd;
+  overflow: hidden;
+  padding: 15px;
+}
+.sitelock-card__head {
+  text-align: center;
+  padding-bottom: 30px;
+}
+.sitelock-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 15px;
+}
+.sitelock-card__head h1 {
+  font-size: 30px;
+  color: #000000;
+  line-height: 24px;
+  font-weight: 400;
+}
+.sitelock-sub {
+  font-size: 14px;
+  color: #041c2c;
+  line-height: 20px;
+  font-weight: 400;
+  padding: 0px 60px;
+  margin: 0px 20px;
+}
+.sitelock-field {
+  margin-bottom: 20px;
+}
+.sitelock-field label {
+  display: block;
+  font-size: 13px;
+  color: #374151;
+  margin-bottom: 6px;
+}
+.sitelock-2fa-inputs {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  justify-content: center;
+  margin: 0px 50px;
+}
+.sitelock-input {
+  width: 40px;
+  height: 48px;
+  border: 1px solid #9e9e9e;
+  border-radius: 4px;
+  box-sizing: border-box;
+  text-align: center;
+  color: #041c2c;
+}
+.sitelock-input:focus {
+  outline: none;
+  border-color: #2d68c4;
+}
+.sitelock-recovery-field {
+  text-align: center;
+  margin: 0px 50px;
+}
+.sitelock-recovery-input {
+  width: 280px;
+  height: 40px;
+  border: 1px solid #9e9e9e;
+  border-radius: 4px;
+  margin-bottom: 24px;
+}
+.sitelock-recovery-field input[type='text' i] {
+  padding-left: 8px;
+  color: #041c2c;
+}
+.sitelock-help {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.sitelock-link {
+  color: #2d68c4;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 150%;
+  letter-spacing: 0px;
+}
+.sitelock-link:hover {
+  text-decoration: underline;
+}
+.sitelock-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+.sitelock-btn {
+  width: 120px;
+  height: 32px;
+  background: #2d68c4;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 25px;
+  cursor: pointer;
+  letter-spacing: 0px;
+  font-size: 14px;
+  line-height: 14px;
+  font-weight: 400;
+  font-family: 'Source Sans 3';
+}
+.sitelock-btn:hover {
+  background-color: #083c8c;
+}
+.sitelock-card__foot {
+  text-align: center;
+}
+.sitelock-error {
+  color: #db1010;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 400;
+  text-align: center;
+}
+.sitelock-recovery-error {
+  color: #db1010;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 400;
+  text-align: center;
+}
+.sitelock-2fa-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+.sitelock-card-powered-by-text {
+  font-family: 'Roboto';
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 110.00000000000001%;
+  letter-spacing: 0px;
+  color: #43586a;
+}
+p.sitelock-card-powered-by-text a.sitelock-foot-link {
+  color: #43586a;
+}
+
+/* hidden class toggle */
+.hidden {
+  display: none;
+}
+
+/* disable the button */
+.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* small screens */
+@media (max-width: 480px) {
+  .sitelock-card {
+    max-width: 300px;
+    padding: 10px;
+  }
+  .sitelock-card__head {
+    padding: 10px 5px 30px;
+  }
+  .sitelock-card__head h1 {
+    font-size: 24px !important;
+  }
+  .sitelock-sub {
+    margin: 0px 5px;
+    padding: 0px 20px;
+  }
+  .sitelock-input {
+    width: 30px;
+    height: 38px;
+  }
+  .sitelock-2fa-inputs {
+    margin: 0px 20px;
+  }
+  .sitelock-recovery-field {
+    margin: 0px 5px;
+  }
+  .sitelock-recovery-input {
+    width: 240px !important;
+  }
+  .sitelock-recovery-error,
+  .sitelock-error {
+    margin-left: 21px;
+  }
+}
+
+@media (max-width: 320px) {
+  .sitelock-card {
+    max-width: 280px;
+  }
+}

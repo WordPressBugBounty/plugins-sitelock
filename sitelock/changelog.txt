@@ -1,46 +1,100 @@
 == Changelog ==
 
-= 4.2.4 = 
+= 5.0.2 =
+_Release Date December 12, 2025_
+
+* Feature: Queue new cloud scans directly from plugin
+* Fix: Support license key activation on subdirectory installs
+* Fix: Minor admin UI improvements
+* Fix: Improve admin load times
+
+= 5.0.1 =
+_Release Date November 10, 2025_
+
+* Security updates.
+
+= 5.0.0 =
+_Release Date November 4, 2025_
+
+**Enhancements**
+
+- License key–based connection flow (SSO-compatible) replacing legacy auth.
+- Full UI redesign aligned with SiteLock dashboard + WordPress admin standards.
+- WordPress Hardening features:
+    - Disable directory listing.
+    - Block execution of unsafe script extensions.
+    - Basic XSS / SQL Injection request filtering.
+    - Block PHP execution inside writable asset directories (e.g. 'wp-content/uploads').
+- Login Security features:
+    - Login lockout (rate limiting after repeated failures).
+    - Forced logout time controls by role.
+    - Password strength enforcement (new users & password changes).
+    - Login Activity Log (role-aware).
+    - Admin Audit Log (tracks privilege & role changes).
+- In-dashboard Security Report providing an overview of your latest SiteLock security scans.
+- Site Health score indicator in wp-admin.
+- Improved signup flow for new users.
+
+**Deprecated**
+
+- SiteLock Trust Seal HTML embed.
+- Post scanning functionality (legacy).
+- Admin Dashboard Widget, Admin Bar dropdown.
+- Post editor metaboxes.
+- WAF & CDN settings panel (SiteLock Dashboard preferred).
+
+**Migration / Upgrade Notes**
+
+- After updating, go to: SiteLock > Settings > SiteLock Plan & License and enter your new license key (required going forward).
+
+= 4.2.4 =
 _Release Date July 31, 2024_
 
 * This release improves compatibility with WordPress 6.6.
-* Now requires a minimum PHP version of 7.2
+* Now requires a minimum PHP version of 7.2.
 
-= 4.2.3 = 
+= 4.2.3 =
 _Release Date October 12, 2023_
 
 * This release improves compatibility with WordPress 6.3.
-* Now requires a minimum PHP version of 7.0
+* Now requires a minimum PHP version of 7.0.
 
-= 4.2.2 = 
+= 4.2.2 =
 _Release Date October 28, 2022_
-* Security updates
 
-= 4.2.0 = 
+* Security updates.
+
+= 4.2.0 =
 _Release Date July 6, 2022_
-* Updated to support WordPress 6.0
+
+* Updated to support WordPress 6.0.
 * SiteLock WordPress Plugin provides complete website security management without leaving WordPress.
 
-= 4.1.0 = 
+= 4.1.0 =
 _Release date: November 9, 2020_
-* Updated to support PHP 7.4 and WordPress 5.5
-* Support for new SiteLock API improvements
-* Better error handling for sites without an active subscription
-* Fixed PHP notices
-* Regained access to our account so we can continue providing updates!
 
-= 4.0.5 = 
+* Updated to support PHP 7.4 and WordPress 5.5.
+* Support for new SiteLock API improvements.
+* Better error handling for sites without an active subscription.
+* Fixed PHP notices.
+* Regained access to our account, so we can continue providing updates!
+
+= 4.0.5 =
 _Release date: April 20, 2017_
-* Resolved minor php warning message
+
+* Resolved minor PHP warning message.
 
 = 4.0.4 =
 _Release date: December 8, 2016_
-* Resolves bug with badge settings
+
+* Resolves bug with badge settings.
 
 = 4.0.3 =
 _Release date: December 6, 2016_
+
 * This release improves compatibility with WordPress 4.7.
 
 = 4.0.2 =
 _Release date: December 3, 2016_
-* Restores missing file needed for source code scan
+
+* Restores missing file needed for source code scan.
