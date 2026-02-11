@@ -135,6 +135,10 @@ class AuthManager
      */
     public function handle_auth($external_key = null)
     {
+        if (!current_user_can('manage_options')) {
+            wp_die(esc_html__('Unauthorized user.', 'sitelock-wordpress-plugin'), '', array('response' => 403));
+        }
+
         // Verify nonce
         if (!$external_key && (!isset($_POST['sitelock_license_key_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['sitelock_license_key_nonce'])), 'sitelock_license_key_action'))) {
             set_transient('sitelock_auth_error', 'Nonce verification failed.', 60); // Store error for 60 seconds

@@ -4,7 +4,7 @@ Tags: wordpress-security, malware-scan, vulnerability-scanner, login-security, s
 Requires at least: 3.8
 Tested up to: 6.9
 Requires PHP: 7.2
-Stable tag: 5.0.2
+Stable tag: 5.0.3
 Language: English
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -13,7 +13,7 @@ Free, lightweight WordPress security. WP Hardening, login protection and Site He
 
 == Description ==
 
->= 🌟 Completely Redesigned in Version 5.0 (November 2025) 🌟 =
+>**🌟 Completely Redesigned in Version 5.0 (November 2025) 🌟**
 >
 >This November marks a milestone: the SiteLock WordPress Plugin has been rebuilt with three goals: make it faster, make it clearer and move the heavy work to the cloud. We built a cloud-first architecture, modernized UI, expanded security controls and stripped out everything that didn't need to be there.
 >
@@ -26,6 +26,8 @@ Free, lightweight WordPress security. WP Hardening, login protection and Site He
 >- 🔢 Future-ready foundation (2FA coming soon)
 >
 >If you used the old plugin: this is a different tool. If you're new: you're starting with the cleanest, fastest version of the plugin.
+
+---
 
 Your website deserves protection that’s simple, fast and built for WordPress. SiteLock WordPress Security focuses on the everyday controls that matter most and helps you establish a secure baseline in minutes — WordPress-specific hardening, login protection and a clear Site Health dashboard that keeps you in control without slowing your site down.
 It’s lightweight, action-first protection that complements your host defenses: essential safeguards run inside WordPress while deeper checks happen securely in the SiteLock cloud. Skip heavy on-server scans and alert fatigue — run on-demand checks when you need extra assurance, so you can ship updates with confidence.
@@ -104,6 +106,8 @@ Make one change at a time, validate and roll back any toggle that conflicts with
 - Visit [Help Center – WordPress](https://www.sitelock.com/help-center/?topics=wordpress-plugin) for plugin specific help
 - For broader topics explore the [SiteLock Help Center](https://www.sitelock.com/help-center/)
 
+= Security =
+Protecting our customers and systems is a top priority, and we take security very seriously. If you believe you’ve found a security vulnerability in the SiteLock WordPress plugin, please let us know at vuln-reporting@sitelock.com before sharing any details publicly.
 
 == Frequently Asked Questions ==
 
@@ -183,6 +187,11 @@ An on-demand check for key items — useful after you update plugins/themes or c
 
 
 == Changelog ==
+
+= 5.0.3 =
+_Release Date February 11, 2026_
+
+* Security: Improved admin permission checks for restricted functions
 
 = 5.0.2 =
 _Release Date December 12, 2025_

@@ -1,5 +1,10 @@
 == Changelog ==
 
+= 5.0.3 =
+_Release Date February 11, 2026_
+
+* Security: Improved admin permission checks for restricted functions
+
 = 5.0.2 =
 _Release Date December 12, 2025_
 

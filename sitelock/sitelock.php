@@ -16,7 +16,7 @@
  * Plugin Name:       SiteLock Security – WP Hardening, Login Security & Malware Scans
  * Plugin URI:        https://www.sitelock.com/wordpress
  * Description:       Free, lightweight WordPress security. WP Hardening, login protection and Site Health & on‑demand checks without slowing your site. Setup in minutes.
- * Version:           5.0.2
+ * Version:           5.0.3
  * Author:            SiteLockSecurity
  * Author URI:        https://www.sitelock.com
  * License:           GPLv2 or later
@@ -275,6 +275,7 @@ function sitelock_admin_notice_css() {
             .notice.notice-warning,
             .notice.notice-error {
                 max-width: 1115px; /* Set your desired max width */
+                margin: 10px 15px 0 10px; /* Set your desired margin */
             }
         </style>';
     }

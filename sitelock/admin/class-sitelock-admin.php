@@ -1066,6 +1066,10 @@ public function sitelock_upgrade_page_callback() {
 }
 
 public function sitelock_scan_enqueue_scripts() {
+    // Prevents nonce leaking to unauthorized users by only enqueuing the script for users with manage_options capability
+    if (!current_user_can('manage_options')) {
+        return;
+    }
         
     wp_enqueue_script('sitelock-scan', plugin_dir_url(__FILE__) . 'js/sitelock-scan.js', ['jquery'], '1.0', true);
 
@@ -1077,6 +1081,10 @@ public function sitelock_scan_enqueue_scripts() {
 }
 public function sitelock_scan_callback() {
     check_ajax_referer('sitelock_scan_nonce', 'nonce');
+
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
 
     $scanType = isset($_POST['scan_type']) ? sanitize_text_field(wp_unslash($_POST['scan_type'])) : ''; // Default to 'patchman' if not provided
     $response = $this->api->sites->post_scan_now($scanType);
