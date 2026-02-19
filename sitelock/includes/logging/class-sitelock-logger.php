@@ -23,6 +23,13 @@ class SiteLock_Logger
 
     /** @var string log filename */
     private $file_name = 'sitelock-error.log';
+    
+    /** @var int max number of backup files to keep (default 10) */
+    private $max_backup_files = 10;
+    
+    /** @var int max content length for large text fields (default 10KB) */
+    private $max_content_length = 10240;
+    
     /** @var WP_Filesystem_Base|null Reusable WP Filesystem instance */
     private $fs = null;
 
@@ -102,6 +109,7 @@ class SiteLock_Logger
      */
     private function protect_log_dir()
     {
+        // 1. Internal .htaccess (sitelock-logs/.htaccess)
         $htaccess = $this->log_dir . '/.htaccess';
         if (! file_exists($htaccess)) {
             $content = "# Prevent direct web access to log files\n"
@@ -114,6 +122,52 @@ class SiteLock_Logger
                 . "</IfModule>\n";
             @file_put_contents($htaccess, $content);
         }
+
+        // 2. Parent .htaccess (uploads/.htaccess) - Guard against directory browsing/access
+        $this->protect_parent_uploads_dir();
+    }
+
+    /**
+     * Add safeguarding rules to the parent uploads directory .htaccess.
+     * Uses a separate marker block to coexist with main hardening rules.
+     */
+    private function protect_parent_uploads_dir()
+    {
+        if (!function_exists('insert_with_markers')) {
+            require_once ABSPATH . 'wp-admin/includes/misc.php';
+        }
+
+        $upload_dir = wp_upload_dir();
+        $uploads_htaccess = $upload_dir['basedir'] . '/.htaccess';
+
+        // Check if file exists/writable or can be created
+        global $wp_filesystem;
+        if (empty($wp_filesystem)) {
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+            WP_Filesystem();
+        }
+
+        if (!$wp_filesystem->exists($uploads_htaccess)) {
+            if (!$wp_filesystem->is_writable(dirname($uploads_htaccess))) {
+                return;
+            }
+            $wp_filesystem->put_contents($uploads_htaccess, '');
+        }
+
+        if (!$wp_filesystem->is_writable($uploads_htaccess)) {
+            return;
+        }
+
+        // Rules to block access to sitelock-logs folder specifically
+        $rules = [
+            '<IfModule mod_rewrite.c>',
+            '    RewriteEngine On',
+            '    RewriteRule ^sitelock-logs/ - [F]',
+            '</IfModule>',
+        ];
+
+        // Unique marker for this specific protection
+        insert_with_markers($uploads_htaccess, 'SitelockLogsProtection', $rules);
     }
 
     /**
@@ -130,6 +184,10 @@ class SiteLock_Logger
      */
     public function log($level, $title, $message = '', $context = [], $class = '')
     {
+        if (!$this->ensure_fs()) {
+            return false;
+        }
+
         // normalize
         $level   = (string) $level;
         $title   = (string) $title;
@@ -233,7 +291,59 @@ class SiteLock_Logger
             // write a new index.html and htaccess for new folder (ensure dir protected)
             $this->ensure_log_dir();
             $this->protect_log_dir();
+            
+            // cleanup old backups to prevent disk bloat
+            $this->cleanup_old_backups();
         }
+    }
+
+    /**
+     * Clean up old backup files, keeping only the most recent max_backup_files.
+     */
+    private function cleanup_old_backups()
+    {
+        // Get all rotated log files
+        $pattern = $this->log_file . '.*';
+        $backups = glob($pattern);
+        
+        if (empty($backups) || count($backups) <= $this->max_backup_files) {
+            return; // Nothing to clean up
+        }
+        
+        // Sort by modification time (oldest first)
+        usort($backups, function($a, $b) {
+            return filemtime($a) - filemtime($b);
+        });
+        
+        // Delete oldest files, keeping only max_backup_files
+        $to_delete = array_slice($backups, 0, count($backups) - $this->max_backup_files);
+        foreach ($to_delete as $file) {
+            if (file_exists($file)) {
+                @unlink($file);
+            }
+        }
+    }
+
+    /**
+     * Safely truncate large content to prevent log bloat.
+     *
+     * @param  string $content Content to truncate if needed
+     * @param  int    $max_length Optional custom max length
+     * @return string Truncated content with indicator if truncated
+     */
+    public function safe_log_content($content, $max_length = null)
+    {
+        if ($max_length === null) {
+            $max_length = $this->max_content_length;
+        }
+        
+        $content = (string) $content;
+        
+        if (strlen($content) <= $max_length) {
+            return $content;
+        }
+        
+        return substr($content, 0, $max_length) . "\n... [truncated, original length: " . strlen($content) . " bytes]";
     }
 
     /**
@@ -254,5 +364,15 @@ class SiteLock_Logger
     public function get_log_file_path()
     {
         return $this->log_file;
+    }
+
+    /**
+     * Get absolute log directory path (useful for .htaccess backups).
+     *
+     * @return string
+     */
+    public function get_log_dir()
+    {
+        return $this->log_dir;
     }
 }

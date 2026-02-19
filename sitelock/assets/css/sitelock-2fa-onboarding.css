@@ -1,0 +1,81 @@
+/* Sitelock 2FA Onboarding Styles - Minimal layout shell */
+
+body.sitelock-2fa-onboarding {
+  background-color: #f1f1f1;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell,
+    'Helvetica Neue', sans-serif;
+  color: #3c434a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.sitelock-onboarding-wrapper {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 24px;
+  text-align: center;
+}
+
+.sitelock-onboarding-wrapper.wizard-width {
+  max-width: 700px;
+}
+
+.sitelock-logo {
+  margin-bottom: 24px;
+}
+
+.sitelock-logo img {
+  height: 80px;
+  width: auto;
+}
+
+.sitelock-card {
+  background: #fff;
+  border: 1px solid #dcdcde;
+  padding: 32px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+  text-align: left;
+}
+
+.sitelock-card h2 {
+  font-size: 24px;
+  line-height: 1.3;
+  margin: 0 0 16px;
+  font-weight: 600;
+  color: #1d2327;
+  text-align: center;
+}
+
+.sitelock-footer {
+  margin-top: 24px;
+  font-size: 11px;
+  color: #646970;
+  text-align: center;
+}
+
+.sitelock-footer a {
+  color: #646970;
+  text-decoration: underline;
+}
+
+/* Specific overrides for standalone mode to ensure Tailwind works without full Admin headers */
+.sitelock-card input {
+  box-sizing: border-box;
+}
+
+.sitelock-card .sitelock-skip-link {
+  display: inline-block;
+  font-size: 13px;
+  color: #2271b1 !important;
+  text-decoration: none;
+  margin-left: 15px;
+}
+
+.sitelock-card .sitelock-skip-link:hover {
+  text-decoration: underline;
+}

@@ -11,7 +11,7 @@ $sitelock_site_id = get_option('sitelock_site_id', '');
             You can find your SiteLock License Key by logging into your
             <a href="<?php echo esc_url(sitelock_api_url()) ?>" class="!inline-block underline text-[#2c68c3]" target="_blank" rel="noopener noreferrer">SiteLock Dashboard</a>.
             <br>If you don’t have a SiteLock account,
-            <a href="<?php echo esc_url(get_sitelock_redirect_url('signup') . admin_url()); ?>" class="!inline-block underline text-[#2c68c3]" target="_blank" rel="noopener noreferrer">sign up here</a>
+            <a href="<?php echo esc_url(sitelock_get_redirect_url('signup') . admin_url()); ?>" class="!inline-block underline text-[#2c68c3]" target="_blank" rel="noopener noreferrer">sign up here</a>
             for a free or paid plan to get started.
         </p>
         <?php } ?>
@@ -32,7 +32,7 @@ $sitelock_site_id = get_option('sitelock_site_id', '');
                         <button class="px-3 sm:px-6 py-[7px] text-center rounded"
                             type="submit">Save Changes</button>
                         <a target="_blank" rel="noopener noreferrer" class="px-3 sm:px-6 py-[5px] bg-[#F6F9FE] text-[#083C8C] hover:text-[#083C8C] text-center rounded border-blue"
-                            href="<?php echo esc_url(sitelock_api_url() . '/login?redirect_to=site.settings.wordpress&siteId=' . get_site_identifier()); ?>">Get License Key</a>
+                            href="<?php echo esc_url(sitelock_api_url() . '/login?redirect_to=site.settings.wordpress&siteId=' . sitelock_get_site_identifier()); ?>">Get License Key</a>
                     <?php } else { ?>
                         <a class="px-3 sm:px-6 py-[7px] bg-[#2D68C4] text-[#fff] hover:text-[#fff] text-center rounded"
                             href="<?php echo esc_url(admin_url('admin.php?page=sitelock')) ?>">Go to SiteLock Dashboard</a>

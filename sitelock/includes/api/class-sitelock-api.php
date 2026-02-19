@@ -18,7 +18,7 @@ class Sitelock_API
         $this->apiHelper            = new ApiHelper($version);
         $this->auth                 = new AuthManager($version, $this->apiHelper);
         $this->sites                = new SitesManager($this->apiHelper, $this->auth);
-        $this->verification_service = new SiteLock_Verification_Service();
+        $this->verification_service = new SiteLock_Verification_Service($version);
         $this->apiHelper->setAuthManager($this->auth);
     }
 

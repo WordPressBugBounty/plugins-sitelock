@@ -2,8 +2,16 @@
 
 class Sitelock_Login_Lockout
 {
+    private $sitelock_language_tokens;
+
     public function __construct()
     {
+        if (function_exists('sitelock_get_language_tokens')) {
+            $this->sitelock_language_tokens = sitelock_get_language_tokens();
+        } else {
+            $this->sitelock_language_tokens = [];
+        }
+
         add_action('wp_login_failed', [$this, 'sitelock_login_lockout_login_failed']);
 
         add_filter('authenticate', [$this, 'sitelock_login_lockout_check_lockout'], 30, 3);
@@ -59,7 +67,7 @@ class Sitelock_Login_Lockout
         $ip = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
 
         if (get_transient("sitelock_login_lockout_{$ip}")) {
-            return new WP_Error('sitelock_login_lockout_lockout', __('Too many failed login attempts. Please try again later.', 'sitelock-wordpress-plugin'));
+            return new WP_Error('sitelock_login_lockout_lockout', esc_html($this->sitelock_language_tokens['common_errors']['tooManyFailedLogin']));
         }
 
         return $user;

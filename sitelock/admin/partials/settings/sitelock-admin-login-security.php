@@ -1,17 +1,19 @@
 <div id="login-security" class="hidden simple-box border-grey-light bg-[#fff] mb-5 p-8 min-h-full xl:min-h-[500px]">
+  <div class="mb-6 w-full xl:w-[595px] box-title text-[30px]">
+        <h3 class="mb-5"><?php echo esc_html($sitelock_language_tokens['login_security_list_settings']['title']) ?></h3>
+        <p class="text-[14px]"><?php echo esc_html($sitelock_language_tokens['login_security_list_settings']['description']) ?></p>
+  </div>
     <?php
-    $two_fa_settings = get_option('sitelock_2fa_settings', [
+    $sitelock_two_fa_settings = get_option('sitelock_2fa_settings', [
         'enable_2fa'      => false,
         'mandatory_roles' => [],
         'grace_period'    => 7,
     ]);
-    $two_fa_settings['enable_2fa']      = isset($two_fa_settings['enable_2fa']) ? $two_fa_settings['enable_2fa'] : false;
-    $two_fa_settings['mandatory_roles'] = isset($two_fa_settings['mandatory_roles']) ? $two_fa_settings['mandatory_roles'] : [];
-    $two_fa_settings['grace_period']    = isset($two_fa_settings['grace_period']) ? $two_fa_settings['grace_period'] : 7;
+    $sitelock_two_fa_settings['enable_2fa']      = isset($sitelock_two_fa_settings['enable_2fa']) ? $sitelock_two_fa_settings['enable_2fa'] : false;
+    $sitelock_two_fa_settings['mandatory_roles'] = isset($sitelock_two_fa_settings['mandatory_roles']) ? $sitelock_two_fa_settings['mandatory_roles'] : [];
+    $sitelock_two_fa_settings['grace_period']    = isset($sitelock_two_fa_settings['grace_period']) ? $sitelock_two_fa_settings['grace_period'] : 7;
     ?>
-    
     <div class="w-full">
-    <h3 class="box-title mb-8"><?php echo esc_html($sitelock_language_tokens['login_security_list_settings']['title']) ?></h3>
     <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
     <input type="hidden" name="action" value="sitelock_security_form_data">
     <input type="hidden" name="tab" value="sitelock_login_security">
@@ -19,7 +21,97 @@
         wp_nonce_field('sitelock_login_security_action', 'sitelock_login_security_nonce');?>
 
         <div class="security-options">
+            <div class="2fa-setting mb-5 border-b border-b-[#dddddd]">
+                <div class="flex mb-5 py-[5px]">
+                    <div class="lightswitch" data-id="2fa">
+                        <input type="checkbox" id="sitelock_2fa_enable" name="sitelock_2fa_settings[enable_2fa]" value="1"
+                            <?php checked(1, $sitelock_two_fa_settings['enable_2fa'], true); ?> />
+                        <span class="switch"><span>
+                    </div>
+                    <div class="option-info two-fa ml-2 w-full xl:w-[70%]">
+                        <label for="sitelock_2fa_enable" class="cursor-pointer">
+                            <h2 class="tab-title mb-1 flex item-center"><?php echo esc_html($sitelock_language_tokens['login_security_list_settings']['2fa']['title']) ?></h2>
+                            <p class="tab-content-field-content"><?php echo esc_html($sitelock_language_tokens['login_security_list_settings']['2fa']['description']) ?></p>
+                        </label>
+                    </div>
+                </div>
+                <div class="2fa-contents pl-14 collapsed" id="2fa">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div class="mb-4">
+                            <h3 class="tab-title mb-1"><?php echo esc_html($sitelock_language_tokens['login_security_list_settings']['2fa']['requiredRole']) ?></h3>
+                            <p class="tab-content-field-content"><?php echo esc_html($sitelock_language_tokens['login_security_list_settings']['2fa']['enabledRoles']) ?></p>
+                            <div class="block mt-5">
+                                <?php
+                                global $wp_roles;
 
+                                $allowed_roles = ['administrator', 'editor', 'author', 'contributor', 'shop_manager'];
+
+                                foreach ($wp_roles->roles as $role_slug => $role_info) {
+                                    $checked = in_array($role_slug, $sitelock_two_fa_settings['mandatory_roles']) ? 'checked' : '';
+                                ?> 
+                                <div class="mb-3">
+                                    <div class="flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            id="sitelock_2fa_role_<?php echo esc_attr($role_slug); ?>"
+                                            name="sitelock_2fa_settings[mandatory_roles][]"
+                                            value="<?php echo esc_attr($role_slug); ?>"
+                                            <?php echo esc_attr($checked); ?>
+                                            <?php echo !in_array($role_slug, $allowed_roles) ? 'disabled' : ''; ?>
+                                        />
+
+                                        <label
+                                            for="sitelock_2fa_role_<?php echo esc_attr($role_slug); ?>"
+                                            class="ml-3 <?php echo !in_array($role_slug, $allowed_roles) ? 'cursor-not-allowed' : 'cursor-pointer'; ?>"
+                                        >
+                                            <h2 class="tab-content-field-title <?php echo !in_array($role_slug, $allowed_roles) ? '!text-[#0000006B]' : ''; ?>">
+                                                <?php echo esc_html($role_info['name']); ?>
+                                                <?php echo !in_array($role_slug, $allowed_roles) ? '<span>*</span>' : ''; ?>
+                                            </h2>
+                                        </label>
+                                    </div>
+                                </div>
+                                <?php
+                                }
+                                ?>
+                                <p class="w-full md:w-[291px] my-2"><?php echo esc_html($sitelock_language_tokens['login_security_list_settings']['2fa']['disableRoleInfo']) ?></p>
+                            </div>
+                        </div>
+                        <div class="mb-4 w-full md:w-[80%]">
+                            <h3 class="tab-title mb-1"><?php echo esc_html($sitelock_language_tokens['login_security_list_settings']['2fa']['gracePeriod']) ?></h3>
+                            <p class="tab-content-field-content"><?php echo esc_html($sitelock_language_tokens['login_security_list_settings']['2fa']['gracePeriodDescription']) ?></p>
+                            <div class="flex items-center mt-5">
+                                <div class="number w-[80px] rounded">
+                                    <input type="number" name="sitelock_2fa_settings[grace_period]"
+                                        value="<?php echo esc_attr($sitelock_two_fa_settings['grace_period']); ?>" min="0" class="input-number h-[36px]" />
+                                    <span class="switch"><span>
+                                </div>
+                                <div class="option-info ml-3">
+                                    <h2 class="tab-content-field-content mt-2"><?php echo esc_html($sitelock_language_tokens['var']['days']) ?></h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <!-- 2FA Disable Confirmation Modal -->
+            <!-- 2FA Disable Confirmation Modal -->
+            <?php
+            $modal_id            = '2fa-disable-confirmation';
+            $title               = $sitelock_language_tokens['login_security_list_settings']['2fa_disable_modal']['title'];
+            $warning_text        = $sitelock_language_tokens['login_security_list_settings']['2fa_disable_modal']['description'];
+            $message_text        = $sitelock_language_tokens['login_security_list_settings']['2fa_disable_modal']['message'];
+            $show_list           = true;
+            $list_items          = $sitelock_language_tokens['login_security_list_settings']['2fa_disable_modal']['disableFactors'];
+            $show_input          = true;
+            $input_label         = $sitelock_language_tokens['login_security_list_settings']['2fa_disable_modal']['confirmationLabel'];
+            $confirm_button_id   = 'disable-confirmation-button';
+            $confirm_button_type = 'button';
+            $cancel_button_text  = $sitelock_language_tokens['login_security_list_settings']['2fa_disable_modal']['cancelButton'];
+            $confirm_button_text = $sitelock_language_tokens['login_security_list_settings']['2fa_disable_modal']['confirmButton'];
+
+            include __DIR__ . '/sitelock-admin-disable-2fa-modal.php';
+            ?>
             <div class="login-lockout-setting mb-5 border-b border-b-[#dddddd]">
                 <div class="flex mb-5 py-[5px]">
                     <div class="lightswitch" data-id="login-lockout">
@@ -105,17 +197,17 @@
                             <div class="block mt-5">
                                 <?php
                                 global $wp_roles;
-    foreach ($wp_roles->roles as $role_slug => $role_info) {
-        $checked = '';
+    foreach ($wp_roles->roles as $sitelock_role_slug => $sitelock_role_info) {
+        $sitelock_checked_state = '';
         if ($sitelock_force_logout_excluded_roles) {
-            $checked = in_array($role_slug, $sitelock_force_logout_excluded_roles) ? 'checked' : '';
+            $sitelock_checked_state = in_array($sitelock_role_slug, $sitelock_force_logout_excluded_roles) ? 'checked' : '';
         } ?>
                                 <div class="mb-3">
                                     <div class="flex">
-                                        <input type="checkbox" id="sitelock_force_logout_role_<?php echo esc_attr($role_slug); ?>" name="sitelock_force_logout_excluded_roles[]" value="<?php echo esc_attr($role_slug); ?>" 
-                                        <?php echo esc_attr($checked); ?> />
-                                        <label for="sitelock_force_logout_role_<?php echo esc_attr($role_slug); ?>" class="ml-3 cursor-pointer">
-                                            <h2 class="tab-content-field-title"><?php echo esc_html($role_info['name']); ?></h2>
+                                        <input type="checkbox" id="sitelock_force_logout_role_<?php echo esc_attr($sitelock_role_slug); ?>" name="sitelock_force_logout_excluded_roles[]" value="<?php echo esc_attr($sitelock_role_slug); ?>" 
+                                        <?php echo esc_attr($sitelock_checked_state); ?> />
+                                        <label for="sitelock_force_logout_role_<?php echo esc_attr($sitelock_role_slug); ?>" class="ml-3 cursor-pointer">
+                                            <h2 class="tab-content-field-title"><?php echo esc_html($sitelock_role_info['name']); ?></h2>
                                         </label>
                                     </div>
                                 </div>
@@ -132,10 +224,10 @@
                                 <div class="number">
                                     <select name="sitelock_force_logout_duration" class="w-[160px] h-[36px]">
                                         <?php
-            $current_value = get_option('sitelock_force_logout_duration', 12); // 12 as default
-    foreach ([4, 8, 12, 24] as $hours): ?>
-                                            <option value="<?php echo esc_attr($hours); ?>" <?php selected($current_value, $hours); ?>>
-                                                <?php echo esc_html($hours . ' ' . $sitelock_language_tokens['var']['hours']); ?>
+            $sitelock_current_duration = get_option('sitelock_force_logout_duration', 12); // 12 as default
+    foreach ([4, 8, 12, 24] as $sitelock_hour_option): ?>
+                                            <option value="<?php echo esc_attr($sitelock_hour_option); ?>" <?php selected($sitelock_current_duration, $sitelock_hour_option); ?>>
+                                                <?php echo esc_html($sitelock_hour_option . ' ' . $sitelock_language_tokens['var']['hours']); ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -169,9 +261,9 @@
                             <thead>
                                 <tr class="bg-white">
                                     <th class="w-32 p-3 text-left "></th>
-                                    <?php foreach (['Disabled', 'Medium', 'Strong'] as $strength): ?>
+                                    <?php foreach (['Disabled', 'Medium', 'Strong'] as $sitelock_strength_label): ?>
                                         <th class="p-3 text-center border-l border-[#F0F0F0] font-normal text-[16px]">
-                                            <?php echo esc_html($strength); ?>
+                                            <?php echo esc_html($sitelock_strength_label); ?>
                                         </th>
                                     <?php endforeach; ?>
                                 </tr>
@@ -179,23 +271,23 @@
                             <tbody>
                                 <?php
                                 global $wp_roles;
-    foreach ($wp_roles->roles as $role_slug => $role_info) {
-        $selected_role_strength = $sitelock_password_strength_user_roles[$role_slug] ?? 'medium';
-        $strength_levels        = ['weak', 'medium', 'strong']; ?>
+    foreach ($wp_roles->roles as $sitelock_role_slug => $sitelock_role_info) {
+        $sitelock_selected_role_strength = $sitelock_password_strength_user_roles[$sitelock_role_slug] ?? 'medium';
+        $sitelock_strength_levels        = ['weak', 'medium', 'strong']; ?>
                                     <tr>
                                         <td class="px-1 lg:pr-12 pl-3 py-3 font-medium tab-content-field-title ">
-                                            <?php echo esc_html($role_info['name']); ?>
+                                            <?php echo esc_html($sitelock_role_info['name']); ?>
                                         </td>
-
+ 
                                         <!-- radio columns -->
-                                        <?php foreach ($strength_levels as $level): ?>
+                                        <?php foreach ($sitelock_strength_levels as $sitelock_strength_level): ?>
                                             <td class="p-3 text-center border-l border-[#F0F0F0]">
                                                 <input 
                                                     type="radio"
-                                                    id="sitelock_password_strength_user_roles_<?php echo esc_attr($role_slug); ?>_<?php echo esc_attr($level); ?>"
-                                                    name="sitelock_password_strength_user_roles[<?php echo esc_attr($role_slug); ?>]" 
-                                                    value="<?php echo esc_attr($level); ?>" 
-                                                    <?php echo $selected_role_strength === $level ? 'checked' : ''; ?> 
+                                                    id="sitelock_password_strength_user_roles_<?php echo esc_attr($sitelock_role_slug); ?>_<?php echo esc_attr($sitelock_strength_level); ?>"
+                                                    name="sitelock_password_strength_user_roles[<?php echo esc_attr($sitelock_role_slug); ?>]" 
+                                                    value="<?php echo esc_attr($sitelock_strength_level); ?>" 
+                                                    <?php echo $sitelock_selected_role_strength === $sitelock_strength_level ? 'checked' : ''; ?> 
                                                 />
                                             </td>
                                         <?php endforeach; ?>
@@ -214,13 +306,13 @@
             </div>
             <div class="mb-7">
                 <h3 class="tab-content-field mb-5 flex item-center"><?php echo esc_html($sitelock_language_tokens['login_security_list_settings']['login_activity_log']['enableRoles']) ?></h3>
-                <?php foreach ($roles as $role_key => $role_data): ?>
+                <?php foreach ($sitelock_roles as $sitelock_role_key => $sitelock_role_data): ?>
                 <div class="mb-3">
                     <div class="flex">
-                        <input type="checkbox" id="sitelock_login_logger_roles_<?php echo esc_attr($role_key); ?>" name="sitelock_login_logger_roles[]" value="<?php echo esc_attr($role_key); ?>" 
-                        <?php checked(in_array($role_key, $sitelock_enabled_roles)); ?> />
-                        <label for="sitelock_login_logger_roles_<?php echo esc_attr($role_key); ?>" class="ml-3 cursor-pointer">
-                        <h2 class="tab-content-field-title"><?php echo esc_html($role_data['name']); ?></h2>
+                        <input type="checkbox" id="sitelock_login_logger_roles_<?php echo esc_attr($sitelock_role_key); ?>" name="sitelock_login_logger_roles[]" value="<?php echo esc_attr($sitelock_role_key); ?>" 
+                        <?php checked(in_array($sitelock_role_key, $sitelock_enabled_roles)); ?> />
+                        <label for="sitelock_login_logger_roles_<?php echo esc_attr($sitelock_role_key); ?>" class="ml-3 cursor-pointer">
+                        <h2 class="tab-content-field-title"><?php echo esc_html($sitelock_role_data['name']); ?></h2>
                         </label>
                     </div>
                 </div>
@@ -230,10 +322,9 @@
             <div class="mb-7">
                 <div class="number mb-3">
                     <select name="sitelock_login_logger_retention" class="w-[160px] h-[36px] py-[8px] rounded">
-                        <option class="sitelock_login_logger_retention_period mb-2" disabled><?php echo esc_html($sitelock_language_tokens['login_security_list_settings']['login_activity_log']['selectPeriod']) ?></option>
-                        <?php foreach ([7, 30, 90] as $days): ?>
-                            <option value="<?php echo esc_attr($days); ?>" <?php selected(get_option('sitelock_login_logger_retention'), $days); ?>>
-                                <?php echo esc_html($days . ' ' . $sitelock_language_tokens['var']['days']); ?>
+                        <?php foreach ([7, 30, 90] as $sitelock_retention_days): ?>
+                            <option value="<?php echo esc_attr($sitelock_retention_days); ?>" <?php selected(get_option('sitelock_login_logger_retention'), $sitelock_retention_days); ?>>
+                                <?php echo esc_html($sitelock_retention_days . ' ' . $sitelock_language_tokens['var']['days']); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -251,7 +342,6 @@
 
 <script>
 jQuery(document).ready(function($) {
-
     $('#login-security .lightswitch').each(function() {
         var input = $(this).find('input').first();
         if (input.prop('checked')) {
@@ -266,6 +356,7 @@ jQuery(document).ready(function($) {
         const id = $(this).data('id');
         const $activeElement = $('#' + id);
         $activeElement.toggleClass('expanded');
+
     });
 
     // Add functionality for label click
@@ -278,5 +369,67 @@ jQuery(document).ready(function($) {
         }
     });
 
+   // 2FA Disable Confirmation Modal
+   const $disableInput = $('#disable-confirmation-input');
+    const $confirmButton = $('#disable-confirmation-button');
+    const $twofaExpandable = $('#2fa');
+    const $modal = $('#2fa-disable-confirmation');
+    const $checkbox = $('#sitelock_2fa_enable');
+
+    const setConfirmState = (disabled) => {
+        $confirmButton
+            .prop('disabled', disabled)
+            .toggleClass('cursor-not-allowed', disabled)
+            .css('opacity', disabled ? '0.5' : '');
+    };
+
+    const closeModal = () => {
+        $modal.addClass('hidden');
+        $twofaExpandable.addClass('expanded');
+        $('body').css('overflow', '');
+        $disableInput.val('');
+        setConfirmState(true);
+        $checkbox.prop('checked', true);
+    };
+
+    const disableTwofa = () => {
+        $disableInput.val('');
+        $modal.addClass('hidden');
+        $twofaExpandable.removeClass('expanded');
+        $checkbox.prop('checked', false);
+        $('body').css('overflow', '');
+    };
+
+    // Initial state
+    setConfirmState(true);
+
+    // Enable button only when user types "DISABLE"
+    $disableInput.on('input', function () {
+        setConfirmState($(this).val().trim().toUpperCase() !== 'DISABLE');
+    });
+
+    // Show modal when disabling 2FA
+    $(document).on('click', '.lightswitch[data-id="2fa"], .two-fa', function () {
+        // Delay allows checkbox state to update first
+        setTimeout(() => {
+            if (!$checkbox.prop('checked')) {
+                $modal.removeClass('hidden');
+                $('body').css('overflow', 'hidden');
+            }
+        }, 0);
+    });
+    
+    // Confirm disable 2FA
+    $confirmButton.on('click', disableTwofa);
+
+    // Close modal (button)
+    $('.close-modal').on('click', closeModal);
+
+    // Close modal (Escape key)
+    $(document).on('keydown', function (e) {
+        if ((e.key === 'Escape' || e.keyCode === 27) && !$modal.hasClass('hidden')) {
+            closeModal();
+        }
+    });
 });
 </script>

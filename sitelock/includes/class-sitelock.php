@@ -96,6 +96,11 @@ class Sitelock
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-sitelock-i18n.php';
 
         /**
+         * The class responsible for IP utility functionality
+         */
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-sitelock-ip-utility.php';
+
+        /**
          * The class responsible for defining all actions that occur in the admin area.
          */
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-sitelock-admin.php';
@@ -105,6 +110,10 @@ class Sitelock
          * side of the site.
          */
         require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-sitelock-public.php';
+
+        // Include the 2fa class files
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-sitelock-2fa-settings.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-sitelock-2fa.php';
 
         // Include the hardening class file
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-sitelock-hardening.php';
@@ -250,6 +259,10 @@ class Sitelock
         add_action('plugins_loaded', function () {
             new SiteLock_Block_Admin_Username();
         });
+
+        new Sitelock_2FA_Settings();
+
+        new Sitelock_2FA();
 
         new Sitelock_Password_Strength();
 

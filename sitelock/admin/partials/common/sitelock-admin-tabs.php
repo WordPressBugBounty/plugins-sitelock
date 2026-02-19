@@ -46,12 +46,12 @@
             <?php
             }
             if (current_user_can('edit_posts')) {
-                $two_fa_settings = get_option('sitelock_2fa_settings');
-                if (!is_array($two_fa_settings)) {
-                    $two_fa_settings = [];
+                $sitelock_two_fa_settings = get_option('sitelock_2fa_settings');
+                if (!is_array($sitelock_two_fa_settings)) {
+                    $sitelock_two_fa_settings = [];
                 }
-                $two_fa_settings['enable_2fa'] = isset($two_fa_settings['enable_2fa']) ? $two_fa_settings['enable_2fa'] : false;
-                if ($two_fa_settings['enable_2fa']) {
+                $sitelock_two_fa_settings['enable_2fa'] = isset($sitelock_two_fa_settings['enable_2fa']) ? $sitelock_two_fa_settings['enable_2fa'] : false;
+                if ($sitelock_two_fa_settings['enable_2fa']) {
                     ?>
             <li id="sitelock-your-2fa">
                 <span class="inline-flex items-center">
@@ -75,7 +75,7 @@
         <p class="mr-2 hidden lg:block text-[14px]">
            <?php echo esc_html($sitelock_language_tokens['give_feedback']['note']); ?>
         </p>
-        <a href="<?php echo esc_url('https://wordpress.org/support/plugin/sitelock/reviews/#new-post'); ?>" target="_blank" rel="noopener noreferrer" class="text-[#2D68C4] underline" aria-label="<?php echo esc_attr__('Leave a review', 'sitelock-wordpress-plugin'); ?>">
+        <a href="<?php echo esc_url('https://wordpress.org/support/plugin/sitelock/reviews/#new-post'); ?>" target="_blank" rel="noopener noreferrer" class="text-[#2D68C4] underline" aria-label="<?php echo esc_attr($sitelock_language_tokens['give_feedback']['leaveReview']); ?>">
             <span class="hidden lg:block -ml-1"><?php echo esc_html($sitelock_language_tokens['give_feedback']['leaveReview']); ?></span>
         </a>
     </div>

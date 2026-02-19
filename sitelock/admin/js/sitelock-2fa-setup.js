@@ -10,6 +10,7 @@ jQuery(document).ready(function ($) {
       return;
     }
 
+    $('#sitelock-2fa-message').addClass('hidden').text('');
     button.prop('disabled', true).text('Verifying...');
 
     $.ajax({
@@ -24,12 +25,27 @@ jQuery(document).ready(function ($) {
         if (response.success) {
           location.reload();
         } else {
-          alert('Invalid 2FA Code. Please try again.');
+          $('#sitelock-2fa-message')
+            .removeClass('hidden')
+            .text(response.data.message || 'Invalid 2FA Code. Please try again.');
         }
-        button.prop('disabled', false).text('Verify & Enable 2FA');
+        button.prop('disabled', false).text('Verify & Activate');
+      },
+      error: function () {
+        $('#sitelock-2fa-message')
+          .removeClass('hidden')
+          .text('An error occurred. Please try again.');
+        button.prop('disabled', false).text('Verify & Activate');
       },
     });
   });
+
+  // Handle Form Submission (Enter Key)
+  $('#sitelock-2fa-verify-form').on('submit', function (e) {
+    e.preventDefault();
+    $('#sitelock-verify-2fa').click();
+  });
+
   // Regenerate Backup Codes
   $('#sitelock-regenerate-codes').on('click', function () {
     if (
@@ -58,28 +74,61 @@ jQuery(document).ready(function ($) {
     });
   });
 
-  $('#confirm-disable-2fa').on('click', function () {
-    $.ajax({
-      url: sitelock_2fa_ajax.ajax_url,
-      type: 'POST',
-      data: {
-        action: 'sitelock_disable_2fa',
-        security: sitelock_2fa_ajax.nonce,
-      },
-      success: function (response) {
-        if (response.success) {
-          alert('Disabled: ' + response.data.message);
-          location.reload();
-        } else {
-          alert('Failed to disable 2FA: ' + response.data.message);
-        }
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.error('AJAX Error:', textStatus, errorThrown);
-        alert('An error occurred while disabling 2FA. Please try again.');
-      },
-    });
+  // Copy 2FA Secret to Clipboard
+  $(document).on('click', '.sitelock-manual-key', function () {
+    let $container = $(this);
+    let secret = $container.data('secret');
+
+    if (!secret) return;
+
+    if (navigator.clipboard) {
+      navigator.clipboard
+        .writeText(secret)
+        .then(function () {
+          showToast('Security code copied');
+        })
+        .catch(function (err) {
+          console.error('Failed to copy: ', err);
+        });
+    } else {
+      // Fallback
+      let textArea = document.createElement('textarea');
+      textArea.value = secret;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        let successful = document.execCommand('copy');
+        if (successful) showToast('Security code copied');
+      } catch (err) {
+        console.error('Fallback: Oops, unable to copy', err);
+      }
+      document.body.removeChild(textArea);
+    }
   });
+
+  function showToast(message) {
+    let $toast = $(
+      '<div class="sitelock-toast" style="position: fixed; top: 32px; left: 50%; transform: translateX(-50%); background-color: #32373c; color: #fff; padding: 12px 24px; border-radius: 4px; z-index: 99999; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); opacity: 0; transition: opacity 0.3s ease-in-out;">' +
+        message +
+        '</div>'
+    );
+
+    $('body').append($toast);
+
+    // Trigger reflow
+    let reflow = $toast[0].offsetHeight;
+
+    // Show
+    $toast.css('opacity', '1');
+
+    // Hide and remove
+    setTimeout(function () {
+      $toast.css('opacity', '0');
+      setTimeout(function () {
+        $toast.remove();
+      }, 300);
+    }, 2000);
+  }
 });
 function toggleDisableButton() {
   const checkbox = document.getElementById('disable_2fa');

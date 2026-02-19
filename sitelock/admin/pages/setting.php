@@ -1,5 +1,6 @@
 <?php
-$sitelock_security_enhancements_options = get_option('sitelock_security_settings');
+$sitelock_security_settings_raw = get_option('sitelock_security_settings', []);
+$sitelock_security_enhancements_options = is_array($sitelock_security_settings_raw) ? $sitelock_security_settings_raw : [];
 $sitelock_connection_status             = $this->api->auth->get_auth_key();
 $sitelock_login_lockout_enabled         = get_option('sitelock_login_lockout_enabled', '0');
 $sitelock_login_lockout_max_attempts    = get_option('sitelock_login_lockout_max_attempts', 3);
@@ -10,10 +11,10 @@ $sitelock_password_strength_user_roles  = get_option('sitelock_password_strength
 $sitelock_force_logout_enabled          = get_option('sitelock_force_logout_enabled', '0');
 $sitelock_force_logout_duration         = get_option('sitelock_force_logout_duration', 12);
 $sitelock_force_logout_excluded_roles   = get_option('sitelock_force_logout_excluded_roles', []);
-$sitelock_language_tokens               = get_language_tokens();
-$roles                                  = get_editable_roles();
-$sitelock_enabled_roles                 = ($tmp                 = get_option('sitelock_login_logger_roles', [])) && is_array($tmp) ? $tmp : [];
-$sitelock_retention_days                = get_option('sitelock_login_logger_retention', 30);
+$sitelock_language_tokens               = sitelock_get_language_tokens();
+$sitelock_roles                                 = get_editable_roles();
+$sitelock_enabled_roles                 = ($sitelock_tmp                 = get_option('sitelock_login_logger_roles', [])) && is_array($sitelock_tmp) ? $sitelock_tmp : [];
+$sitelock_retention_days                = get_option('sitelock_login_logger_retention', 7);
 ?>
 
 <div class="sitelock-wrapper">
@@ -23,27 +24,30 @@ $sitelock_retention_days                = get_option('sitelock_login_logger_rete
     <div id="sitelock-notification-section">
     <?php
     // Retrieve and display the error message
-    $error_message = esc_html(get_transient('sitelock_auth_error'));
-$success_message   = esc_html(get_transient('sitelock_auth_success'));
-if ($error_message) {
-    $message = $error_message;
-    $status  = 'error';
-    include plugin_dir_path(__FILE__) . '../partials/dashboard/sitelock-admin-notification-banner.php';
-    $action = delete_transient('sitelock_auth_error');
-}
-if ($success_message) {
-    $message = $success_message;
-    $status  = 'success';
-    include plugin_dir_path(__FILE__) . '../partials/dashboard/sitelock-admin-notification-banner.php';
-    $action = delete_transient('sitelock_auth_success');
-}
-?>
+    $sitelock_error_message = esc_html(get_transient('sitelock_auth_error'));
+    $sitelock_success_message   = esc_html(get_transient('sitelock_auth_success'));
+    if ($sitelock_error_message) {
+        $sitelock_message = $sitelock_error_message;
+        $sitelock_status  = 'error';
+        include plugin_dir_path(__FILE__) . '../partials/dashboard/sitelock-admin-notification-banner.php';
+        $action = delete_transient('sitelock_auth_error');
+    }
+    if ($sitelock_success_message) {
+        $sitelock_message = $sitelock_success_message;
+        $sitelock_status  = 'success';
+        include plugin_dir_path(__FILE__) . '../partials/dashboard/sitelock-admin-notification-banner.php';
+        $action = delete_transient('sitelock_auth_success');
+    }
 
-    <?php
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This request does not require nonce verification as it is handled securely.
-    $settings_updated = isset($_GET['settings-updated']) ? sanitize_text_field(wp_unslash($_GET['settings-updated'])) : false;
+    $sitelock_settings_updated = isset($_GET['settings-updated']) ? sanitize_text_field(wp_unslash($_GET['settings-updated'])) : false;
+    $sitelock_permission_error_val = get_transient('sitelock_permission_error');
 
-if ($settings_updated): ?>
+    if ($sitelock_permission_error_val):
+        delete_transient('sitelock_permission_error');
+    endif;
+
+    if ($sitelock_settings_updated && !$sitelock_permission_error_val): ?>
         <div class="banner flex items-center compact type-success mt-5">
             <div class="pr-4">
                 <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg"
@@ -56,16 +60,15 @@ if ($settings_updated): ?>
                         fill="#00AA6B"></path>
                 </svg>
             </div>
-            <div class="w-full">
-                <div class="flex items-center">
-                    <div class="w-full"><?php echo esc_html__('Settings Saved Successfully', 'sitelock-wordpress-plugin'); ?></div>
+            <div class="w-full flex items-baseline justify-between pt-1">
+                <div class="items-center">
+                    <div class="w-full"><?php echo esc_html($sitelock_language_tokens['var']['settingsSaved']); ?></div>
                 </div>
+                <img src="<?php echo esc_url(plugin_dir_url(__DIR__) . 'images/close.svg'); ?>" alt="close" width="15" height="15"
+                    class="closebtn pl-1 cursor-pointer -mt-6 mr-[inherit]" />
             </div>
-            <img src="<?php echo esc_url(plugin_dir_url(__DIR__) . 'images/x.svg'); ?>" alt="close"
-                class="closebtn pl-2 cursor-pointer" />
         </div>
-    <?php endif; ?>
-    </div>
+    <?php endif; ?> 
 
     <div class="setting">
         <div class="grid grid-cols-1 lg:grid-cols-12 mt-5">
@@ -73,7 +76,7 @@ if ($settings_updated): ?>
                 <ul class="tab-list">
                     <li class="px-4 mb-6 relative tab-setting-title" data-id="connection-to-sitelock"><span
                             class="inner flex items-center gap-2"><a
-                                href="<?php echo esc_url(admin_url('admin.php?page=sitelock-settings&tab=connection-to-sitelock')); ?>"><?php echo esc_html__('SiteLock Plan & License', 'sitelock-wordpress-plugin'); ?></a>
+                                href="<?php echo esc_url(admin_url('admin.php?page=sitelock-settings&tab=connection-to-sitelock')); ?>"><?php echo esc_html($sitelock_language_tokens['settings_page_menus']['siteLockPlanLicense']); ?></a>
                             <div> <img src="<?php echo esc_url(plugin_dir_url(__DIR__) . '/images/right-arrow.png'); ?>"
                                     alt="arrow" class="arrow-img" /> </div>
                         </span>
@@ -81,7 +84,7 @@ if ($settings_updated): ?>
                     </li>
                     <li class="tab-setting-title px-4 mb-6 relative" data-id="login-security"><span
                             class="inner flex items-center gap-2"><a
-                                href="<?php echo esc_url(admin_url('admin.php?page=sitelock-settings&tab=login-security')); ?>"><?php echo esc_html__('Login Security', 'sitelock-wordpress-plugin'); ?></a>
+                                href="<?php echo esc_url(admin_url('admin.php?page=sitelock-settings&tab=login-security')); ?>"><?php echo esc_html($sitelock_language_tokens['settings_page_menus']['loginSecurity']); ?></a>
                             <div> <img src="<?php echo esc_url(plugin_dir_url(__DIR__) . '/images/right-arrow.png'); ?>"
                                     alt="arrow" class="arrow-img" /> </div>
                         </span>
@@ -89,7 +92,7 @@ if ($settings_updated): ?>
                     </li>
                     <li class="tab-setting-title px-4 mb-6 relative" data-id="security-enhancements"><span
                             class="inner flex items-center gap-2"><a
-                                href="<?php echo esc_url(admin_url('admin.php?page=sitelock-settings&tab=security-enhancements')); ?>"><?php echo esc_html__('Website Security', 'sitelock-wordpress-plugin'); ?></a>
+                                href="<?php echo esc_url(admin_url('admin.php?page=sitelock-settings&tab=security-enhancements')); ?>"><?php echo esc_html($sitelock_language_tokens['settings_page_menus']['websiteSecurity']); ?></a>
                             <div> <img src="<?php echo esc_url(plugin_dir_url(__DIR__) . '/images/right-arrow.png'); ?>"
                                     alt="arrow" class="arrow-img" /> </div>
                         </span>
@@ -143,7 +146,6 @@ if ($settings_updated): ?>
                 $defaultElement.removeClass('hidden').addClass('block');
             }
         });
-
 
         $('.lightswitch').click(function () {
             var input = $(this).find('input').first();

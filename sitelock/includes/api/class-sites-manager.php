@@ -87,7 +87,8 @@ class SitesManager
     public function post_scan_now($scanType)
     {
         $site_id = get_option('sitelock_site_id');
-        $url = $site_id . '/features/' . $scanType . '/scan';
-        return $this->apiHelper->call_laravel_api($url, "POST");
+        $url     = $site_id . '/features/' . $scanType . '/scan';
+
+        return $this->apiHelper->call_laravel_api($url, 'POST');
     }
 }

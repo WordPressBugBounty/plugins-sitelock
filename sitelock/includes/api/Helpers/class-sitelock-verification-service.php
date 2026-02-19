@@ -1,7 +1,16 @@
 <?php
+require_once SITELOCK_PLUGIN_DIR . 'includes/api/Helpers/class-api-helper.php';
+require_once SITELOCK_PLUGIN_DIR . 'includes/api/class-auth-manager.php';
+
+use Firebase\JWT\JWK;
+use Firebase\JWT\JWT;
+JWT::$leeway = 60;
 
 class SiteLock_Verification_Service
 {
+    private $apiHelper;
+    public $auth;
+
     public const OPTION_KEY     = 'sitelock_verification_code';
     public const SESSION_ID_KEY = 'sitelock_session_id';
     public const VERIFY_REST_NS = 'sitelock/v1';
@@ -14,8 +23,11 @@ class SiteLock_Verification_Service
     // Additional IPs from providers if needed
     public $provider_ips = [];
 
-    public function __construct() {
+    public function __construct($version) {
         add_action('rest_api_init', [$this, 'register_rest_endpoint']);
+
+        $this->apiHelper            = new ApiHelper($version);
+        $this->auth                 = new AuthManager($version, $this->apiHelper);
 
         $allowed_ips_override = sitelock_get_test_var('rest_allowed_ips');
 
@@ -23,59 +35,19 @@ class SiteLock_Verification_Service
             $this->allowed_ips = $allowed_ips_override;
         } else {
             // Load SiteLock allowed IPs
-            $this->allowed_ips = $this->load_ip_json(
-                SITELOCK_PLUGIN_DIR . 'ip-data/rest-allowed-ips.json'
+            $this->allowed_ips = Sitelock_IP_Utility::load_ip_json(
+                SITELOCK_PLUGIN_DIR . 'ip-data/rest-allowed-ips.json',
+                __CLASS__
             );
 
             // Load provider IPs
-            $this->provider_ips = $this->load_ip_json(
-                SITELOCK_PLUGIN_DIR . 'ip-data/provider-ips.json'
+            $this->provider_ips = Sitelock_IP_Utility::load_ip_json(
+                SITELOCK_PLUGIN_DIR . 'ip-data/provider-ips.json',
+                __CLASS__
             );
         }
     }
 
-
-    /**
-     * Load IP list from a JSON file and return as an array.
-     *
-     * @param string $file_path Full file path.
-     * @return array            List of IPs or empty array.
-     */
-    private function load_ip_json($file_path) {
-        if (!file_exists($file_path)) {
-            return [];
-        }
-
-        $raw  = file_get_contents($file_path);
-        if ($raw === false) {
-            return [];
-        }
-        $data = json_decode($raw, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            sitelock_log(
-                'error',
-                'Invalid JSON',
-                'Invalid JSON in ' . basename($file_path) . ': ' . json_last_error_msg(),
-                ['file' => $file_path, 'raw_length' => strlen($raw)],
-                __CLASS__
-            );
-            return [];
-        }
-
-        if (!is_array($data)) {
-            sitelock_log(
-                'error',
-                'Unexpected Data Type',
-                basename($file_path) . ' did not decode to an array.',
-                ['file' => $file_path, 'decoded_type' => gettype($data)],
-                __CLASS__
-            );
-            return [];
-        }
-
-        return $data;
-}
 
     /**
      * Register REST endpoint.
@@ -118,21 +90,86 @@ class SiteLock_Verification_Service
      */
     private function validate_verification_request($request)
     {
-        // Retrieve request parameters
-        $state          = $request->get_param('state');
-        $code_challenge = $request->get_param('code_challenge');
 
-        // Retrieve stored values
-        $stored_code       = get_transient(self::OPTION_KEY);
-        $stored_session_id = get_transient(self::SESSION_ID_KEY);
+        $dpop_jwt      = trim( $request->get_body() );
+
+        if (empty($dpop_jwt)) {
+            return [
+                'status'  => 400,
+                'message' => 'Missing required parameters: token.',
+            ];
+        }
+        
+        $open_config_cache_key = 'open_config';
+        $open_config_cache_group = 'global';
+        $open_config = wp_cache_get($open_config_cache_key, $open_config_cache_group);
+
+        if ( empty( $open_config ) ) {
+            $open_config = $this->auth->get_open_config();
+            wp_cache_set( $open_config_cache_key, $open_config, $open_config_cache_group, 3600 );
+        }
+        // Validate open configuration and required jwks_uri.
+        if ( ! is_array( $open_config ) || empty( $open_config['jwks_uri'] ) ) {
+            return [
+                'status'  => 500,
+                'message' => 'Invalid OpenID configuration received. Please try again later.',
+            ];
+        }
+        
+        $jwt_cache_key   = 'open_config_jwks_uri';
+        $jwt_cache_group = 'global';
+        $jwks            = wp_cache_get( $jwt_cache_key, $jwt_cache_group );
+        if (empty($jwks)) {
+            $jwks = $this->auth->get_jwt_key($open_config['jwks_uri']);
+            wp_cache_set($jwt_cache_key, $jwks, $jwt_cache_group, 3600);
+        }
+        // Ensure JWKS is an array; if it's JSON, attempt to decode.
+        if (!is_array($jwks) && is_string($jwks)) {
+            $decoded_jwks = json_decode($jwks, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $jwks = $decoded_jwks;
+            }
+        }
+        // Validate JWKS structure before attempting to parse keys.
+        if (empty($jwks) || !is_array($jwks)) {
+            return [
+                'status'  => 400,
+                'message' => 'Invalid key set data.',
+            ];
+        }
+        try {
+            $jwt_keys = JWK::parseKeySet($jwks);
+            if (empty($jwt_keys) || !is_array($jwt_keys)) {
+                return [
+                    'status'  => 400,
+                    'message' => 'No valid keys available to verify token.',
+                ];
+            }
+            $userData = JWT::decode($dpop_jwt, $jwt_keys);
+        } catch (\Throwable $e) {
+            return [
+                'status'  => 400,
+                'message' => 'Invalid or unverifiable token.',
+            ];
+        }
 
         // Validate required parameters
-        if (empty($state) || empty($code_challenge)) {
+        if (empty($userData->state) || empty($userData->code_challenge)) {
             return [
                 'status'  => 400,
                 'message' => 'Missing required parameters: state or code_challenge.',
             ];
         }
+
+        // Retrieve request parameters
+        $state          = $userData->state;
+        $code_challenge = $userData->code_challenge;
+
+        // Retrieve stored values
+        $stored_code       = get_transient(self::OPTION_KEY);
+        $stored_session_id = get_transient(self::SESSION_ID_KEY);
+
+       
 
         if (empty($stored_code) || empty($stored_session_id)) {
             return [
@@ -142,7 +179,7 @@ class SiteLock_Verification_Service
         }
 
         // Hash the stored code using Base64 SHA256
-        $hashed_code = base64url_encode(hash('sha256', $stored_code, true));
+        $hashed_code = sitelock_base64url_encode(hash('sha256', $stored_code, true));
 
         // Compare the hashed code with the provided code_challenge
         if ($hashed_code !== $code_challenge) {
@@ -187,96 +224,48 @@ class SiteLock_Verification_Service
         if (!empty($_SERVER['REMOTE_ADDR'])) {
             $remote_ip = sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR']));
         }
-    
+
         // 1. Check direct SiteLock allowed IPs (exact match)
         foreach ($this->allowed_ips as $allowed) {
-            if (strpos($allowed, '/') !== false) {
-                // CIDR format
-                if ($this->ip_in_cidr($remote_ip, $allowed)) {
-                    return true;
-                }
-            } elseif ($remote_ip === $allowed) {
+            if (Sitelock_IP_Utility::ip_in_cidr($remote_ip, $allowed)) {
                 return true;
             }
         }
-    
+
         // 2. Check if coming from known proxy (Cloudflare, AWS, etc.)
         foreach ($this->provider_ips as $proxy_ip) {
-            if (strpos($proxy_ip, '/') !== false) {
-                if ($this->ip_in_cidr($remote_ip, $proxy_ip)) {
-                    // Valid proxy detected — now get original client IP from X-Forwarded-For
-                    $left_most_ip = $this->get_leftmost_forwarded_ip();
-                    if ($this->is_ip_in_allowed_list($left_most_ip)) {
-                        return true;
-                    }
-                }
-            } elseif ($remote_ip === $proxy_ip) {
-                // Exact proxy IP — same logic: check forwarded IP
-                $left_most_ip = $this->get_leftmost_forwarded_ip();
+            if (Sitelock_IP_Utility::ip_in_cidr($remote_ip, $proxy_ip)) {
+                // Valid proxy detected — now get original client IP from X-Forwarded-For
+                $left_most_ip = Sitelock_IP_Utility::get_leftmost_forwarded_ip();
                 if ($this->is_ip_in_allowed_list($left_most_ip)) {
                     return true;
                 }
             }
         }
-    
+
         // None matched → block request
         return false;
     }
-    
+
     /**
      * Check if an IP exists in allowed list (supports CIDR + exact)
      *
-     * @param string|null $ip The IP address to check.
-     * @return bool True if the IP is allowed, false otherwise.
+     * @param  string|null $ip The IP address to check.
+     * @return bool        True if the IP is allowed, false otherwise.
      */
-    private function is_ip_in_allowed_list($ip) {
+    private function is_ip_in_allowed_list($ip)
+    {
         if (!$ip) {
             return false;
         }
-    
+
         foreach ($this->allowed_ips as $allowed) {
-            if (strpos($allowed, '/') !== false) {
-                if ($this->ip_in_cidr($ip, $allowed)) {
-                    return true;
-                }
-            } elseif ($ip === $allowed) {
+            if (Sitelock_IP_Utility::ip_in_cidr($ip, $allowed)) {
                 return true;
             }
         }
+
         return false;
     }
-    
-    /**
-     * Extract left-most IP from X-Forwarded-For
-     * @return string|null The left-most IP address, or null if not present.
-     */
-    private function get_leftmost_forwarded_ip() {
-        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $forwarded_for = sanitize_text_field(wp_unslash($_SERVER['HTTP_X_FORWARDED_FOR']));
-            $forwarded_ips = explode(',', $forwarded_for);
-            return trim($forwarded_ips[0]);
-        }
-        return null;
-    }
-    
 
-    /**
-     * Check if an IP is within a CIDR range.
-     *
-     * @param  string $ip   The IP address to check.
-     * @param  string $cidr The CIDR range (e.g., 203.0.113.0/24).
-     * @return bool   True if the IP is within the range, false otherwise.
-     */
-    private function ip_in_cidr($ip, $cidr)
-    {
-        list($subnet, $mask) = explode('/', $cidr);
-        $subnet_long         = ip2long($subnet);
-        $ip_long             = ip2long($ip);
-        if ($mask < 0 || $mask > 32) {
-            return false; // Invalid mask, return false
-        }
-        $mask_long = ~((1 << (32 - $mask)) - 1);
-
-        return ($ip_long & $mask_long) === ($subnet_long & $mask_long);
-    }
 }

@@ -132,9 +132,12 @@
     "disabled": "Disabled",
     "disconnect": "Disconnect",
     "disconnected": "Disconnected",
+    "downArrow": "Down Arrow",
+    "email": "Email",
     "enabled": "Enabled",
     "fileBackup": "File Backup",
     "filesUnderReview": "Files Under Review",
+    "filter": "Filter",
     "firewall": "Firewall",
     "dashboardStatus": "STATUS",
     "lastScanAndBackup": "LAST SCAN / BACKUP",
@@ -181,6 +184,7 @@
     "spamLinksFound": "Spam Links Found",
     "status": "Status",
     "storage": "GB of Storage",
+    "support": "Support",
     "sqlInjection": "SQL Injection",
     "suspiciousFilesFound": "Suspicious Files Found",
     "tollFree": "Toll Free",
@@ -193,13 +197,38 @@
     "vulnerabilitiesFound": "Vulnerabilities Found",
     "websiteSecurity": "Website Security",
     "whatIsThis": "What is this?",
+    "website": "Website",
     "wpSecurity": "WP Security",
     "xssIssues": "XSS Issues",
     "learnMore": "Learn More",
     "loginLogs": "Login Logs",
     "loginMonitoringReport": "Login Monitoring Report",
     "activityLogs": "Activity Logs",
-    "your2fa": "Your 2FA"
+    "your2fa": "Your 2FA",
+    "unAuthorizedUser": "Unauthorized user.",
+    "websiteSecurityFailed": "Security check failed for Website Security.",
+    "loginSecurityFailed": "Security check failed for Login Security.",
+    "invalidTabSpecified": "Invalid tab specified.",
+    "settingsSaved": "Settings Saved Successfully",
+    "loginActivity": "Login Activity",
+    "adminAuditLog": "Admin Audit Log",
+    "items": "items",
+    "timestamp": "Timestamp",
+    "user": "User",
+    "action": "Action",
+    "roleChange": "Role Change",
+    "source": "Source",
+    "trustLevel": "Trust Level",
+    "userAgent": "User Agent",
+    "ipAddress": "IP Address",
+    "roles": "Role(s)",
+    "noAdminUserChanges": "No admin user changes detected yet.",
+    "noLoginActivity": "No login logs detected yet.",
+    "trusted": "Trusted",
+    "suspicious": "Suspicious",
+    "previous": "Previous",
+    "next": "Next",
+    "unknown": "Unknown"
   },
   "cloud_services_description": {
     "advisories": "The Risk Score is an aggregated security score sourced from both SiteLock reports as well as external security scans reporting your website reputation. This is a great source of information on what changes can be made to improve your website's security standing for the better!",
@@ -272,12 +301,15 @@
   "two_factor_authentication_settings_steps": {
     "2FA": "Your 2FA (Two-Factor Authentication)",
     "description": "Two-Factor Authentication (2FA) adds an extra layer of protection to your WordPress login by requiring a second step – like a code from your phone – in addition to your password. Use the options below to set up 2FA for your own account.",
+    "twofaMessage": "Two-Factor Authentication (2FA) adds an extra layer of protection to your WordPress login by requiring a second step – like a code from your phone – in addition to your password.",
     "appTitle": "Authenticator App",
     "enabled": "Enabled",
     "disabled": "Disabled",
+    "confirmDisable": "Are you sure you want to disable Two-Factor Authentication? This will immediately <strong>reduce the security</strong> of your account, leaving it protected by only your password.",
+    "confirmMessage": "<strong>We strongly recommend keeping Two-Factor Authentication enabled for maximum account security.</strong>",
     "stepOne": {
       "title": "Step 1. Scan Code",
-      "description": "Scan the QR code below using your preferred authenticator app (like Google Authenticator) to add this account. If needed, you can enter the setup key manually instead.",
+      "description": "Scan the QR code below using your preferred authenticator app (like Google Authenticator, Authy, or Microsoft Authenticator) to add this account. You can enter the setup key manually instead if required.",
       "notWorking": "Scan not working?",
       "copyManually": "Copy this code and enter it manually into your authenticator app:"
     },
@@ -293,8 +325,14 @@
       "newCodes": "Generate new codes",
       "downloadCodes": "Download Codes (TXT)",
       "activate2fa": "Two-Factor Authentication Activated",
-      "enabled": "You have successfully enabled two-factor authentication for your account. From now on, you'll be asked to enter a verification code from your app when logging in.",
+      "enabled_line1": "You have successfully enabled two-factor authentication for your account.",
+      "enabled_line2": "From now on, you'll be asked to enter a verification code from your app when logging in.",
       "disabled2FA": "Disable",
+      "activationSteps": [
+        "<strong>Two-Factor Authentication is currently enabled for your account.</strong>",
+        "You are required to enter a verification code from your authenticator app when logging in.",
+        "Your one-time backup codes were generated during this activation process. These codes are tied to your current configuration. If you click the Disable button, all current 2FA settings and these backup codes will be permanently deleted. You must then re-enable 2FA to generate a new set of codes."
+      ],
       "recoveryCodeNoticeLine1": "Your recovery codes will only be accessible for the next ##remaining-time##. After that, they will be #b#permanently deleted#/b# for security reasons. We strongly recommend storing them in a #b#secure location#/b# (e.g., a password manager or encrypted file) before they disappear."
     }
   },
@@ -303,9 +341,23 @@
       "title": "2FA (Two Factor Authentication)",
       "description": "Add an extra layer of protection to user logins by requiring a one-time code in addition to the password.",
       "requiredRole": "Required for Roles",
+      "disableRoleInfo": "* This role is disabled because it lacks the required permissions to access the WordPress dashboard.",
       "enabledRoles": "Choose which user roles must use 2FA.",
       "gracePeriod": "Grace Period",
       "gracePeriodDescription": "Give users extra time to set up 2FA before it becomes mandatory. After the grace period ends, users must enable 2FA to log in."
+    },
+    "2fa_disable_modal": {
+      "title": "Disable 2FA?",
+      "description": "Are you sure you want to disable Two-Factor Authentication? This action is <strong>highly discouraged</strong> and will immediately <strong>reduce the security</strong> on your site.",
+      "message": "If you proceed, the following destructive changes will occur:",
+      "disableFactors": [
+        "<strong>All saved 2FA settings</strong> for every user (keys and backup codes) will be <strong>permanently deleted</strong>.",
+        "All users who previously logged in using 2FA will <strong>no longer be required</strong> to provide a second authentication factor.",
+        "Users will need to <strong>re-enable and reconfigure 2FA</strong> if this setting is turned back on later."
+      ],
+      "confirmationLabel": "Please type the word DISABLE to confirm",
+      "confirmButton": "Confirm",
+      "cancelButton": "Cancel"
     },
     "login_lockout": {
       "title": "Login Lockout",
@@ -336,10 +388,10 @@
       "description": "Record all user logins for security monitoring and troubleshooting.",
       "enableRoles": "Enable for Roles",
       "loginRetentionPeriod": "Log Retention Period",
-      "loginRetentionPeriodDescription": "Delete login records older than the selected period.",
-      "selectPeriod": "Select Retention Period"
+      "loginRetentionPeriodDescription": "Delete login records older than the selected period."
     },
-    "title": "Login Security"
+    "title": "Login Security",
+    "description": "Protect your WordPress site from unauthorized access with these essential login security tools. Configure two-factor authentication, enforce strong passwords, monitor login activity, and apply other safeguards to help secure your admin area."
   },
   "need_help": {
     "description": "Contact support for expert assistance with optimizing your WordPress security settings.",
@@ -351,7 +403,7 @@
   "two_factor_authentication": {
     "title": "Two-Factor Authentication",
     "totpText": "Enter the 6-digit code from your authenticator app to continue.",
-    "backupCodeText": "Enter one of your backup codes to continue.",
+    "backupCodeText": "Enter one of your 16-digit backup codes to continue.",
     "useBackupCode": "Or use a backup code",
     "verifyText": "Verify"
   },
@@ -365,5 +417,30 @@
   "give_feedback": {
     "note": "Enjoying the plugin? Please",
     "leaveReview": "leave a review"
+  },
+  "admin_username": {
+    "admin": "admin",
+    "userWithUsername": "A user with the username",
+    "userExists": "exists. This is a common target for attacks. Rename this user to improve security.",
+    "usernameBlocked": "The username 'admin' is not allowed for security reasons. Please choose a different username.",
+    "invalidUsername": "Invalid Username",
+    "securityWarning": "Security Warning"
+  },
+  "common_errors": {
+    "nonceVerificationFailed": "Nonce verification failed. Please try again.",
+    "tooManyFailedLogin": "Too many failed login attempts. Please try again later.",
+    "passwordStrength": "Your password must meet the minimum strength requirement for your account role: %s"
+  },
+  "settings_page_menus": {
+    "websiteSecurity": "Website Security",
+    "loginSecurity": "Login Security",
+    "siteLockPlanLicense": "SiteLock Plan & License"
+  },
+  "date_filters": {
+    "allDates": "All Dates",
+    "last7Days": "Last 7 Days",
+    "custom": "Custom",
+    "startDate": "Start Date",
+    "endDate": "End Date"
   }
 }

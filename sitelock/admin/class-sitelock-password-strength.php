@@ -6,6 +6,8 @@ use ZxcvbnPhp\Zxcvbn;
 
 class Sitelock_Password_Strength
 {
+    private $sitelock_language_tokens;
+
     /**
      * The API instance.
      *
@@ -14,6 +16,12 @@ class Sitelock_Password_Strength
 
     public function __construct()
     {
+        if (function_exists('sitelock_get_language_tokens')) {
+            $this->sitelock_language_tokens = sitelock_get_language_tokens();
+        } else {
+            $this->sitelock_language_tokens = [];
+        }
+
         // Validate password strength during user creation or update
         add_action('user_profile_update_errors', [$this,'sitelock_validate_password_strength_on_user_creation'], 10, 4);
 
@@ -57,7 +65,7 @@ class Sitelock_Password_Strength
         // Verify the nonce for WordPress's default user profile form
         $nonce = $nonce ?? (isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '');
         if (isset($user->ID) && (!$nonce || !wp_verify_nonce($nonce, "update-user_{$user->ID}"))) {
-            $errors->add('nonce_verification_failed', esc_html__('Nonce verification failed. Please try again.', 'sitelock-wordpress-plugin'));
+            $errors->add('nonce_verification_failed', esc_html($this->sitelock_language_tokens['common_errors']['nonceVerificationFailed']));
 
             return;
         }
@@ -91,7 +99,7 @@ class Sitelock_Password_Strength
                 'pass_strength',
                 sprintf(
                     /* Translators: %s is replaced with the minimum strength requirement for the user's account role. */
-                    __('Your password must meet the minimum strength requirement for your account role: %s', 'sitelock-wordpress-plugin'),
+                    esc_html($this->sitelock_language_tokens['common_errors']['passwordStrength']),
                     $primary_role
                 )
             );

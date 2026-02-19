@@ -2,9 +2,16 @@
 
 class SiteLock_Block_Admin_Username
 {
+
+    private $sitelock_language_tokens;
+
     public function __construct()
     {
-
+        if (function_exists('sitelock_get_language_tokens')) {
+            $this->sitelock_language_tokens = sitelock_get_language_tokens();
+        } else {
+            $this->sitelock_language_tokens = [];
+        }
         // Block "admin" username during user creation (wp_create_user)
         add_action( 'user_profile_update_errors',[$this, 'sitelock_block_admin_username_create_form'], 10, 3 );
 
@@ -46,8 +53,8 @@ class SiteLock_Block_Admin_Username
         if (defined('REST_REQUEST') && REST_REQUEST) {
             if (strtolower($username) === 'admin') {
                 wp_die(
-                    esc_html__('The username "admin" is not allowed for security reasons. Please choose a different username.', 'sitelock-wordpress-plugin'),
-                    esc_html__('Invalid Username', 'sitelock-wordpress-plugin'),
+                    esc_html( $this->sitelock_language_tokens['admin_username']['usernameBlocked']),
+                    esc_html($this->sitelock_language_tokens['admin_username']['invalidUsername']),
                     ['back_link' => true]);
             }
         }
@@ -70,7 +77,7 @@ class SiteLock_Block_Admin_Username
                 if ($username === 'admin') {
                     $errors->add(
                         'username_not_allowed',
-                        esc_html__('The username "admin" is not allowed. Please choose a different username.', 'sitelock-wordpress-plugin')
+                        esc_html($this->sitelock_language_tokens['admin_username']['usernameBlocked'])
                     );
                 }
         }
@@ -82,7 +89,7 @@ class SiteLock_Block_Admin_Username
         if (strtolower($sanitized_user_login) === 'admin') {
             $errors->add(
                 'username_admin_blocked',
-                esc_html__('The username "admin" is not allowed for security reasons. Please choose a different username.', 'sitelock-wordpress-plugin')
+                esc_html($this->sitelock_language_tokens['admin_username']['usernameBlocked'])
             );
         }
 
@@ -99,7 +106,7 @@ class SiteLock_Block_Admin_Username
     //     if (strtolower($username) === 'admin') {
     //         $errors->add(
     //             'username_error',
-    //             esc_html__('The username "admin" is not allowed for security reasons. Please choose a different username.', 'sitelock-wordpress-plugin')
+    //             esc_html($this->sitelock_language_tokens['admin_username']['usernameBlocked'])
     //         );
     //         return;
     //     }
@@ -121,7 +128,7 @@ class SiteLock_Block_Admin_Username
         }
 
         $user = wp_get_current_user();
-        
+
         // Display notice only to administrators
         if (is_user_logged_in() && !current_user_can('administrator')) {
             return;
@@ -141,7 +148,7 @@ class SiteLock_Block_Admin_Username
         }
 
         echo wp_kses_post('<div class="notice notice-warning is-dismissible sitelock-admin-warning' . ($class ? ' ' . esc_attr($class) : '') . '">
-        <p><strong>' . esc_html__('Security Warning:', 'sitelock-wordpress-plugin') . '</strong> ' . esc_html__('A user with the username', 'sitelock-wordpress-plugin') . ' <code>' . esc_html('admin') . '</code> ' . esc_html__('exists. This is a common target for attacks. Rename this user to improve security.', 'sitelock-wordpress-plugin') . '</p>
+        <p><strong>' . esc_html($this->sitelock_language_tokens['admin_username']['securityWarning']) . ':</strong> ' . esc_html($this->sitelock_language_tokens['admin_username']['userWithUsername']) . ' <code>' . esc_html($this->sitelock_language_tokens['admin_username']['admin']) . '</code> ' . esc_html($this->sitelock_language_tokens['admin_username']['userExists']) . '</p>
     </div>');
     }
 

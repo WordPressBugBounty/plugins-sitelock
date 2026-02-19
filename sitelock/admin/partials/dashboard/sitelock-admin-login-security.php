@@ -7,6 +7,37 @@
     <!-- Report Body Section -->
     <div class="p-0 sm:px-5 min-h-[150px]">
     
+        <!-- Row 1 -->
+        <div class="border-b border-[#EEEEEE] px-3 sm:px-0">
+            <div class="grid grid-cols-12 gap-4 py-[10px]">
+                <!-- Plus/minus toggle button -->
+                <div class="c1 flex items-center col-span-8">
+                    <div>
+                        <button type="button" class="toggle mr-3" data-id="2fa">
+                            <span><span></span> </span>
+                        </button>
+                    </div>
+                    <a href="#" class="heading" data-id="2fa"><?php echo esc_html($sitelock_language_tokens['login_security_list']['2FA']) ?></a>
+                </div>
+
+                <!-- Heading -->
+                <div class="c2 flex items-center col-span-4">
+                    <!-- Standard color circle -->
+                    <div class="pr-2">
+                        <span class="icon circle w-5 <?php echo isset($sitelock_security_2fa_options['enable_2fa']) && $sitelock_security_2fa_options['enable_2fa'] == 1 ? 'bg-[#00AA6B]' : 'bg-[#DB1010]' ?>">
+                        </span>
+                    </div>
+                    <!-- Text -->
+                    <span class="capitalize analyzing status">
+                        <?php echo isset($sitelock_security_2fa_options['enable_2fa']) && $sitelock_security_2fa_options['enable_2fa'] == 1 ? esc_html($sitelock_language_tokens['var']['enabled']) : esc_html($sitelock_language_tokens['var']['disabled']) ?>
+                    </span>
+                </div>
+    
+            </div>
+            <div id="2fa" class="collapsed">
+                <p class="mx-10 text-[14px] leading-[150%] mb-4 font-normal text-[#6A6A6A]"><?php echo esc_html($sitelock_language_tokens['login_security_description']['2FA']) ?></p>
+            </div>
+        </div>
         <!-- Row 2 -->
         <div class="border-b border-[#EEEEEE] px-3 sm:px-0">
             <div class="grid grid-cols-12 gap-4 py-[10px] ">

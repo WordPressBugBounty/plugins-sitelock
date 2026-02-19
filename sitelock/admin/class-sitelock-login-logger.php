@@ -42,7 +42,7 @@ class Sitelock_Login_Logger
 
         // Default retention
         if (!get_option(self::OPTION_SITELOCK_RETENTION_DAYS)) {
-            update_option(self::OPTION_SITELOCK_RETENTION_DAYS, 30);
+            update_option(self::OPTION_SITELOCK_RETENTION_DAYS, 7);
         }
     }
 
@@ -156,7 +156,7 @@ class Sitelock_Login_Logger
         // Validate table name manually to prevent SQL injection
         if (preg_match('/^[a-zA-Z0-9_]+$/', $table)) {
             $table = esc_sql($table); // Sanitize table name
-            $days  = (int) get_option(self::OPTION_SITELOCK_RETENTION_DAYS, 30);
+            $days  = (int) get_option(self::OPTION_SITELOCK_RETENTION_DAYS, 7);
 
             if ($days > 0) {
                 $date = gmdate('Y-m-d H:i:s', strtotime("-{$days} days"));

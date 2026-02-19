@@ -1,3 +1,5 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
+
 <div id="site-health" class="simple-box border-grey-light bg-[#fff] mb-6">
 
     <!-- Standard header -->
@@ -14,10 +16,10 @@
         </div>
     
         <div class="flex items-center gap-6">
-            <a href="<?php echo esc_url(get_sitelock_redirect_url('whatIsThis')); ?>" target="_blank" rel="noopener noreferrer"
+            <a href="<?php echo esc_url(sitelock_get_redirect_url('whatIsThis')); ?>" target="_blank" rel="noopener noreferrer"
                 class="link underline"><?php echo esc_html($sitelock_language_tokens['var']['whatIsThis']); ?></a>
             <img src="<?php echo esc_url(plugin_dir_url(__DIR__) . '../images/down-arrow.svg'); ?>"
-                alt="<?php echo esc_attr__('Down Arrow', 'sitelock-wordpress-plugin'); ?>"
+                alt="<?php echo esc_attr($sitelock_language_tokens['var']['downArrow']); ?>"
                 class="header-toggle cursor-pointer img-arrow arrow-rotate"
                 data-id="<?php echo esc_attr('site-health-card'); ?>" />
         </div>
@@ -51,11 +53,11 @@
 
             <?php
                 if (!$sitelock_connection_status) {
-                    $healthStage = 'requiresActivation';
+                    $sitelock_health_stage = 'requiresActivation';
                 } elseif (!isset($sitelock_site_info['healthStage']) || !isset($sitelock_language_tokens['health_map_descriptions'][$sitelock_site_info['healthStage']])) {
-                    $healthStage = 'unavailable';
+                    $sitelock_health_stage = 'unavailable';
                 } else {
-                    $healthStage = $sitelock_site_info['healthStage'];
+                    $sitelock_health_stage = $sitelock_site_info['healthStage'];
                 }
         ?>
 
@@ -79,18 +81,18 @@
                     <?php } elseif ($sitelock_site_info && ($sitelock_site_info['healthStage'] == 'compromised' || $sitelock_site_info['healthStage'] == 'atRisk' || $sitelock_site_info['healthStage'] == 'impaired')) { ?>
                         <?php
                             if ($sitelock_site_info['healthStage'] == 'compromised') {
-                                $color = '#DB1010'; // color for compromised
+                                $sitelock_site_health_color = '#DB1010'; // color for compromised
                             } elseif ($sitelock_site_info['healthStage'] == 'impaired') {
-                                $color = '#fd8731'; // color for impaired
+                                $sitelock_site_health_color = '#fd8731'; // color for impaired
                             } else {
-                                $color = '#ffd601'; // color for other stages
+                                $sitelock_site_health_color = '#ffd601'; // color for other stages
                             }
                         ?>
                         <svg width="34" height="24" viewBox="0 0 24 21" fill="none"
                         xmlns="http://www.w3.org/2000/svg" class="mx-auto text-yellow">
                         <path
                             d="M23.6908 17.3689L13.8464 1.04273C13.4585 0.399563 12.7511 0 12 0C11.2489 0 10.5414 0.399563 10.1535 1.04278L0.309161 17.3689C-0.0916669 18.0337 -0.103526 18.8666 0.278177 19.5425C0.659974 20.2185 1.37932 20.6384 2.15557 20.6384H21.8444C22.6206 20.6384 23.34 20.2185 23.7218 19.5425C24.1035 18.8665 24.0917 18.0336 23.6908 17.3689ZM22.3612 18.7741C22.2561 18.9602 22.0581 19.0758 21.8444 19.0758H2.15557C1.94187 19.0758 1.74382 18.9602 1.63877 18.7742C1.53368 18.5881 1.53696 18.3588 1.64726 18.1758L11.4917 1.84964C11.5985 1.67259 11.7933 1.56258 12 1.56258C12.2067 1.56258 12.4015 1.67259 12.5083 1.84964L22.3527 18.1758C22.463 18.3588 22.4663 18.5881 22.3612 18.7741Z"
-                            fill="<?php echo esc_attr($color); ?>" />
+                            fill="<?php echo esc_attr($sitelock_site_health_color); ?>" />
                         <path
                             d="M12.006 6.42871C11.4116 6.42871 10.9478 6.74765 10.9478 7.31305C10.9478 9.03815 11.1507 11.5171 11.1507 13.2422C11.1507 13.6916 11.5422 13.8801 12.0061 13.8801C12.354 13.8801 12.8468 13.6916 12.8468 13.2422C12.8468 11.5171 13.0498 9.0382 13.0498 7.31305C13.0498 6.7477 12.5714 6.42871 12.006 6.42871Z"
                             fill="#000000" />
@@ -131,10 +133,8 @@
             </div>
             </div>
 
-            <!-- Details -->
-
             <div class="rich-text">
-            <?php echo esc_html($sitelock_language_tokens['health_map_descriptions'][$healthStage]); ?>
+            <?php echo esc_html($sitelock_language_tokens['health_map_descriptions'][$sitelock_health_stage]); ?>
 
             </div>
 
@@ -143,11 +143,11 @@
         <?php if (!$sitelock_connection_status) { ?>
             <div class="bg-gradient-to-b from-[#F7F7F7] to-[#FFFFFF] py-4 px-10">
             <div class="flex items-center justify-center gap-5">
-                <a href="<?php echo esc_url(get_sitelock_redirect_url('signup') . admin_url()); ?>" target="_blank" rel="noopener noreferrer"
+                <a href="<?php echo esc_url(sitelock_get_redirect_url('signup') . admin_url()); ?>" target="_blank" rel="noopener noreferrer"
                     class="px-3 sm:px-6 lg:px-[20px] xl:px-6 text-[14px] text-center py-[6px] bg-[#2D68C4] text-[#fff] hover:text-[#fff] focus:text-[#fff] rounded">
                     <?php echo esc_html($sitelock_language_tokens['var']['activateFreeAccount']); ?>
                 </a>
-                <a href="<?php echo esc_url(get_sitelock_redirect_url('comparePlan')); ?>" target="_blank" rel="noopener noreferrer"
+                <a href="<?php echo esc_url(sitelock_get_redirect_url('comparePlan')); ?>" target="_blank" rel="noopener noreferrer"
                     class="px-3 sm:px-6 lg:px-[20px] xl:px-6 text-[14px] text-center py-[5px] bg-[#F6F9FE] text-[#083C8C] rounded border-blue">
                     <?php echo esc_html($sitelock_language_tokens['var']['comparePlans']); ?>
                 </a>

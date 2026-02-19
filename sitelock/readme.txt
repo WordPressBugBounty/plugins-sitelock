@@ -4,18 +4,18 @@ Tags: wordpress-security, malware-scan, vulnerability-scanner, login-security, s
 Requires at least: 3.8
 Tested up to: 6.9
 Requires PHP: 7.2
-Stable tag: 5.0.3
+Stable tag: 5.1.0
 Language: English
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Free, lightweight WordPress security. WP Hardening, login protection and Site Health & on‑demand checks without slowing your site. Setup in minutes.
+Free, lightweight WordPress security. Harden your site with login protection & 2FA, see Site Health clearly and run on-demand checks—setup in minutes.
 
 == Description ==
 
->**🌟 Completely Redesigned in Version 5.0 (November 2025) 🌟**
+>**🌟 Completely redesigned in Version 5.0 — now even stronger with 2FA in 5.1 🌟**
 >
->This November marks a milestone: the SiteLock WordPress Plugin has been rebuilt with three goals: make it faster, make it clearer and move the heavy work to the cloud. We built a cloud-first architecture, modernized UI, expanded security controls and stripped out everything that didn't need to be there.
+>The SiteLock WordPress plugin was recently rebuilt with three goals: make it faster, make it clearer and move the heavy work to the cloud. We built a cloudfirst architecture, modernized UI, expanded security controls and stripped out everything that didn’t need to be there. Our latest 5.1 release builds on that foundation with TwoFactor Authentication (2FA) to strengthen login security and give you tighter control over access.
 >
 >**The big changes:**
 >- 🔒 Enhanced WordPress-specific hardening and login security controls
@@ -23,52 +23,50 @@ Free, lightweight WordPress security. WP Hardening, login protection and Site He
 >- 🩺 New Site Health interface that shows you what matters in one view
 >- ⚡ Streamlined controls (fewer clicks to get protected)
 >- ✨ Modern codebase built for the WordPress you're actually using today
->- 🔢 Future-ready foundation (2FA coming soon)
+>- 🔢 Two-Factor Authentication (2FA) now available for stronger login protection
 >
 >If you used the old plugin: this is a different tool. If you're new: you're starting with the cleanest, fastest version of the plugin.
 
 ---
 
-Your website deserves protection that’s simple, fast and built for WordPress. SiteLock WordPress Security focuses on the everyday controls that matter most and helps you establish a secure baseline in minutes — WordPress-specific hardening, login protection and a clear Site Health dashboard that keeps you in control without slowing your site down.
-It’s lightweight, action-first protection that complements your host defenses: essential safeguards run inside WordPress while deeper checks happen securely in the SiteLock cloud. Skip heavy on-server scans and alert fatigue — run on-demand checks when you need extra assurance, so you can ship updates with confidence.
+Your website deserves protection that’s simple, fast and built for WordPress. SiteLock WordPress Security focuses on the everyday controls that matter most and helps you establish a secure baseline in minutes — WordPress-specific hardening, login protection with Two-Factor Authentication (2FA) and a clear Site Health dashboard that keeps you in control without slowing your site down. It’s lightweight, action-first protection that complements your host defenses: essential safeguards run inside WordPress while deeper checks happen securely in the SiteLock cloud. Skip heavy on-server scans and alert fatigue — run on-demand checks when you need extra assurance, so you can ship updates with confidence.
 
 = Security that grows with you =
 Our goal is straightforward: maintain a strong baseline with minimal overhead while giving you clear visibility and room to grow as your needs evolve.
-And because security is never static, this plugin keeps pace. Next up: Two-Factor Authentication (2FA) to strengthen login security (coming soon).
+And because security is never static, this plugin keeps pace. Two-Factor Authentication (2FA) is now available to strengthen login security with an extra layer of protection.
 
 = Commercial plugin =
 This plugin is free but offers additional paid commercial upgrades or support.
 
 == What’s included ==
 
-= WordPress Hardening: Cut common attack paths in just a few clicks. =
-- Disable directory listing.
-- Restrict PHP execution in upload folders.
-- Limit unsafe script types.
-- Force strong configuration defaults to close risky gaps.
+= WordPress Hardening: Cut common attack paths in just a few clicks =
+- Disable directory listing
+- Restrict PHP execution in upload folders
+- Limit unsafe script types
+- Force strong configuration defaults to close risky gaps
 
 _All options are toggle-based and reversible — safe to enable, easy to test and lightweight on performance._
 
 = Login Security: Protect what matters most — your access =
-- **Brute-force defense**: Blocks repeated failed logins and temporarily locks abusive IPs.
-- **Password policy prompts**: Encourage stronger credentials without breaking workflows.
-- **Session timeouts**: Automatically end idle sessions to prevent account hijacks.
-- **Activity awareness**: View recent logins and admin changes in the **Activity Log**.
+- **Two-Factor Authentication (2FA)**: Add a second layer of verification to protect admin access
+- **Brute-force defense**: Blocks repeated failed logins and temporarily locks abusive IPs
+- **Password policy prompts**: Encourage stronger credentials without breaking workflows
+- **Session timeouts**: Automatically end idle sessions to prevent account hijacks
+- **Activity awareness**: View recent logins and admin changes in the **Activity Log**
 
-**_Heads-up:_ Two-Factor Authentication (2FA)** — a second layer of verification for even greater login protection. It’s already in development and will arrive as part of the next plugin milestone.
-
-= Site Health & Cloud Checks: Clarity without noise. =
+= Site Health & Cloud Checks: Clarity without noise =
 - **Site Health Dashboard**: Surface key signals in one view — WordPress hardening status, last scan timestamp and actionable indicators
 - **Cloud Checks**: Connect your free SiteLock account to enable recurring off-server checks (Webpage Scan, SSL Verification, Email Reputation and more)
-- **Scan Now**: Run on-demand checks after updates or changes for instant assurance -no heavy, always-on local scanners
-- **Activity Log**: Track what’s happening across your WordPress admin. See admin/login events at a glance making it easy to spot anomalies early and keep accountability clear.
+- **Scan Now**: Run on-demand checks after updates or changes for instant assurance — no heavy, always-on local scanners
+- **Activity Log**: Track what’s happening across your WordPress admin. See admin/login events at a glance making it easy to spot anomalies early and keep accountability clear
 
 = Why Choose SiteLock WordPress Security? =
 - **Lightweight by design**: All high-impact protections, no unnecessary load
 - **Real visibility**: Know your security posture in seconds with Site Health
 - **Cloud-powered assurance**: Checks run off-server, protecting performance
 - **Flexible setup**: Use standalone or connect a SiteLock account for added layers
-- **Future-ready**: Two-Factor Authentication and enhanced security features are already on the horizon
+- **Strong login protection**: Two-Factor Authentication (2FA) alongside brute-force defense and session controls
 - **Trusted heritage**: From the global leader in SMB website security backed by continuous innovation and research
 - **Aligned to WordPress**: Designed to stay out of your way and keep performance priorities intact
 
@@ -147,7 +145,11 @@ No. This plugin sets your on-site baseline. For active blocking and performance 
 
 = What about Two-Factor Authentication (2FA)? =
 
-Enhanced protection is on the horizon — stay tuned for the update! 2FA is actively in development. It’s designed to layer on top of our current login protections bringing stronger, verification-based defense without adding friction for site owners.
+Enhanced protection is here — Two-Factor Authentication (2FA) is now available. It adds an extra verification step on top of our existing login protections and works with authenticator apps like Google Authenticator and Microsoft Authenticator.
+
+= Will 2FA be required or optional? =
+
+For security, 2FA is required for all accounts. Users have a 7-day enrollment window to complete setup.
 
 = What changes does this plugin make that could affect my site? =
 
@@ -168,7 +170,7 @@ An on-demand check for key items — useful after you update plugins/themes or c
 == Screenshots ==
 
 1. **Dashboard** — overview with Site Health
-2. **Login Security** — brute-force defense, password hygiene and session timeouts
+2. **Login Security** — 2FA, brute force defense, password hygiene and session timeouts
 3. **WordPress Hardening** — one-click toggles for secure defaults
 4. **Activity Log** — recent admin/login events at a glance
 5. **Cloud Checks** — on-demand and recurring scans from the SiteLock cloud
@@ -187,6 +189,16 @@ An on-demand check for key items — useful after you update plugins/themes or c
 
 
 == Changelog ==
+
+= 5.1.0 =
+_Release Date February 19, 2026_
+
+* Feature: Added new Two-Factor Authentication (2FA) functionality to improve login security
+* Fix: Improved license key validation flow
+* Fix: Improved WordPress hardening handling to prevent .htaccess update issues
+* Fix: Improved report data freshness, including last scan and next scheduled scan date handling
+* Fix: Minor UI improvements
+* Perf: Reduce database queries and standardize admin enqueue logic
 
 = 5.0.3 =
 _Release Date February 11, 2026_

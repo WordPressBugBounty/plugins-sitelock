@@ -1,5 +1,15 @@
 == Changelog ==
 
+= 5.1.0 =
+_Release Date February 19, 2026_
+
+* Feature: Added new Two-Factor Authentication (2FA) functionality to improve login security
+* Fix: Improved license key validation flow
+* Fix: Improved WordPress hardening handling to prevent .htaccess update issues
+* Fix: Improved report data freshness, including last scan and next scheduled scan date handling
+* Fix: Minor UI improvements
+* Perf: Reduce database queries and standardize admin enqueue logic
+
 = 5.0.3 =
 _Release Date February 11, 2026_
 

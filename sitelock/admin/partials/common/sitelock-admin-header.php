@@ -13,7 +13,9 @@ require_once plugin_dir_path(dirname(__FILE__)) . '../../includes/api/class-site
 </div>
 
 
-    <?php if ($sitelock_connection_status) { ?>
+    <?php 
+    if (current_user_can('manage_options')) {
+        if ($sitelock_connection_status) { ?>
         <div class="bg-[#E4E4E4] rounded flex justify-between items-center">
             <div class="px-6 py-[10px]">
                 <h5 class="my-[3px] text-[13px] leading-[14px] text-[#4F4F4F] font-normal"><?php echo esc_html($sitelock_language_tokens['var']['status']) ?></h5>
@@ -41,5 +43,7 @@ require_once plugin_dir_path(dirname(__FILE__)) . '../../includes/api/class-site
                 </div>
             </div>
         </div>
-    <?php } ?>
+    <?php } 
+    }
+    ?>
 </div>

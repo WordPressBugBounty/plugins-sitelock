@@ -24,6 +24,7 @@
   padding: 32px;
   font-family: 'Source Sans 3';
 }
+
 .sitelock-card {
   max-width: 420px;
   background: #ffffff;
@@ -33,22 +34,26 @@
   overflow: hidden;
   padding: 15px;
 }
+
 .sitelock-card__head {
   text-align: center;
   padding-bottom: 30px;
 }
+
 .sitelock-logo {
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 20px 15px;
 }
+
 .sitelock-card__head h1 {
   font-size: 30px;
   color: #000000;
   line-height: 24px;
   font-weight: 400;
 }
+
 .sitelock-sub {
   font-size: 14px;
   color: #041c2c;
@@ -57,15 +62,19 @@
   padding: 0px 60px;
   margin: 0px 20px;
 }
+
 .sitelock-field {
   margin-bottom: 20px;
+  margin-top: -40px;
 }
+
 .sitelock-field label {
   display: block;
   font-size: 13px;
   color: #374151;
   margin-bottom: 6px;
 }
+
 .sitelock-2fa-inputs {
   display: flex;
   flex-direction: row;
@@ -73,6 +82,7 @@
   justify-content: center;
   margin: 0px 50px;
 }
+
 .sitelock-input {
   width: 40px;
   height: 48px;
@@ -82,14 +92,18 @@
   text-align: center;
   color: #041c2c;
 }
+
 .sitelock-input:focus {
   outline: none;
   border-color: #2d68c4;
 }
+
 .sitelock-recovery-field {
   text-align: center;
   margin: 0px 50px;
+  margin-top: -40px;
 }
+
 .sitelock-recovery-input {
   width: 280px;
   height: 40px;
@@ -97,14 +111,17 @@
   border-radius: 4px;
   margin-bottom: 24px;
 }
+
 .sitelock-recovery-field input[type='text' i] {
   padding-left: 8px;
   color: #041c2c;
 }
+
 .sitelock-help {
   text-align: center;
   margin-bottom: 20px;
 }
+
 .sitelock-link {
   color: #2d68c4;
   text-decoration: none;
@@ -113,15 +130,18 @@
   line-height: 150%;
   letter-spacing: 0px;
 }
+
 .sitelock-link:hover {
   text-decoration: underline;
 }
+
 .sitelock-actions {
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 25px;
 }
+
 .sitelock-btn {
   width: 120px;
   height: 32px;
@@ -137,19 +157,27 @@
   font-weight: 400;
   font-family: 'Source Sans 3';
 }
+
 .sitelock-btn:hover {
   background-color: #083c8c;
 }
+
 .sitelock-card__foot {
   text-align: center;
 }
+
 .sitelock-error {
-  color: #db1010;
-  margin-bottom: 10px;
-  font-size: 14px;
+  background: #fceded;
+  height: 45px;
+  width: 372px;
+  margin: auto;
   font-weight: 400;
-  text-align: center;
+  font-size: 14px;
+  line-height: 45px;
+  margin-bottom: 25px;
+  border-radius: 4px;
 }
+
 .sitelock-recovery-error {
   color: #db1010;
   margin-bottom: 10px;
@@ -157,11 +185,13 @@
   font-weight: 400;
   text-align: center;
 }
+
 .sitelock-2fa-fieldset {
   border: none;
   padding: 0;
   margin: 0;
 }
+
 .sitelock-card-powered-by-text {
   font-family: 'Roboto';
   font-weight: 400;
@@ -170,6 +200,7 @@
   letter-spacing: 0px;
   color: #43586a;
 }
+
 p.sitelock-card-powered-by-text a.sitelock-foot-link {
   color: #43586a;
 }
@@ -186,38 +217,123 @@ p.sitelock-card-powered-by-text a.sitelock-foot-link {
   cursor: not-allowed;
 }
 
+.sitelock-2fa-lockout-title {
+  font-weight: 400;
+  font-size: 30px !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0;
+  text-align: center;
+  vertical-align: middle;
+  margin-bottom: 0px;
+}
+
+.sitelock-2fa-lockout-error-notice {
+  background-color: #fceded;
+  padding: 20px;
+  border-radius: 4px;
+  text-align: center;
+  margin: 8px;
+  padding-top: 1px;
+  font-weight: 400;
+  line-height: 150%;
+  width: 332px;
+  font-size: 14px;
+}
+
+.sitelock-2fa-lockout-error-notice-p1 {
+  margin-bottom: 16px !important;
+  font-size: 14px;
+  color: #041c2c;
+}
+
+.sitelock-2fa-lockout-error-notice-p2 {
+  margin: auto;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #041c2c;
+  width: 318px;
+}
+
+.sitelock-timer-section {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  margin-bottom: 48px;
+  margin-top: 28px;
+}
+
+#sitelock-retry-container {
+  display: none;
+  margin-top: -26px;
+  margin-bottom: 45px;
+}
+
+@media (max-width: 768px) {
+  .sitelock-2fa-lockout-error-notice {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    box-sizing: border-box;
+  }
+
+  .sitelock-2fa-lockout-error-notice-p2 {
+    width: 100%;
+  }
+}
+
 /* small screens */
 @media (max-width: 480px) {
   .sitelock-card {
     max-width: 300px;
     padding: 10px;
   }
+
   .sitelock-card__head {
     padding: 10px 5px 30px;
   }
+
   .sitelock-card__head h1 {
     font-size: 24px !important;
   }
+
   .sitelock-sub {
     margin: 0px 5px;
     padding: 0px 20px;
   }
+
   .sitelock-input {
     width: 30px;
     height: 38px;
   }
+
   .sitelock-2fa-inputs {
     margin: 0px 20px;
   }
+
   .sitelock-recovery-field {
     margin: 0px 5px;
   }
+
   .sitelock-recovery-input {
     width: 240px !important;
   }
+
   .sitelock-recovery-error,
   .sitelock-error {
-    margin-left: 21px;
+    margin-left: 0;
+    width: 100% !important;
+    height: auto !important;
+    line-height: 1.5 !important;
+    /* Allow proper spacing between lines */
+    padding: 10px;
+    /* Add internal spacing */
+    white-space: normal;
+    /* Ensure text wraps */
+    word-wrap: break-word;
+    /* Break long words if necessary */
+    box-sizing: border-box;
+    /* Include padding in width */
   }
 }
 

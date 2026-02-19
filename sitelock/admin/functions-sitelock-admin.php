@@ -166,7 +166,7 @@ function sitelock_bytes_to_mb($bytes)
  * @since 5.0.0
  * @return string
  */
-function get_site_hostname($siteroot = false): string
+function sitelock_get_site_hostname($siteroot = false): string
 {
     // return "domain" value from testing.json
     if (($test_domain = sitelock_get_test_var('domain')) !== null) {
@@ -191,13 +191,13 @@ function get_site_hostname($siteroot = false): string
  * @since 5.0.0
  * @return string
  */
-function get_site_identifier(): string
+function sitelock_get_site_identifier(): string
 {
     $site_id = get_option('sitelock_site_id', '');
     if (!empty($site_id)) {
         return $site_id;
     } else {
-        $hostname   = get_site_hostname();
+        $hostname   = sitelock_get_site_hostname();
         $parsed_url = wp_parse_url($hostname);
 
         return $parsed_url['host'] ?? $hostname;
@@ -212,7 +212,7 @@ function get_site_identifier(): string
  * @param  string $claim claim name
  * @return string claim value, if found
  */
-function get_JWT_claim(string $jwt, string $claim)
+function sitelock_get_jwt_claim(string $jwt, string $claim)
 {
     list($header, $payload, $signature) = explode('.', $jwt);
     $jsonToken                          = base64_decode($payload);
@@ -232,7 +232,7 @@ function get_JWT_claim(string $jwt, string $claim)
  * @param  string $data The input string or binary data to encode.
  * @return string The Base64 URL-safe encoded string.
  */
-function base64url_encode($data)
+function sitelock_base64url_encode($data)
 {
     return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 }
@@ -1050,12 +1050,101 @@ function sitelock_get_existing_blockable_directories()
 }
 
 /**
+ * Store the pending user ID in a secure, encrypted cookie for 2FA verification.
+ * 
+ * @param  int  $user_id The WordPress user ID.
+ * @return bool True on success, false on failure.
+ */
+function sitelock_set_pending_user_cookie($user_id)
+{
+    if (empty($user_id) || !is_numeric($user_id)) {
+        return false;
+    }
+
+    $token_id = wp_generate_uuid4();
+
+    // Store server-side state (10 mins)
+    set_transient('sitelock_pending_2fa_' . $token_id, $user_id, 10 * MINUTE_IN_SECONDS);
+
+    // Store minimal data + token_id
+    $payload = [
+        'uid' => (int) $user_id,
+        'ts'  => time(),
+        'tid' => $token_id,
+    ];
+
+    // Save securely in cookie using the helper class
+    $status = Sitelock_Secure_Cookie::set(
+        'sitelock_pending_user',
+        $payload,
+        10 * MINUTE_IN_SECONDS // 10-minute expiration
+    );
+
+    if (!$status) {
+        delete_transient('sitelock_pending_2fa_' . $token_id);
+
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Retrieve and validate the pending user ID from the secure cookie.
+ *
+ * @return int The user ID if valid, or 0 if missing/expired/invalid.
+ */
+function sitelock_get_pending_user_id()
+{
+    $data = Sitelock_Secure_Cookie::get('sitelock_pending_user');
+
+    if (!is_array($data) || empty($data['uid']) || empty($data['ts']) || empty($data['tid'])) {
+        return 0;
+    }
+
+    // Ensure it's within the allowed lifetime (max 10 min safety window)
+    $age = time() - (int)$data['ts'];
+    if ($age > 10 * MINUTE_IN_SECONDS) {
+        sitelock_clear_pending_user_cookie();
+        return 0;
+    }
+
+    // Server-side validation
+    $transient_user_id = get_transient('sitelock_pending_2fa_' . $data['tid']);
+    if (!$transient_user_id || (int)$transient_user_id !== (int)$data['uid']) {
+        sitelock_clear_pending_user_cookie(); // Invalid or expired token
+        return 0;
+    }
+
+    // Basic sanity check on user ID
+    $user_id = (int)$data['uid'];
+    if ($user_id <= 0 || !get_user_by('id', $user_id)) {
+        sitelock_clear_pending_user_cookie();
+        return 0;
+    }
+
+    return $user_id;
+}
+
+/**
+ * Clear the pending user ID cookie and server-side token.
+ */
+function sitelock_clear_pending_user_cookie()
+{
+    $data = Sitelock_Secure_Cookie::get('sitelock_pending_user');
+    if (is_array($data) && !empty($data['tid'])) {
+        delete_transient('sitelock_pending_2fa_' . $data['tid']);
+    }
+    Sitelock_Secure_Cookie::delete('sitelock_pending_user');
+}
+
+/**
  * Get Sitelock Redirect URL based on type
  *
  * @param  string $type The type of redirect. Valid values: 'comparePlan', 'signup', 'whatIsThis'.
  * @return string
  */
-function get_sitelock_redirect_url($type = ''): string
+function sitelock_get_redirect_url($type = ''): string
 {
     switch ($type) {
         case 'comparePlan':

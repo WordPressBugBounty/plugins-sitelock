@@ -40,9 +40,9 @@ class Sitelock_Admin
     // Might need or might not need these below. Adding to resolve errors.
     public $table;
     public $table2;
+    public $settings_2fa;
     public $wpslp_data;
     public $wpslp_partner_data;
-
     public $site_id;
     public $banner;
     public $boxes;
@@ -58,6 +58,7 @@ class Sitelock_Admin
     public $current_badge_color;
     public $current_badge_size;
     public $current_badge_type;
+    private $sitelock_language_tokens;
     /**
      * Initialize the class and set its properties.
      *
@@ -74,6 +75,13 @@ class Sitelock_Admin
          */
         $this->plugin_name = $plugin_name;
         $this->version     = $version;
+        if (function_exists('sitelock_get_language_tokens')) {
+            $this->sitelock_language_tokens = sitelock_get_language_tokens();
+        } else {
+            $this->sitelock_language_tokens = [];
+        }
+
+        defined( 'ABSPATH' ) || exit;
 
         if (!empty($_GET['logout'])) {
             /**
@@ -83,7 +91,7 @@ class Sitelock_Admin
              * @since   1.9.0
              */
             if (function_exists('wp_verify_nonce') && isset($_GET['_wpnonce']) && !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'sitelock_logout_action')) {
-                wp_die(esc_html__('Nonce verification failed. Please try again.', 'sitelock-wordpress-plugin'));
+                wp_die(esc_html($this->sitelock_language_tokens['common_errors']['nonceVerificationFailed']));
             }
 
             // delete all cache data
@@ -114,7 +122,7 @@ class Sitelock_Admin
 
         // Add Feedback Submenu
         add_action('admin_menu', [$this, 'add_feedback_submenu']);
-        
+
         // Remove the automatically created first submenu
         add_action('admin_menu', [$this, 'remove_default_submenu']);
 
@@ -140,11 +148,9 @@ class Sitelock_Admin
         // Upgrade page
         add_action('admin_menu', array($this, 'sitelock_upgrade_page'));
 
-        add_action('admin_enqueue_scripts', array($this, 'sitelock_scan_enqueue_scripts'));
+        add_action('admin_enqueue_scripts', [$this, 'sitelock_scan_enqueue_scripts']);
 
-        add_action('wp_ajax_sitelock_scan', array($this,'sitelock_scan_callback'));
-
-
+        add_action('wp_ajax_sitelock_scan', [$this,'sitelock_scan_callback']);
     }
 
     /**
@@ -169,9 +175,15 @@ class Sitelock_Admin
          */
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/api/class-sitelock-api.php';
 
-        $this->api    = new Sitelock_API($this->version);
-        $this->table  = new Sitelock_Table();
-        $this->table2 = new Sitelock_Table();
+        /**
+         * The class responsible for 2FA settings
+         */
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-sitelock-2fa-settings.php';
+
+        $this->api          = new Sitelock_API($this->version);
+        $this->table        = new Sitelock_Table();
+        $this->table2       = new Sitelock_Table();
+        $this->settings_2fa = new Sitelock_2FA_Settings(false);
 
         /**
          * Add thickbox
@@ -340,7 +352,21 @@ class Sitelock_Admin
             'sitelock-activity-logs',
             [$this, 'sitelock_activity_logs_page']
         );
-        
+
+        $sitelock_two_fa_settings               = get_option('sitelock_2fa_settings');
+        $sitelock_two_fa_settings['enable_2fa'] = isset($sitelock_two_fa_settings['enable_2fa']) ? $sitelock_two_fa_settings['enable_2fa'] : false;
+        if ($sitelock_two_fa_settings['enable_2fa']) {
+            $hook = add_submenu_page(
+                'sitelock-plugin',
+                'Your 2FA',
+                'Your 2FA',
+                'edit_posts', // Default roles with this capability: Administrator, Editor, Author, Contributor
+                'sitelock-your-2fa',
+                [$this, 'sitelock_your_2fa_page']
+            );
+            add_action('load-' . $hook, array($this, 'on_load_your_2fa_page'));
+        }
+
     }
 
 
@@ -354,9 +380,9 @@ class Sitelock_Admin
             'sitelock-give-feedback',
             '__return_null'
         );
-    
+
         global $submenu;
-    
+
         if (isset($submenu['sitelock-plugin'])) {
             foreach ($submenu['sitelock-plugin'] as &$item) {
                 if ($item[2] === 'sitelock-give-feedback') {
@@ -366,7 +392,7 @@ class Sitelock_Admin
             }
         }
     }
-    
+
     public function remove_default_submenu()
     {
         remove_submenu_page('sitelock-plugin', 'sitelock-plugin');
@@ -391,8 +417,8 @@ class Sitelock_Admin
     {
         if ($this->api->auth->get_auth_key()) { # && $this->api->is_auth_key_valid() ) {
             $this->wpslp_data         = $this->api->sites->get_features();
-            $this->wpslp_partner_data = $this->api->sites->get_partner_preference('upgrade');
-            if ((isset($this->wpslp_data['status']) && $this->wpslp_data['status'] === "error") || (isset($this->wpslp_partner_data['status']) && $this->wpslp_partner_data['status'] === "error")) {
+            $this->wpslp_partner_data = $this->api->sites->get_partner_preference('');
+            if ((isset($this->wpslp_data['status']) && $this->wpslp_data['status'] === 'error') || (isset($this->wpslp_partner_data['status']) && $this->wpslp_partner_data['status'] === 'error')) {
                 $error_message = 'Something went wrong while refreshing the token. Please try again later.';
                 set_transient('sitelock_auth_error', $error_message, 60); // Store error for 60 seconds
             }
@@ -411,7 +437,7 @@ class Sitelock_Admin
     {
         // Verify nonce to ensure the request is valid
         if (isset($_GET['report_type']) && (!isset($_GET['_wpnonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'sitelock_activity_logs_nonce'))) {
-            wp_die(esc_html__('Nonce verification failed. Please try again.', 'sitelock-wordpress-plugin'));
+            wp_die(esc_html($this->sitelock_language_tokens['common_errors']['nonceVerificationFailed']));
         }
 
         // Determine report type
@@ -443,6 +469,68 @@ class Sitelock_Admin
         extract($data);
         include plugin_dir_path(__FILE__) . 'pages/activity-logs.php';
         wp_enqueue_script('sitelock-activity-logs-js', plugin_dir_url(__FILE__) . 'js/sitelock-activity-logs.js', ['jquery'], '1.0.0', true);
+    }
+
+    /**
+     * Handle page load for 2FA page.
+     * Used to intercept onboarding requests and render full-page UI.
+     */
+    public function on_load_your_2fa_page() {
+        // Ensure 2FA assets are enqueued
+        require_once plugin_dir_path(__FILE__) . 'class-sitelock-2fa.php';
+        $sitelock_2fa = new Sitelock_2FA();
+        $sitelock_2fa->enqueue_assets();
+
+        $user = wp_get_current_user();
+        $user_2fa_status = sitelock_get_user_2fa_status($user);
+        $has_2fa = $user_2fa_status['has_2fa'];
+        $grace_period_expired = $user_2fa_status['grace_period_expired'];
+
+        // Handle "Skip for Now" Action
+        if (isset($_GET['action']) && $_GET['action'] === 'sitelock_2fa_skip' && wp_verify_nonce($_GET['_wpnonce'], 'sitelock_2fa_skip_action')) {
+            // ONLY allowed if grace period is NOT expired
+            if (!$grace_period_expired) {
+                // Set a cookie (or transient) to skip for (e.g.) 1 day
+                Sitelock_Secure_Cookie::set('sitelock_2fa_skipped', 'true', DAY_IN_SECONDS);
+
+                // Redirect to dashboard
+                wp_safe_redirect(admin_url());
+                exit;
+            }
+        }
+
+        // Setup Wizard View (Full Page)
+        if (isset($_GET['setup_wizard']) && $_GET['setup_wizard'] == '1') {
+             // We need data for the settings view
+             $data = $this->settings_2fa->display_2fa_settings($user);
+             $data['grace_period_expired'] = $grace_period_expired;
+             extract($data);
+
+             include plugin_dir_path(__FILE__) . 'pages/2fa-wizard-template.php';
+             exit;
+        }
+
+        // Onboarding Prompt (Full Page)
+        // If user has NO 2FA setup and is FORCED via parameter (or wizard mode),
+        // render the onboarding interstitial.
+        $force_setup = isset($_GET['force_setup']) && $_GET['force_setup'] == '1';
+
+        if (!$has_2fa && $force_setup) {
+           include plugin_dir_path(__FILE__) . 'pages/2fa-onboarding-template.php';
+           exit; // Stop WordPress from loading the rest of the admin UI
+        }
+    }
+
+    public function sitelock_feedback()
+    {
+        include plugin_dir_path(__FILE__) . 'partials/sitelock-admin-feedback.php';
+    }
+
+    public function sitelock_your_2fa_page()
+    {
+        $data = $this->settings_2fa->display_2fa_settings(wp_get_current_user());
+        extract($data);
+        include plugin_dir_path(__FILE__) . 'pages/your-2fa.php';
     }
 
     /**
@@ -576,6 +664,9 @@ class Sitelock_Admin
      */
     public function enqueue_scripts()
     {
+        // Ensure jQuery is loaded for inline scripts in setting.php
+        wp_enqueue_script('jquery');
+
         // Admin JS
         wp_enqueue_script(
             'sitelock-give-feedback',
@@ -618,26 +709,26 @@ class Sitelock_Admin
     {
         // Optional: capability check first
         if (!current_user_can('manage_options')) {
-            wp_die(esc_html__('Unauthorized user.', 'sitelock-wordpress-plugin'));
+            wp_die(esc_html($this->sitelock_language_tokens['var']['unAuthorizedUser']));
         }
 
         // Identify which tab triggered the form
         $tab = isset($_POST['tab']) ? sanitize_text_field(wp_unslash($_POST['tab'])) : '';
 
-        // ✅ Tab-specific nonce verification (prevents duplicate DOM IDs)
+        // Tab-specific nonce verification (prevents duplicate DOM IDs)
         if ($tab === 'sitelock_website_security') {
             $nonce = isset($_POST['sitelock_website_security_nonce']) ? sanitize_text_field(wp_unslash($_POST['sitelock_website_security_nonce'])) : '';
             if (!$nonce || !wp_verify_nonce($nonce, 'sitelock_website_security_action')) {
-                wp_die(esc_html__('Security check failed for Website Security.', 'sitelock-wordpress-plugin'));
+                wp_die(esc_html($this->sitelock_language_tokens['var']['websiteSecurityFailed']));
             }
         } elseif ($tab === 'sitelock_login_security') {
             $nonce = isset($_POST['sitelock_login_security_nonce']) ? sanitize_text_field(wp_unslash($_POST['sitelock_login_security_nonce'])) : '';
             if (!$nonce || !wp_verify_nonce($nonce, 'sitelock_login_security_action')) {
-                wp_die(esc_html__('Security check failed for Login Security.', 'sitelock-wordpress-plugin'));
+                wp_die(esc_html($this->sitelock_language_tokens['var']['loginSecurityFailed']));
             }
         } else {
             // Fallback for invalid or missing tab
-            wp_die(esc_html__('Invalid tab specified.', 'sitelock-wordpress-plugin'));
+            wp_die(esc_html($this->sitelock_language_tokens['var']['invalidTabSpecified']));
         }
 
         // website security settings
@@ -647,6 +738,55 @@ class Sitelock_Admin
 
         //login security settings
         if (isset($_POST['tab']) && $_POST['tab'] === 'sitelock_login_security') {
+            // save 2fa settings
+            if (isset($_POST['sitelock_2fa_settings']) && is_array($_POST['sitelock_2fa_settings'])) {
+
+               // Sanitize submitted roles
+                if (isset($_POST['sitelock_2fa_settings']['mandatory_roles']) && is_array($_POST['sitelock_2fa_settings']['mandatory_roles'])) {
+                    $submitted_roles = array_map('sanitize_text_field', wp_unslash($_POST['sitelock_2fa_settings']['mandatory_roles']));
+                } else {
+                    $submitted_roles = [];
+                }
+                // Remove roles not in the allowed roles list
+                $allowed_roles = ['administrator', 'editor', 'author', 'contributor', 'shop_manager'];
+
+                foreach ($submitted_roles as $key => $role) {
+                    if (!in_array($role, $allowed_roles, true)) {
+                        unset($submitted_roles[$key]);
+                    }
+                }
+
+                // Sanitize other fields
+                $grace_period = isset($_POST['sitelock_2fa_settings']['grace_period']) && $_POST['sitelock_2fa_settings']['grace_period'] !== ''
+                    ? intval($_POST['sitelock_2fa_settings']['grace_period'])
+                    : 7;
+
+                $enable_2fa = isset($_POST['sitelock_2fa_settings']['enable_2fa'])
+                    ? boolval($_POST['sitelock_2fa_settings']['enable_2fa'])
+                    : 0;
+
+                // Prepare sanitized settings array
+                $sanitized_settings = [
+                    'mandatory_roles' => $submitted_roles,
+                    'grace_period'    => $grace_period,
+                    'enable_2fa'      => $enable_2fa,
+                ];
+
+                // Save sanitized settings
+                update_option('sitelock_2fa_settings', $sanitized_settings);
+
+                // If 2FA is enabled and the current user's role is mandatory, set a "settings saved" cookie
+                // This prevents immediate redirect to setup page upon saving settings
+                if ($enable_2fa) {
+                    $current_user = wp_get_current_user();
+                    $user_roles = $current_user->roles;
+                    if (array_intersect($user_roles, $submitted_roles)) {
+                        Sitelock_Secure_Cookie::set('sitelock_2fa_settings_saved', 'true', DAY_IN_SECONDS);
+                    }
+                }
+            }
+
+
             // save login lockout settings
             update_option('sitelock_login_lockout_enabled', isset($_POST['sitelock_login_lockout_enabled']) ? sanitize_text_field(wp_unslash($_POST['sitelock_login_lockout_enabled'])) : 0);
 
@@ -697,7 +837,7 @@ class Sitelock_Admin
     {
         // Verify nonce to ensure the request is valid
         if (isset($_GET['report_type']) && (!isset($_GET['_wpnonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'sitelock_activity_logs_nonce'))) {
-            wp_die(esc_html__('Nonce verification failed. Please try again.', 'sitelock-wordpress-plugin'));
+            wp_die(esc_html($this->sitelock_language_tokens['common_errors']['nonceVerificationFailed']));
         }
         global $wpdb;
 
@@ -716,7 +856,7 @@ class Sitelock_Admin
                 'items_per_page'             => $items_per_page,
                 'paged'                      => $paged,
                 'sitelock_connection_status' => $this->api->auth->get_auth_key(),
-                'sitelock_language_tokens'   => get_language_tokens(),
+                'sitelock_language_tokens'   => sitelock_get_language_tokens(),
                 'status_filter'              => '',
                 'date_filter'                => '',
                 'start_date'                 => '',
@@ -738,9 +878,11 @@ class Sitelock_Admin
 
         // Status filter
         if ($status_filter === 'success') {
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
             $conditions[]   = 'status = %s';
             $prepare_args[] = 'success';
         } elseif ($status_filter === 'failure') {
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
             $conditions[]   = 'status = %s';
             $prepare_args[] = 'failure';
         }
@@ -750,6 +892,7 @@ class Sitelock_Admin
             $start = gmdate('Y-m-d', strtotime('-6 days')); // last 7 days including today
             $end   = gmdate('Y-m-d');
 
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
             $conditions[]   = 'DATE(logged_at) BETWEEN %s AND %s';
             $prepare_args[] = $start;
             $prepare_args[] = $end;
@@ -760,6 +903,7 @@ class Sitelock_Admin
             $date_regex = '/^\d{4}-\d{2}-\d{2}$/';
             if (preg_match($date_regex, $start_date) && preg_match($date_regex, $end_date)) {
                 if (strtotime($start_date) <= strtotime($end_date)) {
+                    // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
                     $conditions[]   = 'DATE(logged_at) BETWEEN %s AND %s';
                     $prepare_args[] = $start_date;
                     $prepare_args[] = $end_date;
@@ -781,8 +925,10 @@ class Sitelock_Admin
         }
 
         // Build WHERE clause
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $where_clause = '';
         if (! empty($conditions)) {
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
             $where_clause = 'WHERE ' . implode(' AND ', $conditions);
         }
 
@@ -791,10 +937,16 @@ class Sitelock_Admin
         $total_items     = wp_cache_get($cache_key_total, 'sitelock_login_logs_count_cache');
 
         if ($total_items === false) {
-            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-            $total_items = $wpdb->get_var("SELECT COUNT(*) FROM {$table}");
-            $total_items = $total_items !== null ? $total_items : 0;
-            wp_cache_set($cache_key_total, $total_items, 'sitelock_login_logs_count_cache', 3600);
+            if (preg_match('/^[a-zA-Z0-9_]+$/', $table)) {
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+                $table_escaped = esc_sql($table);
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+                $total_items = $wpdb->get_var("SELECT COUNT(*) FROM $table_escaped");
+                $total_items = $total_items !== null ? (int) $total_items : 0;
+                wp_cache_set($cache_key_total, $total_items, 'sitelock_login_logs_count_cache', 3600);
+            } else {
+                $total_items = 0;
+            }
         }
 
         // Count total items with filter - cached
@@ -802,19 +954,23 @@ class Sitelock_Admin
         $filtered_total_items     = wp_cache_get($filtered_count_cache_key, 'sitelock_login_logs_status_count_cache');
 
         if ($filtered_total_items === false) {
-            if (! empty($prepare_args)) {
-                // Merge prepare args for count query
-                $count_query = "SELECT COUNT(*) FROM {$table} {$where_clause}";
-                // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-                $filtered_total_items = $wpdb->get_var($wpdb->prepare($count_query, ...$prepare_args));
+            if (preg_match('/^[a-zA-Z0-9_]+$/', $table)) {
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+                $table_escaped = esc_sql($table);
+                if (! empty($prepare_args)) {
+                    // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+                    $query = "SELECT COUNT(*) FROM $table_escaped $where_clause";
+                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.Security.EscapeOutput.UnsafeQuery
+                    $filtered_total_items = $wpdb->get_var($wpdb->prepare(esc_sql($query), ...$prepare_args));
+                } else {
+                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+                    $filtered_total_items = $wpdb->get_var("SELECT COUNT(*) FROM $table_escaped");
+                }
+                $filtered_total_items = $filtered_total_items !== null ? (int) $filtered_total_items : 0;
+                wp_cache_set($filtered_count_cache_key, $filtered_total_items, 'sitelock_login_logs_status_count_cache', 3600);
             } else {
-                // No dynamic placeholders; safe to run directly
-                // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-                $filtered_total_items = $wpdb->get_var("SELECT COUNT(*) FROM {$table}");
+                $filtered_total_items = 0;
             }
-
-            $filtered_total_items = $filtered_total_items !== null ? $filtered_total_items : 0;
-            wp_cache_set($filtered_count_cache_key, $filtered_total_items, 'sitelock_login_logs_status_count_cache', 3600);
         }
 
         // Fetch logs with filter and pagination - cached
@@ -822,24 +978,24 @@ class Sitelock_Admin
         $logs                    = wp_cache_get($filtered_logs_cache_key, 'sitelock_login_logs_filter_log_cache');
 
         if ($logs === false) {
-            $select_query = "SELECT * FROM {$table} {$where_clause} ORDER BY logged_at DESC LIMIT %d OFFSET %d";
+            if (preg_match('/^[a-zA-Z0-9_]+$/', $table)) {
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+                $table_escaped = esc_sql($table);
+                $final_prepare_args   = $prepare_args;
+                $final_prepare_args[] = $items_per_page;
+                $final_prepare_args[] = $offset;
 
-            // Build final prepare args: first the date/status placeholders, then the limit and offset
-            $final_prepare_args   = $prepare_args;
-            $final_prepare_args[] = $items_per_page;
-            $final_prepare_args[] = $offset;
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+                $query = "SELECT * FROM $table_escaped $where_clause ORDER BY logged_at DESC LIMIT %d OFFSET %d";
 
-            if (! empty($final_prepare_args)) {
-                // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-                $logs = $wpdb->get_results($wpdb->prepare($select_query, ...$final_prepare_args));
+                // phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.Security.EscapeOutput.UnsafeQuery
+                $logs = $wpdb->get_results($wpdb->prepare($query, ...$final_prepare_args));
+
+                $logs = $logs !== null ? $logs : [];
+                wp_cache_set($filtered_logs_cache_key, $logs, 'sitelock_login_logs_filter_log_cache', 3600);
             } else {
-                // No dynamic placeholders besides limit/offset
-                // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-                $logs = $wpdb->get_results($wpdb->prepare($select_query, $items_per_page, $offset));
+                $logs = [];
             }
-
-            $logs = $logs !== null ? $logs : [];
-            wp_cache_set($filtered_logs_cache_key, $logs, 'sitelock_login_logs_filter_log_cache', 3600);
         }
 
         return [
@@ -848,7 +1004,7 @@ class Sitelock_Admin
             'items_per_page'             => $items_per_page,
             'paged'                      => $paged,
             'sitelock_connection_status' => $this->api->auth->get_auth_key(),
-            'sitelock_language_tokens'   => get_language_tokens(),
+            'sitelock_language_tokens'   => sitelock_get_language_tokens(),
             'status_filter'              => $status_filter,
             'date_filter'                => $date_filter,
             'start_date'                 => $start_date,
@@ -860,7 +1016,7 @@ class Sitelock_Admin
     {
         // Verify nonce to ensure the request is valid
         if (isset($_GET['report_type']) && (! isset($_GET['_wpnonce']) || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'sitelock_activity_logs_nonce'))) {
-            wp_die(esc_html__('Nonce verification failed. Please try again.', 'sitelock-wordpress-plugin'));
+            wp_die(esc_html($this->sitelock_language_tokens['common_errors']['nonceVerificationFailed']));
         }
 
         global $wpdb;
@@ -877,12 +1033,11 @@ class Sitelock_Admin
 
         if ($total_items === false) {
             if (preg_match('/^[a-zA-Z0-9_]+$/', $table_name)) {
-                // Table name validated by regex; escape for SQL context
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
                 $table_name_escaped = esc_sql($table_name);
 
-                // Use a prepared statement with a constant predicate to satisfy coding standards; table name already validated above.
-                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-                $total_items = (int) $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$table_name_escaped} WHERE %d = %d", 1, 1));
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+                $total_items = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table_name_escaped");
 
                 if ($total_items === false) {
                     $total_items = 0;
@@ -905,9 +1060,11 @@ class Sitelock_Admin
         $prepare_args = [];
 
         if ($status_filter === 'suspicious') {
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
             $conditions[]   = 'is_suspicious = %d';
             $prepare_args[] = 1;
         } elseif ($status_filter === 'trusted') {
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
             $conditions[]   = 'is_suspicious = %d';
             $prepare_args[] = 0;
         }
@@ -916,6 +1073,7 @@ class Sitelock_Admin
             $start = gmdate('Y-m-d', strtotime('-6 days'));
             $end   = gmdate('Y-m-d');
 
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
             $conditions[]   = 'DATE(logged_at) BETWEEN %s AND %s';
             $prepare_args[] = $start;
             $prepare_args[] = $end;
@@ -926,6 +1084,7 @@ class Sitelock_Admin
             $date_regex = '/^\d{4}-\d{2}-\d{2}$/';
             if (preg_match($date_regex, $start_date) && preg_match($date_regex, $end_date)) {
                 if (strtotime($start_date) <= strtotime($end_date)) {
+                    // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
                     $conditions[]   = 'DATE(logged_at) BETWEEN %s AND %s';
                     $prepare_args[] = $start_date;
                     $prepare_args[] = $end_date;
@@ -944,8 +1103,10 @@ class Sitelock_Admin
         }
 
         // Compose WHERE clause (conditions already use placeholders)
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $where_sql = '';
         if (! empty($conditions)) {
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
             $where_sql = ' WHERE ' . implode(' AND ', $conditions);
         }
 
@@ -955,16 +1116,19 @@ class Sitelock_Admin
 
         if ($logs === false) {
             if (preg_match('/^[a-zA-Z0-9_]+$/', $table_name)) {
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
                 $table_name_escaped = esc_sql($table_name);
 
                 // Final prepare args: first the condition values, then limit and offset
                 $final_prepare_args   = $prepare_args;
                 $final_prepare_args[] = $items_per_page;
                 $final_prepare_args[] = $offset;
-                $limit_query          = 'LIMIT %d OFFSET %d';
-                // Prepare and execute query
-                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-                $logs = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$table_name_escaped}{$where_sql} ORDER BY logged_at DESC {$limit_query}", $final_prepare_args));
+
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+                $query = "SELECT * FROM $table_name_escaped$where_sql ORDER BY logged_at DESC LIMIT %d OFFSET %d";
+
+               // phpcs:ignore PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.Security.EscapeOutput.UnsafeQuery
+                $logs = $wpdb->get_results($wpdb->prepare($query, ...$final_prepare_args));
 
                 if ($logs !== false) {
                     wp_cache_set($cache_key_logs, $logs, '', 3600);
@@ -982,7 +1146,7 @@ class Sitelock_Admin
             'items_per_page'             => $items_per_page,
             'paged'                      => $paged,
             'sitelock_connection_status' => $this->api->auth->get_auth_key(),
-            'sitelock_language_tokens'   => get_language_tokens(),
+            'sitelock_language_tokens'   => sitelock_get_language_tokens(),
             'status_filter'              => $status_filter,
             'date_filter'                => $date_filter,
             'start_date'                 => $start_date,
@@ -1011,12 +1175,11 @@ class Sitelock_Admin
         // Add the database prefix to the table name
         $full_table_name = $wpdb->prefix . $table_name;
 
-        // Sanitize the table name
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $full_table_name = esc_sql($full_table_name);
 
-        // Query the database to get the row count
-        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        $row_count = $wpdb->get_var("SELECT COUNT(*) FROM {$full_table_name}");
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.Security.EscapeOutput.UnsafeQuery
+        $row_count = $wpdb->get_var("SELECT COUNT(*) FROM " . esc_sql($full_table_name));
 
         // Return the row count or 0 if the query fails
         return $row_count !== null ? intval($row_count) : 0;
@@ -1041,7 +1204,7 @@ class Sitelock_Admin
                 $redirect_to = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . "://{$http_host}{$request_uri}";
 
                 // Redirect to the login page and set UTR to return to after login
-                wp_redirect(wp_login_url($redirect_to));
+                wp_safe_redirect(wp_login_url($redirect_to));
                 exit; // Important to exit after redirection
             }
         }
@@ -1060,34 +1223,37 @@ class Sitelock_Admin
         );
     }
 
-public function sitelock_upgrade_page_callback() {
-    $this->wpslp_partner_data = $this->api->sites->get_partner_preference('customer_support_options');
-    include plugin_dir_path(__FILE__) . 'pages/upgrade.php';
-}
-
-public function sitelock_scan_enqueue_scripts() {
-    // Prevents nonce leaking to unauthorized users by only enqueuing the script for users with manage_options capability
-    if (!current_user_can('manage_options')) {
-        return;
+    public function sitelock_upgrade_page_callback()
+    {
+        $this->wpslp_partner_data = $this->api->sites->get_partner_preference('customer_support_options');
+        include plugin_dir_path(__FILE__) . 'pages/upgrade.php';
     }
-        
-    wp_enqueue_script('sitelock-scan', plugin_dir_url(__FILE__) . 'js/sitelock-scan.js', ['jquery'], '1.0', true);
 
-    wp_localize_script('sitelock-scan', 'sitelockPlugin', [
-    'ajax_url' => admin_url('admin-ajax.php'),
-    'nonce'    => wp_create_nonce('sitelock_scan_nonce'),
-    'pluginUrl' => plugin_dir_url(__FILE__),
-    ]);
-}
-public function sitelock_scan_callback() {
-    check_ajax_referer('sitelock_scan_nonce', 'nonce');
+    public function sitelock_scan_enqueue_scripts()
+    {
+        // Prevents nonce leaking to unauthorized users by only enqueuing the script for users with manage_options capability
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        wp_enqueue_script('sitelock-scan', plugin_dir_url(__FILE__) . 'js/sitelock-scan.js', ['jquery'], '1.0', true);
+
+        wp_localize_script('sitelock-scan', 'sitelockPlugin', [
+            'ajax_url'  => admin_url('admin-ajax.php'),
+            'nonce'     => wp_create_nonce('sitelock_scan_nonce'),
+            'pluginUrl' => plugin_dir_url(__FILE__),
+        ]);
+    }
+    public function sitelock_scan_callback()
+    {
+        check_ajax_referer('sitelock_scan_nonce', 'nonce');
 
     if (!current_user_can('manage_options')) {
         wp_send_json_error(['message' => 'Unauthorized'], 403);
     }
 
-    $scanType = isset($_POST['scan_type']) ? sanitize_text_field(wp_unslash($_POST['scan_type'])) : ''; // Default to 'patchman' if not provided
-    $response = $this->api->sites->post_scan_now($scanType);
+        $scanType = isset($_POST['scan_type']) ? sanitize_text_field(wp_unslash($_POST['scan_type'])) : ''; // Default to 'patchman' if not provided
+        $response = $this->api->sites->post_scan_now($scanType);
 
     // Check if the response is valid and print it
     if (is_array($response) && isset($response['status']) && $response['status'] === 'scan_queued') {
@@ -1103,4 +1269,3 @@ public function sitelock_scan_callback() {
 
 
 }
-

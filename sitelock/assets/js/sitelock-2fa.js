@@ -58,7 +58,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const recoveryErrorElement = document.querySelector('#recovery-group .sitelock-recovery-error');
   const recoveryVisible = recoveryErrorElement !== null ? recoveryErrorElement : false;
-  showRecovery(null, recoveryVisible);
+  if (toggle) {
+    showRecovery(null, recoveryVisible);
+  }
 
   // Attach toggle listener
   if (toggle) toggle.addEventListener('click', showRecovery);

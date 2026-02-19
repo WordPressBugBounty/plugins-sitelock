@@ -96,7 +96,7 @@ class Sitelock_Force_Logout
                 // Redirect with header fallback
                 $redirect_url = home_url('/?session_expired=1');
                 if (!headers_sent()) {
-                    wp_redirect($redirect_url);
+                    wp_safe_redirect($redirect_url);
                     exit;
                 } else {
                     echo '<script>window.location.href="' . esc_url($redirect_url) . '";</script>';

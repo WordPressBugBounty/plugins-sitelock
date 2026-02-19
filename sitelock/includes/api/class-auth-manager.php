@@ -53,6 +53,7 @@ class AuthManager
 
     public const OPTION_KEY     = 'sitelock_verification_code';
     public const SESSION_ID_KEY = 'sitelock_session_id';
+    private $sitelock_language_tokens;
 
     /**
      * Initialize the class and set its properties.
@@ -62,6 +63,12 @@ class AuthManager
      */
     public function __construct($version, $apiHelper)
     {
+        if (function_exists('sitelock_get_language_tokens')) {
+            $this->sitelock_language_tokens = sitelock_get_language_tokens();
+        } else {
+            $this->sitelock_language_tokens = [];
+        }
+
         // Set plugin version
         $this->version = $version;
 
@@ -97,6 +104,20 @@ class AuthManager
     }
 
     /**
+     * Get JWT key Set
+     *
+     * @since   5.1.0
+     */
+    public function get_jwt_key($url)
+    {
+        $base_url = sitelock_api_url('secure') . '/_services';
+        $endpoint = parse_url($url, PHP_URL_PATH);
+        $url = $base_url . $endpoint;
+
+        return $this->apiHelper->call_api($url);
+    }
+
+    /**
      * Sets auth key when received as request
      *
      * @since    5.0.0
@@ -115,7 +136,7 @@ class AuthManager
                 // Update the token
                 $this->save_new_token($jwt);
                 // Get site ID from JWT audience claim
-                $site_id = get_JWT_claim($jwt, 'sub');
+                $site_id = sitelock_get_jwt_claim($jwt, 'sub');
                 update_option('sitelock_site_id', $site_id);
 
                 return true;
@@ -181,7 +202,7 @@ class AuthManager
                 // Update the token
                 $this->save_new_token($jwt);
                 // Get site ID from JWT audience claim
-                $site_id = get_JWT_claim($jwt, 'sub');
+                $site_id = sitelock_get_jwt_claim($jwt, 'sub');
                 update_option('sitelock_site_id', $site_id);
                 update_option('sitelock_license_key', $license_key);
                 set_transient('sitelock_auth_success', 'Successfully activated your SiteLock account.', 60); // Store error for 60 seconds
@@ -207,7 +228,7 @@ class AuthManager
         $token_exchange_endpoint = sitelock_api_url() . '/_services/oauth/token';
         $code_verifier           = $this->get_verification_code(true);
         $state_session_id        = $this->get_session_id(true);
-        $site_root               = get_site_hostname(true);
+        $site_root               = sitelock_get_site_hostname(true);
 
         $payload = [
             'grant_type'    => 'client_credentials',
@@ -216,6 +237,7 @@ class AuthManager
             'code_verifier' => $code_verifier,
             'state'         => $state_session_id,
             'redirect_uri'  => "{$site_root}/?rest_route=/sitelock/v1/verify",
+            'dpop_type'     => 'jwt',
         ];
 
         $dpop_flag = sitelock_get_test_var('dpop');
@@ -234,7 +256,7 @@ class AuthManager
     public function activate_email_key($nonce)
     {
         if (!isset($nonce) || !wp_verify_nonce(sanitize_text_field(wp_unslash($nonce)), 'activate_email_key_action')) {
-            wp_die(esc_html__('Nonce verification failed. Please try again.1', 'sitelock-wordpress-plugin'));
+            wp_die(esc_html($this->sitelock_language_tokens['common_errors']['nonceVerificationFailed']));
         }
         $license_key = isset($_GET['license_key']) ? sanitize_text_field(wp_unslash($_GET['license_key'])) : '';
         $this->handle_auth($license_key);

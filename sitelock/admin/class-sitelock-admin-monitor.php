@@ -341,15 +341,8 @@ class SiteLock_Admin_Monitor
                 $table_name = esc_sql($table);
 
                 // Prepare and execute query
-                // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-                $existing_entry_id = $wpdb->get_var(
-                    $wpdb->prepare(
-                        'SELECT id FROM %s WHERE user_id = %d AND action = %s',
-                        $table_name,
-                        $user->ID,
-                        'role_changed'
-                    )
-                );
+                // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+                $existing_entry_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$table_name} WHERE user_id = %d AND action = %s", $user->ID, 'role_changed'));
 
                 // Cache the result
                 wp_cache_set($cache_key, $existing_entry_id, $cache_group, HOUR_IN_SECONDS);
