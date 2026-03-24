@@ -3,7 +3,7 @@ Contributors: SiteLockSecurity, SiteLock, tlow
 Tags: wordpress-security, malware-scan, vulnerability-scanner, login-security, site-health
 Requires at least: 3.8
 Tested up to: 6.9
-Requires PHP: 7.2
+Requires PHP: 8.0
 Stable tag: 5.1.0
 Language: English
 License: GPLv2 or later
