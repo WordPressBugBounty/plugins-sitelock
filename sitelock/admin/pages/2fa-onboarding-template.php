@@ -45,7 +45,7 @@ include dirname(__DIR__) . '/partials/2fa/header.php';
         <?php 
         $skip_url = wp_nonce_url(add_query_arg(['action' => 'sitelock_2fa_skip']), 'sitelock_2fa_skip_action'); 
         ?>
-        <a href="<?php echo esc_url($skip_url); ?>" class="text-[14px] text-[#2D68C4] hover:underline no-underline">
+        <a href="<?php echo esc_url($skip_url); ?>" class="w-full h-[32px] btn-secondary">
             <?php esc_html_e('Skip for Now', 'sitelock-wordpress-plugin'); ?>
         </a>
     <?php endif; ?>

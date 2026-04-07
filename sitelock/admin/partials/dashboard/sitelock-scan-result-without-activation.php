@@ -32,7 +32,7 @@ $sitelock_show_free_badge = in_array($sitelock_list, ['spam_scan', 'ssl_scan']) 
 
         <!-- Learn Moren / Close button -->
         <div class="flex items-center col-span-3">
-                <button type="button" class="toggle-learn-more learn-more-box w-[112px] px-4 text-[14px] text-center py-[6px] bg-[#F6F9FE] text-[#083C8C] border-blue rounded cursor-pointer" data-id="<?php echo esc_attr($sitelock_list); ?>">
+                <button type="button" class="toggle-learn-more learn-more-box btn-secondary w-[112px] h-[32px] px-4" data-id="<?php echo esc_attr($sitelock_list); ?>">
                     <?php echo esc_html($sitelock_language_tokens['var']['learnMore']); ?>
                 </button>
         </div>
@@ -64,7 +64,7 @@ $sitelock_show_free_badge = in_array($sitelock_list, ['spam_scan', 'ssl_scan']) 
                 <div class="col-span-12">
                     <div class="ml-10 flex justify-start items-center gap-5">
                         <a href="<?php echo esc_url('https://www.sitelock.com/pricing'); ?>" target="_blank"
-                            class="text-[14px] p-0 md:py-1 w-[112px] h-[32px] text-center bg-[#2D68C4] text-[#fff] hover:text-[#fff] focus:text-[#fff] rounded inline-flex justify-center items-center">
+                            class="btn-primary w-[112px] h-[32px]">
                             <?php echo esc_html($sitelock_language_tokens['var']['pickPlan']); ?> </a>
 
                         <p class="text-[14px]"><?php echo esc_html($sitelock_language_tokens['var']['requiredPlanForSecurityScan']); ?></p>
@@ -81,7 +81,7 @@ $sitelock_show_free_badge = in_array($sitelock_list, ['spam_scan', 'ssl_scan']) 
 
                     <div class="ml-10 flex justify-start items-center gap-5">
                         <a href="<?php echo esc_url('https://www.sitelock.com/pricing'); ?>" target="_blank"
-                            class="text-[14px] p-0 md:py-1 w-[112px] h-[32px] text-center bg-[#2D68C4] text-[#fff] hover:text-[#fff] focus:text-[#fff] rounded inline-flex justify-center items-center">
+                            class="btn-primary w-[112px] h-[32px]">
                             <?php echo esc_html($sitelock_language_tokens['var']['pickPlan']); ?> </a>
 
                         <p class="text-[14px]"><?php echo esc_html($sitelock_language_tokens['var']['requiredPlan']); ?></p>

@@ -1,6 +1,6 @@
 <?php defined( 'ABSPATH' ) || exit; ?>
 
-<div id="site-health" class="simple-box border-grey-light bg-[#fff] mb-6">
+<div id="site-health" class="simple-box border-[#DDDDDD] bg-[#fff] mb-6">
 
     <!-- Standard header -->
     <div class="header flex items-center justify-between px-3 sm:px-5 py-3">
@@ -133,7 +133,7 @@
             </div>
             </div>
 
-            <div class="rich-text">
+            <div class="rich-text text-[#333333]">
             <?php echo esc_html($sitelock_language_tokens['health_map_descriptions'][$sitelock_health_stage]); ?>
 
             </div>
@@ -144,11 +144,11 @@
             <div class="bg-gradient-to-b from-[#F7F7F7] to-[#FFFFFF] py-4 px-10">
             <div class="flex items-center justify-center gap-5">
                 <a href="<?php echo esc_url(sitelock_get_redirect_url('signup') . admin_url()); ?>" target="_blank" rel="noopener noreferrer"
-                    class="px-3 sm:px-6 lg:px-[20px] xl:px-6 text-[14px] text-center py-[6px] bg-[#2D68C4] text-[#fff] hover:text-[#fff] focus:text-[#fff] rounded">
+                    class="w-[163px] btn-primary">
                     <?php echo esc_html($sitelock_language_tokens['var']['activateFreeAccount']); ?>
                 </a>
                 <a href="<?php echo esc_url(sitelock_get_redirect_url('comparePlan')); ?>" target="_blank" rel="noopener noreferrer"
-                    class="px-3 sm:px-6 lg:px-[20px] xl:px-6 text-[14px] text-center py-[5px] bg-[#F6F9FE] text-[#083C8C] rounded border-blue">
+                    class="w-[163px] btn-secondary">
                     <?php echo esc_html($sitelock_language_tokens['var']['comparePlans']); ?>
                 </a>
             </div>

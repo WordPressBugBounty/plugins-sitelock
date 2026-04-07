@@ -1,5 +1,10 @@
 == Changelog ==
 
+= 5.1.1 =
+_Release Date April 7, 2026_
+
+* Feature: New SiteLock branding
+
 = 5.1.0 =
 _Release Date February 19, 2026_
 

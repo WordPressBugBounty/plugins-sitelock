@@ -63,7 +63,7 @@ $step_three_tokens = $sitelock_language_tokens['two_factor_authentication_settin
         </div>
 
         <div class="sitelock-recovery-actions gap-4">
-            <button type="button" onclick="downloadBackupCodes()" class="sitelock-btn-download w-[164px] h-[32px] text-[#2D68C4] bg-[#F6F9FE] border border-solid border-[#A2BEEB] rounded text-[14px] hover:bg-gray-50 transition-colors">
+            <button type="button" onclick="downloadBackupCodes()" class="sitelock-btn-download w-[164px] h-[32px] btn-secondary">
                 <?php echo esc_html($step_three_tokens['downloadCodes']); ?>
             </button>
             
@@ -71,7 +71,7 @@ $step_three_tokens = $sitelock_language_tokens['two_factor_authentication_settin
                 <?php esc_html_e('When you’re done saving your recovery codes, continue to your account.', 'sitelock-wordpress-plugin'); ?>
             </p>
 
-            <a href="<?php echo esc_url(admin_url()); ?>" class="sitelock-btn-continue inline-block w-[164px] h-[32px] bg-[#2D68C4] text-white rounded text-[14px] flex items-center justify-center no-underline hover:bg-[#1e4a8c] transition-colors">
+            <a href="<?php echo esc_url(admin_url()); ?>" class="sitelock-btn-continue w-[164px] h-[32px] btn-primary !block">
                 <?php esc_html_e('Continue to Dashboard', 'sitelock-wordpress-plugin'); ?>
             </a>
         </div>

@@ -1,4 +1,4 @@
-<div id="login-security" class="hidden simple-box border-grey-light bg-[#fff] mb-5 p-8 min-h-full xl:min-h-[500px]">
+<div id="login-security" class="hidden simple-box border-[#DDDDDD] bg-[#fff] mb-5 p-8 min-h-full xl:min-h-[500px]">
   <div class="mb-6 w-full xl:w-[595px] box-title text-[30px]">
         <h3 class="mb-5"><?php echo esc_html($sitelock_language_tokens['login_security_list_settings']['title']) ?></h3>
         <p class="text-[14px]"><?php echo esc_html($sitelock_language_tokens['login_security_list_settings']['description']) ?></p>
@@ -333,7 +333,7 @@
             </div>
         </div>
         <div class="mb-7">
-            <button type="submit" class="w-[118px] h-[36px] bg-[#2D68C4] text-[#fff] rounded"><?php echo esc_html($sitelock_language_tokens['var']['saveChanges']) ?></button>
+            <button type="submit" class="w-[131px] h-[32px] btn-primary"><?php echo esc_html($sitelock_language_tokens['var']['saveChanges']) ?></button>
         </div>             
     </form>
     </div>

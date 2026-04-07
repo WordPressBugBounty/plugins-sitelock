@@ -76,7 +76,7 @@ $sitelock_language_tokens = sitelock_get_language_tokens();
 
                 <!-- Filter button -->
                 <div class="filter-section">
-                    <button id="apply-filters" type="button" class="button button-lite">
+                    <button id="apply-filters" type="button" class="button button-lite w-[100px] h-[32px] btn-secondary">
                         <?php echo esc_html($sitelock_language_tokens['var']['filter']); ?>
                     </button>
                 </div>

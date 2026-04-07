@@ -60,10 +60,10 @@ jQuery(function ($) {
                      : 'We were unable to initiate a scan. Please ' +
                        (response?.data?.partner_data?.dashboard_visibility?.value?.help?.action ===
                        '[default]'
-                         ? '<a href="https://www.sitelock.com/help-center/" target="_blank" rel="noopener noreferrer" class="inline underline text-[#2d68c4]">contact support</a> for more assistance.'
+                         ? '<a href="https://www.sitelock.com/help-center/" target="_blank" rel="noopener noreferrer" class="inline underline text-[#2161CC]">contact support</a> for more assistance.'
                          : response?.data?.partner_data?.dashboard_visibility?.value?.help
                                ?.action === 'redirect'
-                           ? `<a href="${response?.data?.partner_data?.dashboard_visibility?.value?.help?.url ? response.data.partner_data.dashboard_visibility.value.help.url : ''}" target="_blank" rel="noopener noreferrer" class="inline underline text-[#2d68c4]">contact support</a> for more assistance.`
+                           ? `<a href="${response?.data?.partner_data?.dashboard_visibility?.value?.help?.url ? response.data.partner_data.dashboard_visibility.value.help.url : ''}" target="_blank" rel="noopener noreferrer" class="inline underline text-[#2161CC]">contact support</a> for more assistance.`
                            : 'contact support for more assistance.')
                  }
             </div>
@@ -132,10 +132,10 @@ jQuery(function ($) {
                       : 'We were unable to initiate a scan. Please ' +
                         (response?.data?.partner_data?.dashboard_visibility?.value?.help?.action ===
                         '[default]'
-                          ? '<a href="https://www.sitelock.com/help-center/" target="_blank" rel="noopener noreferrer" class="inline underline text-[#2d68c4]">contact support</a> for more assistance.'
+                          ? '<a href="https://www.sitelock.com/help-center/" target="_blank" rel="noopener noreferrer" class="inline underline text-[#2161CC]">contact support</a> for more assistance.'
                           : response?.data?.partner_data?.dashboard_visibility?.value?.help
                                 ?.action === 'redirect'
-                            ? `<a href="${response?.data?.partner_data?.dashboard_visibility?.value?.help?.url ? response.data.partner_data.dashboard_visibility.value.help.url : ''}" target="_blank" rel="noopener noreferrer" class="inline underline text-[#2d68c4]">contact support</a> for more assistance.`
+                            ? `<a href="${response?.data?.partner_data?.dashboard_visibility?.value?.help?.url ? response.data.partner_data.dashboard_visibility.value.help.url : ''}" target="_blank" rel="noopener noreferrer" class="inline underline text-[#2161CC]">contact support</a> for more assistance.`
                             : 'contact support for more assistance.')
                   }
           </div>

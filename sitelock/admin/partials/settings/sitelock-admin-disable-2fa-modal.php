@@ -63,7 +63,7 @@ $cancel_button_text  = $cancel_button_text ?? 'Cancel';
         </div>
 
         <!-- Warning box -->
-        <p class="bg-[#FCEDED] mb-5 py-4 px-6 text-[14px] rounded leading-[150%]" id="2fa-disable-confirmation-description">
+        <p class="bg-[#FBE9E9] mb-5 py-4 px-6 text-[14px] rounded leading-[150%]" id="2fa-disable-confirmation-description">
             <?php echo wp_kses_post($warning_text); ?>
         </p>
 
@@ -108,10 +108,7 @@ $cancel_button_text  = $cancel_button_text ?? 'Cancel';
         <!-- Buttons -->
         <div class="flex justify-between gap-3 mt-8">
             <button type="button"
-                    class="w-[100px] sm:w-[119px] h-[32px]
-                        bg-[#F6F9FE] text-[#083C8C]
-                        border border-solid border-[#A2BEEB]
-                        rounded close-modal">
+                    class="w-[100px] sm:w-[119px] h-[32px] btn-secondary close-modal">
                 <?php echo esc_html($cancel_button_text); ?>
             </button>
 
@@ -119,7 +116,7 @@ $cancel_button_text  = $cancel_button_text ?? 'Cancel';
                     id='<?php echo esc_attr($confirm_button_id); ?>'
                     name="confirm_disable_2fa"
                     class="w-[100px] sm:w-[119px] h-[32px]
-                        bg-[#DB1010] text-white rounded">
+                        bg-[#DC2626] text-white rounded-[120px]">
                 <?php echo esc_html($confirm_button_text); ?>
             </button>
         </div>

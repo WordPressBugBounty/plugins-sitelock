@@ -75,7 +75,7 @@
         <p class="mr-2 hidden lg:block text-[14px]">
            <?php echo esc_html($sitelock_language_tokens['give_feedback']['note']); ?>
         </p>
-        <a href="<?php echo esc_url('https://wordpress.org/support/plugin/sitelock/reviews/#new-post'); ?>" target="_blank" rel="noopener noreferrer" class="text-[#2D68C4] underline" aria-label="<?php echo esc_attr($sitelock_language_tokens['give_feedback']['leaveReview']); ?>">
+        <a href="<?php echo esc_url('https://wordpress.org/support/plugin/sitelock/reviews/#new-post'); ?>" target="_blank" rel="noopener noreferrer" class="text-[#2161CC] underline" aria-label="<?php echo esc_attr($sitelock_language_tokens['give_feedback']['leaveReview']); ?>">
             <span class="hidden lg:block -ml-1"><?php echo esc_html($sitelock_language_tokens['give_feedback']['leaveReview']); ?></span>
         </a>
     </div>

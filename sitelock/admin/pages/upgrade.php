@@ -16,7 +16,7 @@ $sitelock_connection_status = $this->api->auth->get_auth_key();
         $sitelock_upgrade_phone_2 = isset($sitelock_upgrade_callus_phones[1]) ? trim($sitelock_upgrade_callus_phones[1]) : '+1 (415) 390 2500';
         ?>
 
-        <div class="relative overflow-hidden border border-grey-light rounded upgrade-background-img">
+        <div class="relative overflow-hidden border border-[#DDDDDD] rounded upgrade-background-img">
             <div class="relative z-20 text-center px-5 py-6 sm:py-8 md:py-10 lg:py-12">
                 <div class="max-w-2xl mx-auto">
                     <!-- Custom heading -->
@@ -48,7 +48,7 @@ $sitelock_upgrade_description_html = str_replace(
 
                     <div class="flex justify-center">
                     <a href="<?php echo esc_html('tel:'.str_replace(' ', '', $sitelock_upgrade_phone_1)); ?>"
-                        class="w-[124px] h-[32px] flex items-center justify-center bg-[#2D68C4] text-[#fff] hover:text-[#fff] focus:text-[#fff] rounded">
+                        class="w-[124px] h-[32px] flex items-center justify-center btn-primary">
                         <?php echo esc_html($sitelock_language_tokens['upgrade_page']['callUsNow']) ?>
                     </a>
                     </div>

@@ -110,12 +110,12 @@
             <?php if ($sitelock_service['smart_scan']['availability'] == "upgradable") { ?>
                 <?php if ($this->wpslp_partner_data['upgrade'] === "[default]"): ?>
                     <a href="<?php echo esc_url(admin_url() . 'admin.php?page=sitelock-upgrade'); ?>"
-                        class="w-[180px] text-[14px] py-[7px] text-center rounded bg-[#2D68C4] text-[#fff] hover:text-[#fff] focus:text-[#fff]">
+                        class="w-[180px] h-[32px] btn-primary">
                         <?php echo esc_html($sitelock_language_tokens['var']['upgrade']); ?>
                     </a>
                 <?php elseif ($this->wpslp_partner_data['upgrade']['action'] === 'redirect' && $this->wpslp_partner_data['upgrade']['value']['popup_option'] === 'no_popup'): ?>
                     <a href="<?php echo esc_url($this->wpslp_partner_data['upgrade']['value']['url']); ?>" target="_blank"
-                        class="w-[180px] text-[14px] py-[7px] text-center rounded bg-[#2D68C4] text-[#fff] hover:text-[#fff] focus:text-[#fff]">
+                        class="w-[180px] h-[32px] btn-primary">
                         <?php echo esc_html($sitelock_language_tokens['var']['upgrade']); ?>
                     </a>
     
@@ -125,7 +125,7 @@
                     <?php
                         include(plugin_dir_path(__FILE__) . '../../common/sitelock-modal.php'); ?>
                     <button
-                        class="upgradeOpenModalBtn w-[180px] text-[14px] py-[7px] text-center rounded bg-[#2D68C4] text-[#fff] hover:text-[#fff] focus:text-[#fff]">
+                        class="upgradeOpenModalBtn w-[180px] h-[32px] btn-primary">
                         <?php echo esc_html($sitelock_language_tokens['var']['upgrade']); ?>
                     </button>
     
@@ -133,7 +133,7 @@
             <?php } else { ?>
                 <?php if ($sitelock_service['smart_scan']['showConfigure']) { ?>
                     <a href="<?php echo esc_url(sitelock_api_url() . '/sites/' . esc_attr($sitelock_site_info['id']) . '/' . esc_attr($sitelock_language_tokens['service_setup_url_tokens']['wizard_server'])) ?>"
-                        class="w-full text-[14px] bg-[#F6F9FE] py-[5px] text-center text-[#083C8C] hover:text-[#083C8C] rounded border-blue">
+                        class="w-full h-[32px] <?php echo esc_attr($sitelock_service['smart_scan']['status'] == 'unconfigured' || $sitelock_service['smart_scan']['status'] == 'partiallyConfigured' ? 'btn-primary' : 'btn-secondary') ?>">
                         <?php echo esc_html($sitelock_language_tokens['var']['setup']) ?>
                     </a>
                 <?php } else {
@@ -143,7 +143,7 @@
                     } ?>
                     <button data-scan="smart-scan" data-type="smart_scan" <?php if ($sitelock_next_available_scan_value)
                            echo esc_attr('disabled'); ?>
-                        class="scan-now-button flex-1 text-[14px] bg-[#F6F9FE] py-[5px] text-center text-[#083C8C] hover:text-[#083C8C] rounded border-blue">
+                        class="scan-now-button flex-1 h-[32px] btn-secondary">
                         <?php echo $sitelock_next_available_scan_value
                             ? '<img src="' . esc_url(plugin_dir_url(__FILE__) . '../../../images/pending.svg') . '" class="mr-2" alt="Pending Icon" /> ' . esc_html($sitelock_language_tokens['var']['scanPending'])
                             : esc_html($sitelock_language_tokens['var']['scanNow']); ?>
@@ -154,7 +154,7 @@
                 <?php if (isset($sitelock_service['smart_scan']['lastScan']['scanned_at']) && $sitelock_service['smart_scan']['lastScan']['scanned_at'] && !$sitelock_service['smart_scan']['hideDetails']) { ?>
                     <a target="_blank"
                         href="<?php echo esc_url($sitelock_service['smart_scan']['status'] == 'unconfigured' ? sitelock_api_url() . '/sites/' . esc_attr($sitelock_site_info['id']) . '/' . esc_attr($sitelock_language_tokens['service_url_tokens'][$sitelock_scan_result_url]) : sitelock_api_url() . '/sites/' . esc_attr($sitelock_site_info['id']) . '/' . esc_attr($sitelock_language_tokens['service_url_tokens'][$sitelock_scan_result_url]) . '/' . esc_attr($sitelock_language_tokens['service_url_tokens']['smart'])) ?>"
-                        class="w-full text-[14px] bg-[#2D68C4] py-[6px] text-center text-[#fff] hover:text-[#fff] focus:text-[#fff] rounded <?php echo esc_attr($sitelock_service['smart_scan']['status'] == 'unconfigured' ? 'invisible' : 'visible') ?>">
+                        class="w-full btn-primary h-[32px] <?php echo esc_attr($sitelock_service['smart_scan']['status'] == 'unconfigured' ? 'invisible' : 'visible') ?>">
                         <?php echo esc_html($sitelock_language_tokens['var']['viewDetails']) ?>
                     </a>
                 <?php } ?>

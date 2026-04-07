@@ -28,8 +28,8 @@ $config = $is_wizard ? [
     // Wizard Specifics
     'show_manual_key_ui' => 'wizard', // 'wizard' or 'settings'
     'use_form'           => true,
-    'step2_input_class'  => 'sitelock-input-code w-[120px] h-[36px] text-lg border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none text-left',
-    'step2_btn_class'    => 'sitelock-btn-primary',
+    'step2_input_class'  => 'sitelock-input-code w-[120px] text-lg border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 outline-none text-left',
+    'step2_btn_class'    => 'w-[164px] sitelock-btn-primary',
     'step2_flex_class'   => 'mb-6 flex justify-between items-baseline',
 ] : [
     'step1_wrapper'      => '2fa-scan-code step-1 p-5',
@@ -42,8 +42,8 @@ $config = $is_wizard ? [
     // Settings Specifics
     'show_manual_key_ui' => 'settings',
     'use_form'           => false,
-    'step2_input_class'  => 'input-number h-[36px]',
-    'step2_btn_class'    => 'w-[164px] h-[36px] bg-[#2D68C4] text-[#fff] rounded text-[14px]',
+    'step2_input_class'  => 'input-number',
+    'step2_btn_class'    => 'w-[164px] h-[32px] btn-primary',
     'step2_flex_class'   => 'number flex justify-between items-baseline mb-4',
 ];
 
@@ -131,7 +131,7 @@ $render_header = function($step_key) use ($config, $sitelock_language_tokens) {
         </button>
         
         <?php if ($config['use_form'] && !empty($show_skip) && !empty($skip_url)): ?>
-            <a href="<?php echo esc_url($skip_url); ?>" class="sitelock-link-skip text-[14px] text-[#2D68C4] hover:underline no-underline">
+            <a href="<?php echo esc_url($skip_url); ?>" class="sitelock-link-skip w-[132px] h-[32px] btn-secondary">
                 <?php esc_html_e('Skip for Now', 'sitelock-wordpress-plugin'); ?>
             </a>
         <?php endif; ?>

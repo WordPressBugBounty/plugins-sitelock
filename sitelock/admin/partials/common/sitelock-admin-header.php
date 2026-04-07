@@ -5,9 +5,9 @@
 require_once plugin_dir_path(dirname(__FILE__)) . '../../includes/api/class-sitelock-api.php';
 ?>
 <div class="flex items-center justify-between mt-6 mb-8">
-<div class="flex items-center">
+<div class="flex items-end">
     <img src="<?php echo esc_url(plugin_dir_url(__DIR__) . '../images/sitelock-sectigo-logo.svg'); ?>" alt="SiteLock Logo" class="max-w-[90%] sm:max-w-full w-[180px]" />
-    <h1 class="hidden logo-header sm:block pl-4 leading-none whitespace-nowrap">
+    <h1 class="hidden sm:block logo-header pl-4 leading-none whitespace-nowrap">
         <?php echo esc_html($sitelock_language_tokens['var']['wpSecurity']); ?>
     </h1>
 </div>
@@ -25,7 +25,7 @@ require_once plugin_dir_path(dirname(__FILE__)) . '../../includes/api/class-site
                         <h5 class="my-[3px] text-[13px] leading-[16px] mr-1"><?php echo esc_html($sitelock_language_tokens['var']['connected']) ?> </h5>
                     </div>
                     (&nbsp; <a href="<?php echo esc_url(admin_url() . 'admin.php?page=sitelock-settings&tab=connection-to-sitelock') ?>"
-                        style="white-space: nowrap;text-decoration:underline; " class="text-[#2d68c4]"> <?php echo esc_html($sitelock_language_tokens['var']['settings']) ?> </a>
+                        style="white-space: nowrap;text-decoration:underline; " class="text-[#2161CC]"> <?php echo esc_html($sitelock_language_tokens['var']['settings']) ?> </a>
                     &nbsp; )
                 </div>
             </div>

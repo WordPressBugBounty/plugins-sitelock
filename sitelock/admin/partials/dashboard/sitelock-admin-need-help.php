@@ -1,6 +1,6 @@
 <?php defined( 'ABSPATH' ) || exit; ?>
 
-<div id="need-help" class="simple-box border-grey-light bg-[#fff] mb-6">
+<div id="need-help" class="simple-box border-[#DDDDDD] bg-[#fff] mb-6">
     <?php
     $sitelock_support_contact_info = isset($this->wpslp_partner_data['customer_support_options']['value']['support_contact_info'])
         ? $this->wpslp_partner_data['customer_support_options']['value']['support_contact_info']
@@ -23,7 +23,7 @@
                 <p class="toll-free-title">
                     <?php echo esc_html($sitelock_language_tokens['var']['website']); ?>
                 </p>
-                <a href="<?php echo esc_url($sitelock_support_contact_info['value']['url']); ?>" class="text-[#2D68C4] text-[14px]" target="_blank">
+                <a href="<?php echo esc_url($sitelock_support_contact_info['value']['url']); ?>" class="text-[#2161CC] text-[14px]" target="_blank">
                     <?php echo esc_html($sitelock_support_contact_info['value']['replacement_text']); ?>
                 </a>
             </div>
@@ -43,7 +43,7 @@
                     <p class="toll-free-title">
                         <?php echo esc_html($sitelock_phone_support[0]); ?>
                     </p>
-                    <a href="<?php echo esc_attr('tel:' . $sitelock_support_phone_number); ?>" class="text-[#2D68C4] text-[14px]">
+                    <a href="<?php echo esc_attr('tel:' . $sitelock_support_phone_number); ?>" class="text-[#2161CC] text-[14px]">
                         <?php echo esc_html($sitelock_phone_support[1]); ?>
                     </a>
                 </div>
@@ -59,7 +59,7 @@
                     <p class="toll-free-title">
                         <?php echo esc_html($sitelock_language_tokens['var']['support']); ?>
                         </p>
-                        <a href="<?php echo esc_attr('tel:' . $sitelock_support_phone_number); ?>" class="text-[#2D68C4] text-[14px]">
+                        <a href="<?php echo esc_attr('tel:' . $sitelock_support_phone_number); ?>" class="text-[#2161CC] text-[14px]">
                             <?php echo esc_html($sitelock_support_contact_info['value']['phone_support']); ?>
                         </a>
                     </div>
@@ -72,7 +72,7 @@
                     <?php echo esc_html($sitelock_language_tokens['var']['email']); ?>
                 </p>
                 <a href="<?php echo esc_attr('mailto:' . $sitelock_support_contact_info['value']['email']); ?>"
-                    class="text-[#2D68C4] text-[14px]">
+                    class="text-[#2161CC] text-[14px]">
                     <?php echo esc_html($sitelock_support_contact_info['value']['email']); ?>
                 </a>
             </div>
@@ -83,7 +83,7 @@
                     <?php echo esc_html($sitelock_language_tokens['var']['tollFree']); ?>
                 </p>
                 <a href="<?php echo esc_attr($sitelock_language_tokens['need_help']['tollFreeUrl']); ?>"
-                    class="text-[#2D68C4] text-[14px]">
+                    class="text-[#2161CC] text-[14px]">
                     <?php echo esc_html($sitelock_language_tokens['need_help']['tollFree']); ?>
                 </a>
             </div>
@@ -93,7 +93,7 @@
                     <?php echo esc_html($sitelock_language_tokens['var']['international']); ?>
                 </p>
                 <a href="<?php echo esc_attr($sitelock_language_tokens['need_help']['internationalUrl']); ?>"
-                    class="text-[#2D68C4] text-[14px]">
+                    class="text-[#2161CC] text-[14px]">
                     <?php echo esc_html($sitelock_language_tokens['need_help']['international']); ?>
                 </a>
             </div>

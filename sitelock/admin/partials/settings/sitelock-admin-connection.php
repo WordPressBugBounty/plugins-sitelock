@@ -3,15 +3,15 @@ $sitelock_site_id = get_option('sitelock_site_id', '');
 ?>
 
 <div id="connection-to-sitelock"
-    class="hidden simple-box border-grey-light bg-[#fff] mb-5 p-8 min-h-full xl:min-h-[500px]">
+    class="hidden simple-box border-[#DDDDDD] bg-[#fff] mb-5 p-8 min-h-full xl:min-h-[500px]">
     <div class="max-w-[640px]">
         <h3 class="box-title mb-4">SiteLock License</h3>
         <?php if (!$sitelock_connection_status) { ?>
         <p class="text-[14px] font-normal leading-[150%] mb-5">
             You can find your SiteLock License Key by logging into your
-            <a href="<?php echo esc_url(sitelock_api_url()) ?>" class="!inline-block underline text-[#2c68c3]" target="_blank" rel="noopener noreferrer">SiteLock Dashboard</a>.
+            <a href="<?php echo esc_url(sitelock_api_url()) ?>" class="!inline-block underline text-[#2161cc]" target="_blank" rel="noopener noreferrer">SiteLock Dashboard</a>.
             <br>If you don’t have a SiteLock account,
-            <a href="<?php echo esc_url(sitelock_get_redirect_url('signup') . admin_url()); ?>" class="!inline-block underline text-[#2c68c3]" target="_blank" rel="noopener noreferrer">sign up here</a>
+            <a href="<?php echo esc_url(sitelock_get_redirect_url('signup') . admin_url()); ?>" class="!inline-block underline text-[#2161cc]" target="_blank" rel="noopener noreferrer">sign up here</a>
             for a free or paid plan to get started.
         </p>
         <?php } ?>
@@ -29,14 +29,14 @@ $sitelock_site_id = get_option('sitelock_site_id', '');
                 </div>
                 <div class="flex items-center gap-4">
                     <?php if (!$sitelock_connection_status) { ?>
-                        <button class="px-3 sm:px-6 py-[7px] text-center rounded"
+                        <button class="w-[136px] h-[32px] btn-primary"
                             type="submit">Save Changes</button>
-                        <a target="_blank" rel="noopener noreferrer" class="px-3 sm:px-6 py-[5px] bg-[#F6F9FE] text-[#083C8C] hover:text-[#083C8C] text-center rounded border-blue"
+                        <a target="_blank" rel="noopener noreferrer" class="w-[136px] h-[32px] btn-secondary"
                             href="<?php echo esc_url(sitelock_api_url() . '/login?redirect_to=site.settings.wordpress&siteId=' . sitelock_get_site_identifier()); ?>">Get License Key</a>
                     <?php } else { ?>
-                        <a class="px-3 sm:px-6 py-[7px] bg-[#2D68C4] text-[#fff] hover:text-[#fff] text-center rounded"
+                        <a class="w-[191px] h-[32px] btn-primary"
                             href="<?php echo esc_url(admin_url('admin.php?page=sitelock')) ?>">Go to SiteLock Dashboard</a>
-                        <a class="px-3 sm:px-6 py-[6px] bg-[#F6F9FE] text-[#083C8C] hover:text-[#083C8C] text-center rounded border-blue"
+                        <a class="w-[132px] h-[32px] btn-secondary"
                             href="<?php echo esc_url(admin_url() . 'admin.php?page=sitelock-settings&tab=connection-to-sitelock&logout=true&_wpnonce=' . wp_create_nonce('sitelock_logout_action')) ?>">Disconnect</a>
                     <?php } ?>
                 </div>

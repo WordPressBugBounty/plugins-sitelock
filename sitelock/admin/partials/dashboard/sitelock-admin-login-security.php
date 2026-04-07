@@ -1,4 +1,4 @@
-<div id="login-security" class="simple-box border-grey-light bg-[#fff] mb-6">
+<div id="login-security" class="simple-box border-[#DDDDDD] bg-[#fff] mb-6">
     <!-- Standard header -->
     <div class="header flex items-center justify-between px-3 sm:px-5 py-3">
         <h4 class="title flex items-center"><?php echo esc_html($sitelock_language_tokens['var']['loginSecurity']) ?></h4>
@@ -135,7 +135,7 @@
         </div>
         
         <a href='<?php echo esc_url(admin_url('admin.php?page=sitelock-settings&tab=login-security')) ?>'
-            class="w-[132px] px-6 text-[14px] text-center py-[6px] bg-[#F6F9FE] text-[#083C8C]  border-blue rounded ml-3 sm:ml-0 my-3">
+            class="w-[132px] h-[32px] btn-secondary ml-3 sm:ml-0 my-3">
             <?php echo esc_html($sitelock_language_tokens['var']['viewSettings']) ?>
         </a>
     </div>

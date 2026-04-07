@@ -65,9 +65,9 @@ if ($warning_message) {
             ?>
             <p class="sitelock-step-title mb-2 text-left text-[16px] font-normal"><?php echo esc_html($step_three_tokens['title']); ?></p>
             <p class="sitelock-step-desc mb-6 text-[14px] leading-relaxed text-left"><?php echo esc_html($step_three_tokens['description']); ?></p>
-                <div class="flex items-center max-w-[870px] border border-[#FFD601] px-4 py-3 rounded relative overflow-hidden">
-                    <span class="absolute left-0 top-0 h-full w-[15px] bg-[#FFD601] opacity-20 pointer-events-none"></span>
-                    <div class="text-[#FFD601] pl-4 pr-4 flex-shrink-0 icon type-warning">
+                <div class="flex items-center max-w-[870px] border border-[#FBBF24] px-4 py-3 rounded relative overflow-hidden">
+                    <span class="absolute left-0 top-0 h-full w-[15px] bg-[#FBBF24] opacity-20 pointer-events-none"></span>
+                    <div class="text-[#FBBF24] pl-4 pr-4 flex-shrink-0 icon type-warning">
                         <svg fill="none" viewBox="0 0 24 21" width="24" height="20" xmlns="http://www.w3.org/2000/svg">
                             <path d="M23.6908 17.3689L13.8464 1.04273C13.4585 0.399563 12.7511 0 12 0C11.2489 0 10.5414 0.399563 10.1535 1.04278L0.309161 17.3689C-0.0916669 18.0337 -0.103526 18.8666 0.278177 19.5425C0.659974 20.2185 1.37932 20.6384 2.15557 20.6384H21.8444C22.6206 20.6384 23.34 20.2185 23.7218 19.5425C24.1035 18.8665 24.0917 18.0336 23.6908 17.3689ZM22.3612 18.7741C22.2561 18.9602 22.0581 19.0758 21.8444 19.0758H2.15557C1.94187 19.0758 1.74382 18.9602 1.63877 18.7742C1.53368 18.5881 1.53696 18.3588 1.64726 18.1758L11.4917 1.84964C11.5985 1.67259 11.7933 1.56258 12 1.56258C12.2067 1.56258 12.4015 1.67259 12.5083 1.84964L22.3527 18.1758C22.463 18.3588 22.4663 18.5881 22.3612 18.7741Z" fill="currentColor"></path>
                             <path d="M12.006 6.42871C11.4116 6.42871 10.9478 6.74765 10.9478 7.31305C10.9478 9.03815 11.1507 11.5171 11.1507 13.2422C11.1507 13.6916 11.5422 13.8801 12.0061 13.8801C12.354 13.8801 12.8468 13.6916 12.8468 13.2422C12.8468 11.5171 13.0498 9.0382 13.0498 7.31305C13.0498 6.7477 12.5714 6.42871 12.006 6.42871Z" fill="#000000"></path>
@@ -96,7 +96,7 @@ if ($warning_message) {
                 <!-- Generate new codes -->
                 <div class="mt-1">
                     <div class="flex justify-center">
-                        <button type="submit" onclick="downloadBackupCodes()" class="w-[164px] h-[36px] bg-[#2D68C4] text-[#fff] rounded">
+                        <button type="submit" onclick="downloadBackupCodes()" class="w-[164px] h-[32px] btn-primary">
                             <?php echo esc_html($step_three_tokens['downloadCodes']); ?>
                         </button>
                     </div>
@@ -134,7 +134,7 @@ if ($warning_message) {
 
                 <!-- Disable the 2FA -->
                 <div class="mb-5">
-                    <button type="button" name="disable_2fa" id="twofa-disable-confirmation" class="w-[120px] h-[32px] bg-[#F6F9FE] text-[#083C8C] rounded border-[1px] border-[#A2BEEB] border-solid">
+                    <button type="button" name="disable_2fa" id="twofa-disable-confirmation" class="w-[120px] h-[32px] btn-secondary">
                         <?php echo esc_html($step_three_tokens['disabled2FA']); ?>
                     </button>
                 </div>

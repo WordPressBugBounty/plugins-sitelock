@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
 }
 ?>
 
-<div id="need-help" class="simple-box border-grey-light bg-[#fff] mb-5 mt-5">
+<div id="need-help" class="simple-box border-[#DDDDDD] bg-[#fff] mb-5 mt-5">
     <!-- Report Body Section -->
     <div class="px-3 sm:px-5 min-h-[100px] pb-0 sm:pb-5 mt-5">
         <div class="overflow-x-auto">

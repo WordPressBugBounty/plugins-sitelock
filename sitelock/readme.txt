@@ -4,7 +4,7 @@ Tags: wordpress-security, malware-scan, vulnerability-scanner, login-security, s
 Requires at least: 3.8
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable tag: 5.1.0
+Stable tag: 5.1.1
 Language: English
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -189,6 +189,11 @@ An on-demand check for key items — useful after you update plugins/themes or c
 
 
 == Changelog ==
+
+= 5.1.1 =
+_Release Date April 7, 2026_
+
+* Feature: New SiteLock branding
 
 = 5.1.0 =
 _Release Date February 19, 2026_

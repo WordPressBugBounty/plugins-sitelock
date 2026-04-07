@@ -6,7 +6,7 @@ $sitelock_upgrade_redirect_url = isset($this->wpslp_partner_data['upgrade']['val
 $sitelock_accepted_feature_list = ['scanning', 'waf', 'backup', 'patchman', 'ssl_scan', 'spam_scan', 'risk_score'];
 ?>
 
-<div id="scan-result" class="simple-box border-grey-light bg-[#fff] mb-6">
+<div id="scan-result" class="simple-box border-[#DDDDDD] bg-[#fff] mb-6">
     <!-- Standard header -->
 
     <?php  if ($sitelock_connection_status) { ?>
@@ -49,13 +49,13 @@ $sitelock_accepted_feature_list = ['scanning', 'waf', 'backup', 'patchman', 'ssl
             <div class="flex justify-between bg-gradient-to-b from-[#F7F7F7] to-[#FFFFFF] py-2 px-2 sm:px-5">
                 <div class="flex items-center justify-start gap-4">
                     <a href="<?php echo esc_url(sitelock_get_redirect_url('signup') . admin_url()); ?>" target="_blank" rel="noopener noreferrer"
-                        class="px-6 text-center py-[6px] bg-[#F6F9FE] text-[#083C8C] border-blue rounded my-3">
+                        class="w-[163px] btn-secondary">
                         <?php echo esc_html($sitelock_language_tokens['var']['activateFreeAccount']); ?>
                     </a>
                 </div>
                 <div class="block sm:flex text-[14px] font-normal leading-[150%] py-4">
                     Already have an account?
-                    <a target="_blank" rel="noopener noreferrer" class="text-[#2D68C4] underline cursor-pointer ml-1"
+                    <a target="_blank" rel="noopener noreferrer" class="text-[#2161CC] underline cursor-pointer ml-1"
                         href="<?php echo esc_url(sitelock_api_url() . '/login?redirect_to=site.settings.wordpress&siteId=' . sitelock_get_site_identifier()); ?>">
                         Get your license key now
                     </a>
@@ -269,12 +269,12 @@ $sitelock_accepted_feature_list = ['scanning', 'waf', 'backup', 'patchman', 'ssl
                             <?php if ($sitelock_service['upgradable']) { ?>
                                 <?php if ($this->wpslp_partner_data['upgrade'] === '[default]'): ?>
                                     <a href="<?php echo esc_url(admin_url() . 'admin.php?page=sitelock-upgrade'); ?>"
-                                        class="w-full text-[14px] py-[7px] text-center rounded bg-[#2D68C4] text-[#fff] hover:text-[#fff] focus:text-[#fff]">
+                                        class="w-full btn-primary h-[32px]">
                                         <?php echo esc_html($sitelock_language_tokens['var']['upgrade']); ?>
                                     </a>
                                 <?php elseif ($this->wpslp_partner_data['upgrade']['action'] === 'redirect' && $this->wpslp_partner_data['upgrade']['value']['popup_option'] === 'no_popup'): ?>
                                     <a href="<?php echo esc_url($this->wpslp_partner_data['upgrade']['value']['url']); ?>" target="_blank"
-                                        class="w-full text-[14px] py-[7px] text-center rounded bg-[#2D68C4] text-[#fff] hover:text-[#fff] focus:text-[#fff]">
+                                        class="w-full btn-primary h-[32px]">
                                         <?php echo esc_html($sitelock_language_tokens['var']['upgrade']); ?>
                                     </a>
                                 <?php elseif ($this->wpslp_partner_data['upgrade']['action'] == 'prompt' || $this->wpslp_partner_data['upgrade']['action'] == 'redirect'): ?>
@@ -284,7 +284,7 @@ $sitelock_accepted_feature_list = ['scanning', 'waf', 'backup', 'patchman', 'ssl
                                     <?php
                                     include(plugin_dir_path(__FILE__) . '../common/sitelock-modal.php'); ?>
 
-                                    <button class="upgradeOpenModalBtn w-full text-[14px] py-[7px] text-center rounded bg-[#2D68C4] text-[#fff] hover:text-[#fff] focus:text-[#fff]">
+                                    <button class="upgradeOpenModalBtn w-full btn-primary h-[32px]">
                                         <?php echo esc_html($sitelock_language_tokens['var']['upgrade']); ?>
                                     </button>
 
@@ -292,9 +292,9 @@ $sitelock_accepted_feature_list = ['scanning', 'waf', 'backup', 'patchman', 'ssl
                             <?php } elseif (($sitelock_scan_result_url == 'patchman' || $sitelock_scan_result_url == 'waf' || $sitelock_scan_result_url == 'backup') && (isset($sitelock_service['showConfigure']) && $sitelock_service['showConfigure'] && isset($sitelock_service['hideDetails']) && !$sitelock_service['hideDetails'])) { ?>
                                 <div class="relative w-full relative-wrapper">
                                     <a href="<?php echo esc_url_raw(sitelock_api_url()) . '/sites/' . esc_attr($sitelock_site_info['id']) . '/wizard/' . esc_attr($sitelock_language_tokens['service_setup_url_tokens'][$sitelock_scan_result_url]); ?>"
-                                        class="w-full text-[14px] py-[6px] text-center rounded border-blue bg-[#F6F9FE] text-[#083C8C] relative inline-block" target="_blank" rel="noopener noreferrer">
+                                        class="w-full h-[32px] btn-secondary relative inline-block" target="_blank" rel="noopener noreferrer">
                                         <span class="mr-6"><?php echo esc_html($sitelock_language_tokens['var']['setup']); ?></span>
-                                        <span class="dropdown-arrow border border-l-[#A2BEEB]">
+                                        <span class="dropdown-arrow border-l-2 border-l-[#71C6FF]">
                                             <img src="<?php echo esc_url(plugin_dir_url(__DIR__) . '../images/down-arrow-blue.svg'); ?>"
                                                 alt="<?php echo esc_attr($sitelock_language_tokens['var']['downArrow']); ?>" class="w-3 arrow-toggle" />
                                         </span>
@@ -310,13 +310,13 @@ $sitelock_accepted_feature_list = ['scanning', 'waf', 'backup', 'patchman', 'ssl
                             <?php } elseif (($sitelock_scan_result_url == 'patchman' || $sitelock_scan_result_url == 'waf' || $sitelock_scan_result_url == 'backup') && $sitelock_service['status'] == 'unconfigured' || (isset($sitelock_service['showConfigure']) && $sitelock_service['showConfigure'])) { ?>
                                 <a target="_blank"
                                     href="<?php echo esc_url(sitelock_api_url() . '/sites/' . esc_attr($sitelock_site_info['id']) . '/wizard/' . esc_attr($sitelock_language_tokens['service_setup_url_tokens'][$sitelock_scan_result_url])); ?>"
-                                    class="w-full text-[14px] py-[6px] text-center rounded border-blue bg-[#F6F9FE] text-[#083C8C]">
+                                    class="w-full h-[32px] btn-secondary">
                                     <?php echo esc_html($sitelock_language_tokens['var']['setup']); ?>
                                 </a>
                             <?php } else { ?>
                                 <a target="_blank"
                                     href="<?php echo esc_url(sitelock_api_url() . '/sites/' . esc_attr($sitelock_site_info['id']) . '/' . esc_attr($sitelock_language_tokens['service_url_tokens'][$sitelock_scan_result_url])); ?>"
-                                    class="w-full text-[14px] py-[6px] text-center rounded border-blue bg-[#F6F9FE] text-[#083C8C]">
+                                    class="w-full h-[32px] btn-secondary">
                                     <?php echo esc_html($sitelock_language_tokens['var']['details']); ?>
                                 </a>
                             <?php } ?>
@@ -499,7 +499,7 @@ $sitelock_accepted_feature_list = ['scanning', 'waf', 'backup', 'patchman', 'ssl
                                         <div>
                                             <button data-type="<?php echo esc_attr($sitelock_scan_result_url); ?>" <?php if ($sitelock_next_available_scan_value)
                                                    echo esc_attr('disabled'); ?>
-                                                class="scan-now-button w-[150px] text-[14px] bg-[#F6F9FE] py-[5px] text-center text-[#083C8C] hover:text-[#083C8C] rounded border-blue mb-3">
+                                                class="scan-now-button w-[150px] h-[32px] btn-secondary">
                                                 <?php echo $sitelock_next_available_scan_value
                                                     ? '<img src="' . esc_url(plugin_dir_url(__DIR__) . '../images/pending.svg') . '" class="mr-2" alt="Pending Icon" /> ' . esc_html($sitelock_language_tokens['var']['scanPending'])
                                                     : esc_html($sitelock_language_tokens['var']['scanNow']); ?>
@@ -645,7 +645,7 @@ $sitelock_accepted_feature_list = ['scanning', 'waf', 'backup', 'patchman', 'ssl
             <?php endif; endforeach; ?>
             <div class="flex items-center gap-4">
                 <a href='<?php echo esc_url(sitelock_api_url() . '/sites/' . esc_attr($sitelock_site_info['id']) . '/'); ?>' target="_blank"
-                    class="px-6 text-[14px] text-center py-[7px] bg-[#2D68C4] text-[#fff] hover:text-[#fff] focus:text-[#fff] rounded ml-3 sm:ml-0 my-3">
+                    class="w-[146px] btn-primary h-[32px] ml-3 sm:ml-0 my-3">
                     <?php echo esc_html($sitelock_language_tokens['var']['viewFullReport']); ?>
                 </a>
             </div>

@@ -1,6 +1,6 @@
 <div id="security-enhancements" class="hidden">
 
-    <div class="simple-box border-grey-light bg-[#fff] mb-5 p-8 min-h-full xl:min-h-[500px]">
+    <div class="simple-box border-[#DDDDDD] bg-[#fff] mb-5 p-8 min-h-full xl:min-h-[500px]">
         <?php
     // Use get_home_path() if available ensuring we check the same location where the file is created.
     // Fallback to ABSPATH.
@@ -122,7 +122,7 @@
             </div>
 
             <div class="mb-7">
-                <button type="submit" class="w-[112px] h-[32px] bg-[#2D68C4] text-[#fff] rounded">Save
+                <button type="submit" class="w-[131px] h-[32px] btn-primary">Save
                     Changes</button>
             </div>
 

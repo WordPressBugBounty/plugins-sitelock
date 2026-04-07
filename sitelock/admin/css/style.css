@@ -59,7 +59,7 @@
 
   input[type='checkbox']:checked::before {
     content: url('data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2214%22%20height%3D%2210%22%20viewBox%3D%220%200%2014%2010%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M13.7036%201.71344L5.58885%209.70607C5.39732%209.89429%205.13781%2010%204.86726%2010C4.59671%2010%204.3372%209.89429%204.14568%209.70607L0.296431%205.91482C0.106134%205.7261%20-0.000459862%205.47079%201.49138e-06%205.2048C0.000462845%204.93882%200.107942%204.68386%200.298892%204.49578C0.489842%204.3077%200.748694%204.20184%201.01874%204.20139C1.28878%204.20093%201.548%204.30592%201.7396%204.49336L4.65745%207.36741C4.7131%207.42221%204.78857%207.453%204.86726%207.453C4.94595%207.453%205.02143%207.42221%205.07707%207.36741L12.2604%200.291973C12.452%200.104538%2012.7112%20-0.000452946%2012.9813%201.46896e-06C13.2513%200.000455884%2013.5102%200.106319%2013.7011%200.294397C13.8921%200.482476%2013.9995%200.737434%2014%201.00342C14.0005%201.2694%2013.8939%201.52472%2013.7036%201.71344Z%22%20fill%3D%22white%22/%3E%3C/svg%3E');
-    background-color: #2d68c4;
+    background-color: #2161CC;
     border-radius: 4px;
     padding: 1px;
     width: 18px;
@@ -73,14 +73,47 @@
   }
 
   input[type='radio']:checked {
-    border: 1px solid #2d68c4;
+    border: 1px solid #2161CC;
   }
 
   input[type='radio']:checked::before {
-    background-color: #2d68c4;
+    background-color: #2161CC;
     padding: 6px;
   }
 
+  .btn-primary {
+    font-weight: 600;
+    font-size: 14px;
+    padding: 7px 0;
+    text-align: center;
+    background-color: #011858;
+    color: #FFFFFF;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 120px;
+  }
+
+  .btn-primary:hover,
+  .btn-primary:focus {
+    color: white;
+  }
+
+  .btn-secondary {
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    padding: 6px 0;
+    background-color: #FFFFFF;
+    color: #000000;
+    border: 2px solid #71C6FF;
+    border-radius: 120px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
   .dark {
     background: #222222;
   }
@@ -120,7 +153,7 @@
   }
 
   .text-blue {
-    color: #2d68c4;
+    color: #2161CC;
   }
 
   .border-blue {
@@ -280,7 +313,7 @@
   }
 
   #page-tabs-wrapper #page-tabs li.active::after {
-    background-color: #2d68c4;
+    background-color: #12A0FF;
   }
 
   #page-tabs li:focus-visible,
@@ -298,7 +331,7 @@
     margin-bottom: -2px;
     vertical-align: bottom;
     margin-left: 0.5rem;
-    background-color: #2d68c4;
+    background-color: #2161CC;
     color: #fff;
     padding: 2px;
     border-radius: 2px;
@@ -346,7 +379,7 @@
 
   .free-label {
     background-color: #efefef;
-    color: #2d68c4;
+    color: #2161CC;
     font-size: 12px;
     font-weight: 600;
     padding: 0px 7px;
@@ -363,7 +396,7 @@
     line-height: 14px;
     /* fix alignment issue */
     font-weight: 400;
-    color: #2d68c4;
+    color: #2161CC;
     display: inline-flex;
     align-items: center;
     vertical-align: middle;
@@ -530,7 +563,7 @@
     display: block;
     border-radius: 9999px;
     --tw-bg-opacity: 1;
-    background-color: rgb(45 104 196 / var(--tw-bg-opacity));
+    background-color: rgba(33, 97, 204, var(--tw-bg-opacity));
     position: absolute;
     top: 50%;
     left: 50%;
@@ -708,7 +741,7 @@
   }
 
   .tab-setting-title .inner.active::after {
-    background-color: #2d68c4;
+    background-color: #12A0FF;
   }
 
   .tab-setting-title .inner .arrow-img {
@@ -798,7 +831,7 @@
     top: 0;
     left: 0;
     border-radius: 9999px;
-    border: 1px solid #a0aec0;
+    border: 1px solid #9E9E9E;
     width: 2.25rem;
     height: 1.25rem;
   }
@@ -807,7 +840,7 @@
     position: absolute;
     top: 3px;
     left: 3px;
-    background-color: #a0aec0;
+    background-color: #9E9E9E;
     border-radius: 9999px;
     width: 0.75rem;
     height: 0.75rem;
@@ -815,13 +848,12 @@
   }
 
   .lightswitch input:checked + .switch {
-    /* border: 1px solid #2d68c4; */
-    border-color: #2d68c4;
+    border-color: #2161CC;
   }
 
   .lightswitch input:checked + .switch span {
     left: 18px;
-    background-color: #2d68c4;
+    background-color: #2161CC;
   }
 
   .sitelock-wrapper .input-number {
@@ -912,16 +944,16 @@
   }
 
   .type-success {
-    border-color: #22c55e;
+    border-color: #00D27F;
     /* Tailwind's green-500 by default */
   }
 
   .type-success::before {
-    background-color: #22c55e;
+    background-color: #00D27F;
   }
 
   .type-error {
-    border-color: #ef4444;
+    border-color: #DC2626;
     /* Tailwind's green-500 by default */
   }
 
@@ -936,7 +968,7 @@
   }
 
   .type-error::before {
-    background-color: #ef4444;
+    background-color: #DC2626;
   }
 
   @media (max-width: 782px) {
@@ -1157,11 +1189,10 @@
 
 /* Button overrides to match design */
 .sitelock-btn-primary {
-  height: 36px;
+  height: 32px;
   width: 164px;
-  background-color: #2d68c4 !important;
-  color: #ffffff !important;
-  border-radius: 4px !important;
+  background-color: #011858 !important;
+  color: #FFFFFF !important;
   font-size: 14px !important;
   font-weight: 400 !important;
   line-height: 14px !important;
@@ -1170,10 +1201,11 @@
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s ease-in-out;
+  border-radius: 120px !important;
 }
 
 .sitelock-btn-primary:hover {
-  background-color: #1e4a8c !important;
+  background-color: #011858 !important;
 }
 
 .sitelock-2fa-onboarding .sitelock-card p {

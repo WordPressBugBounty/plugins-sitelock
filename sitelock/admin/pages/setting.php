@@ -15,6 +15,7 @@ $sitelock_language_tokens               = sitelock_get_language_tokens();
 $sitelock_roles                                 = get_editable_roles();
 $sitelock_enabled_roles                 = ($sitelock_tmp                 = get_option('sitelock_login_logger_roles', [])) && is_array($sitelock_tmp) ? $sitelock_tmp : [];
 $sitelock_retention_days                = get_option('sitelock_login_logger_retention', 7);
+$sitelock_right_arrow = plugin_dir_url(__DIR__) . 'images/right-arrow.svg';
 ?>
 
 <div class="sitelock-wrapper">
@@ -77,7 +78,7 @@ $sitelock_retention_days                = get_option('sitelock_login_logger_rete
                     <li class="px-4 mb-6 relative tab-setting-title" data-id="connection-to-sitelock"><span
                             class="inner flex items-center gap-2"><a
                                 href="<?php echo esc_url(admin_url('admin.php?page=sitelock-settings&tab=connection-to-sitelock')); ?>"><?php echo esc_html($sitelock_language_tokens['settings_page_menus']['siteLockPlanLicense']); ?></a>
-                            <div> <img src="<?php echo esc_url(plugin_dir_url(__DIR__) . '/images/right-arrow.png'); ?>"
+                            <div> <img src="<?php echo esc_url($sitelock_right_arrow); ?>"
                                     alt="arrow" class="arrow-img" /> </div>
                         </span>
                         <p class="tab-setting-field-content mt-1">Manage your license key</p>
@@ -85,7 +86,7 @@ $sitelock_retention_days                = get_option('sitelock_login_logger_rete
                     <li class="tab-setting-title px-4 mb-6 relative" data-id="login-security"><span
                             class="inner flex items-center gap-2"><a
                                 href="<?php echo esc_url(admin_url('admin.php?page=sitelock-settings&tab=login-security')); ?>"><?php echo esc_html($sitelock_language_tokens['settings_page_menus']['loginSecurity']); ?></a>
-                            <div> <img src="<?php echo esc_url(plugin_dir_url(__DIR__) . '/images/right-arrow.png'); ?>"
+                            <div> <img src="<?php echo esc_url($sitelock_right_arrow); ?>"
                                     alt="arrow" class="arrow-img" /> </div>
                         </span>
                         <p class="tab-setting-field-content mt-1">Manage login and account security</p>
@@ -93,7 +94,7 @@ $sitelock_retention_days                = get_option('sitelock_login_logger_rete
                     <li class="tab-setting-title px-4 mb-6 relative" data-id="security-enhancements"><span
                             class="inner flex items-center gap-2"><a
                                 href="<?php echo esc_url(admin_url('admin.php?page=sitelock-settings&tab=security-enhancements')); ?>"><?php echo esc_html($sitelock_language_tokens['settings_page_menus']['websiteSecurity']); ?></a>
-                            <div> <img src="<?php echo esc_url(plugin_dir_url(__DIR__) . '/images/right-arrow.png'); ?>"
+                            <div> <img src="<?php echo esc_url($sitelock_right_arrow); ?>"
                                     alt="arrow" class="arrow-img" /> </div>
                         </span>
                         <p class="tab-setting-field-content mt-1">Manage site protection settings</p>
