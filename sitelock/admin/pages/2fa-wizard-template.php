@@ -5,13 +5,13 @@ if (!defined('ABSPATH')) {
 
 // Data already extracted in on_load_your_2fa_page: $qr_src, $user_secret, $is_2fa_enabled, $backup_codes, $grace_period_expired
 $title = __('Set Up Two-Factor Authentication', 'sitelock-wordpress-plugin');
-$wrapper_class = 'wizard-width';
+$sitelock_wrapper_class = 'wizard-width';
 
 include dirname(__DIR__) . '/partials/2fa/header.php';
 
 // Skip Link Logic
-$show_skip = !($grace_period_expired ?? false) && !$is_2fa_enabled;
-$skip_url = wp_nonce_url(add_query_arg(['action' => 'sitelock_2fa_skip']), 'sitelock_2fa_skip_action');
+$sitelock_show_skip = !($grace_period_expired ?? false) && !$is_2fa_enabled;
+$sitelock_skip_url = wp_nonce_url(add_query_arg(['action' => 'sitelock_2fa_skip']), 'sitelock_2fa_skip_action');
 ?>
 
 <?php if ($is_2fa_enabled): ?>
@@ -20,7 +20,7 @@ $skip_url = wp_nonce_url(add_query_arg(['action' => 'sitelock_2fa_skip']), 'site
     <h2 class="font-normal text-[30px] mb-6"><?php esc_html_e($title, 'sitelock-wordpress-plugin'); ?></h2>
     
     <?php
-    $is_wizard = true;
+    $sitelock_2fa_is_wizard = true;
     include dirname(__DIR__) . '/partials/2fa/recovery-codes-list.php';
     ?>
 
@@ -32,15 +32,15 @@ $skip_url = wp_nonce_url(add_query_arg(['action' => 'sitelock_2fa_skip']), 'site
     
     <!-- Step 1: Scan Code -->
     <?php 
-    $is_wizard = true;
+    $sitelock_2fa_is_wizard = true;
     include dirname(__DIR__) . '/partials/2fa/qr-setup.php'; 
     ?>
 
 <?php endif; ?>
 
 <?php
-$plugin_root_url = plugin_dir_url(dirname(dirname(__FILE__)));
-$footer_scripts = '
+$sitelock_plugin_root_url = plugin_dir_url(dirname(dirname(__FILE__)));
+$sitelock_footer_scripts = '
 <script type="text/javascript">
     var ajaxurl = "' . admin_url('admin-ajax.php') . '";
     var sitelock_2fa_ajax = {
@@ -49,8 +49,8 @@ $footer_scripts = '
     };
 </script>';
 // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
-$footer_scripts .= '<script src="' . esc_url($plugin_root_url . 'admin/js/sitelock-2fa-setup.js') . '"></script>
+$sitelock_footer_scripts .= '<script src="' . esc_url($sitelock_plugin_root_url . 'admin/js/sitelock-2fa-setup.js') . '"></script>
 ';
-$extra_footer = $footer_scripts;
+$sitelock_extra_footer = $sitelock_footer_scripts;
 include dirname(__DIR__) . '/partials/2fa/footer.php';
 ?>

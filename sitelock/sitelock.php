@@ -16,7 +16,7 @@
  * Plugin Name:       SiteLock Security – WP Hardening, Login Security & Malware Scans
  * Plugin URI:        https://www.sitelock.com/wordpress
  * Description:       Free, lightweight WordPress security. WP Hardening, login protection and Site Health & on‑demand checks without slowing your site. Setup in minutes.
- * Version:           5.1.1
+ * Version:           5.1.2
  * Author:            SiteLockSecurity
  * Author URI:        https://www.sitelock.com
  * License:           GPLv2 or later
@@ -100,7 +100,7 @@ register_deactivation_hook(__FILE__, 'sitelock_deactivate');
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */
-require plugin_dir_path(__FILE__) . 'includes/class-sitelock.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-sitelock.php';
 
 
 register_activation_hook(__FILE__, ['SiteLock_Admin_Monitor', 'on_activation']);
@@ -366,6 +366,7 @@ function sitelock_is_allowed_request() {
             'heartbeat',
             'query-attachments'
         ];
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Processing form data without nonce verification.
         $action = isset($_REQUEST['action']) ? sanitize_text_field(wp_unslash($_REQUEST['action'])) : '';
 
         if (in_array($action, $allowed_actions, true)) {
@@ -380,6 +381,7 @@ function sitelock_is_allowed_request() {
     // 2. Admin Post Handling (Allow saving 2FA settings)
     global $pagenow;
     if ($pagenow === 'admin-post.php') {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Processing form data without nonce verification.
         $action = isset($_REQUEST['action']) ? sanitize_text_field(wp_unslash($_REQUEST['action'])) : '';
         if ($action === 'sitelock_security_form_data') {
             return true;
@@ -388,6 +390,7 @@ function sitelock_is_allowed_request() {
 
     // 3. Page Check (Strict Page Whitelist)
     // Allow the 2FA Setup page itself
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Processing form data without nonce verification.
     $is_2fa_page = ($pagenow === 'admin.php' && isset($_GET['page']) && $_GET['page'] === 'sitelock-your-2fa');
 
     return $is_2fa_page;
@@ -523,6 +526,7 @@ add_filter('wp_is_application_passwords_available_for_user', 'sitelock_disable_a
  */
 function sitelock_render_app_password_notice($user) {
     // Check if App Passwords are effectively disabled for this user by our filter
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
     $available = apply_filters('wp_is_application_passwords_available_for_user', true, $user);
 
     // If they are available, we don't need to show a notice (WP shows the form).
@@ -664,12 +668,18 @@ function sitelock_plugin_activation_notice()
 function sitelock_delete_plugin_options() {
     global $wpdb;
 
-    // Delete all options starting with 'sitelock_'
-    $options = wp_load_alloptions();
-    foreach ($options as $option_name => $option_value) {
-        if (strpos($option_name, 'sitelock_') === 0) {
-            delete_option($option_name);
-        }
+    // Delete all options starting with 'sitelock_' regardless of autoload status.
+    // wp_load_alloptions() only returns autoloaded options, so options marked
+    // autoload='no' (e.g. by fix_option_autoload()) would be silently skipped.
+    // A direct DB query ensures all sitelock_ options are found and removed.
+    $option_names = $wpdb->get_col(
+        $wpdb->prepare(
+            "SELECT option_name FROM $wpdb->options WHERE option_name LIKE %s",
+            'sitelock\_%'
+        )
+    );
+    foreach ($option_names as $option_name) {
+        delete_option($option_name);
     }
 
     // Delete all user meta keys starting with 'sitelock_'

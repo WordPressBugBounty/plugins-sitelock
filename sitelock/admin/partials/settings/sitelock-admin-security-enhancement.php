@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <div id="security-enhancements" class="hidden">
 
     <div class="simple-box border-[#DDDDDD] bg-[#fff] mb-5 p-8 min-h-full xl:min-h-[500px]">

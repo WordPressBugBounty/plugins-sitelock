@@ -1,13 +1,14 @@
 <?php
-
+defined('ABSPATH') || exit;
 class Sitelock_Force_Logout
 {
+    // Force logout by time period variables
+    private $force_logout_default_duration = 12; // Default: 12 hour
+    private $force_logout_default_enabled = 0;     // Default: OFF
+    private $one_hour_in_seconds = 3600;
+
     public function __construct()
     {
-        // Force logout by time period variables
-        define('SITELOCK_FORCE_LOGOUT_DEFAULT_DURATION', 12); // Default: 12 hour
-        define('SITELOCK_FORCE_LOGOUT_DEFAULT_ENABLED', 0);     // Default: OFF
-        define('SITELOCK_ONE_HOUR_IN_SECONDS', 3600);
 
         // Disable Remember Me - CSS
         add_action('login_form', [$this, 'sitelock_force_logout_conditionally_hide_remember_me_checkbox']);
@@ -67,12 +68,12 @@ class Sitelock_Force_Logout
      */
     public function sitelock_force_logout_check_logout_time()
     {
-        $enabled = get_option('sitelock_force_logout_enabled', SITELOCK_FORCE_LOGOUT_DEFAULT_ENABLED);
+        $enabled = get_option('sitelock_force_logout_enabled', $this->force_logout_default_enabled);
         if (intval($enabled) !== 1) {
             return;
         }
 
-        $duration = intval(get_option('sitelock_force_logout_duration', SITELOCK_FORCE_LOGOUT_DEFAULT_DURATION) * SITELOCK_ONE_HOUR_IN_SECONDS);
+        $duration = intval(get_option('sitelock_force_logout_duration', $this->force_logout_default_duration) * $this->one_hour_in_seconds);
 
         if (is_user_logged_in()) {
             $current_user   = wp_get_current_user();

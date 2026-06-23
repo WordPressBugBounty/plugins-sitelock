@@ -45,11 +45,11 @@ if ($warning_message) {
         <!-- Step 1 -->
         <!-- Step 1 & 2 -->
         <?php 
-        $is_wizard = false;
+        $sitelock_2fa_is_wizard = false;
         include plugin_dir_path(dirname(__DIR__)) . 'partials/2fa/qr-setup.php'; 
         ?>
     <?php else :
-        $step_three_tokens = $sitelock_language_tokens['two_factor_authentication_settings_steps']['stepThree'];
+        $sitelock_2fa_step_three_tokens = $sitelock_language_tokens['two_factor_authentication_settings_steps']['stepThree'];
         if (isset($backup_codes)):
             ?>
         <!-- Step 3 -->
@@ -57,14 +57,14 @@ if ($warning_message) {
         <div class="sitelock-recovery-code step-3 p-5">
             <?php
             // Recovery code notice logic (Steps 3 header area)
-            $code_expiration_minutes  = isset($code_expiration) ? (int) $code_expiration : 0;
-            $time_suffix              = ($code_expiration_minutes === 1) ? ' minute' : ' minutes';
-            $recovery_code_notice_raw = esc_html($step_three_tokens['recoveryCodeNoticeLine1']);
-            $recovery_code_notice_raw = str_replace('##remaining-time##', '<b>'.$code_expiration_minutes . $time_suffix.'</b>', $recovery_code_notice_raw);
-            $recovery_code_notice     = str_replace(['#b#', '#/b#'], ['<b>', '</b>'], $recovery_code_notice_raw);
+            $sitelock_2fa_code_expiration_minutes  = isset($code_expiration) ? (int) $code_expiration : 0;
+            $sitelock_2fa_time_suffix              = ($sitelock_2fa_code_expiration_minutes === 1) ? ' minute' : ' minutes';
+            $sitelock_2fa_recovery_code_notice_raw = esc_html($sitelock_2fa_step_three_tokens['recoveryCodeNoticeLine1']);
+            $sitelock_2fa_recovery_code_notice_raw = str_replace('##remaining-time##', '<b>'.$sitelock_2fa_code_expiration_minutes . $sitelock_2fa_time_suffix.'</b>', $sitelock_2fa_recovery_code_notice_raw);
+            $sitelock_2fa_recovery_code_notice     = str_replace(['#b#', '#/b#'], ['<b>', '</b>'], $sitelock_2fa_recovery_code_notice_raw);
             ?>
-            <p class="sitelock-step-title mb-2 text-left text-[16px] font-normal"><?php echo esc_html($step_three_tokens['title']); ?></p>
-            <p class="sitelock-step-desc mb-6 text-[14px] leading-relaxed text-left"><?php echo esc_html($step_three_tokens['description']); ?></p>
+            <p class="sitelock-step-title mb-2 text-left text-[16px] font-normal"><?php echo esc_html($sitelock_2fa_step_three_tokens['title']); ?></p>
+            <p class="sitelock-step-desc mb-6 text-[14px] leading-relaxed text-left"><?php echo esc_html($sitelock_2fa_step_three_tokens['description']); ?></p>
                 <div class="flex items-center max-w-[870px] border border-[#FBBF24] px-4 py-3 rounded relative overflow-hidden">
                     <span class="absolute left-0 top-0 h-full w-[15px] bg-[#FBBF24] opacity-20 pointer-events-none"></span>
                     <div class="text-[#FBBF24] pl-4 pr-4 flex-shrink-0 icon type-warning">
@@ -75,20 +75,20 @@ if ($warning_message) {
                         </svg>
                     </div>
                     <div class="text-sm leading-5 break-words items-center pl-2">
-                        <?php echo wp_kses($recovery_code_notice, ['b' => []]); ?>
+                        <?php echo wp_kses($sitelock_2fa_recovery_code_notice, ['b' => []]); ?>
                     </div>
                 </div>
             </div>
             <div class="sitelock-recovery-code-box mt-2 item-center">
                 <i class="text-center block leading-[20px] font-semibold text-[14px] mb-4 mt-2">
-                    <?php echo esc_html($step_three_tokens['storeCodes']); ?>
+                    <?php echo esc_html($sitelock_2fa_step_three_tokens['storeCodes']); ?>
                 </i>
                 <!-- Backup codes -->
                 <div class="flex justify-center">
                     <ul id="backup-codes" class="text-[#041C2C] mb-3">
-                        <?php foreach ($backup_codes as $code) : ?>
-                            <li data-code="<?php echo esc_attr(chunk_split($code, 4, ' ')); ?>" class="bg-[#F7F7F7] px-4 py-2 mb-2 border rounded text-[16px] item-center font-mono">
-                                <span class="masked"><?php echo esc_html(chunk_split($code, 4, ' ')); ?></span>
+                        <?php foreach ($backup_codes as $sitelock_code) : ?>
+                            <li data-code="<?php echo esc_attr(chunk_split($sitelock_code, 4, ' ')); ?>" class="bg-[#F7F7F7] px-4 py-2 mb-2 border rounded text-[16px] item-center font-mono">
+                                <span class="masked"><?php echo esc_html(chunk_split($sitelock_code, 4, ' ')); ?></span>
                             </li>
                         <?php endforeach; ?>
                     </ul>
@@ -97,7 +97,7 @@ if ($warning_message) {
                 <div class="mt-1">
                     <div class="flex justify-center">
                         <button type="submit" onclick="downloadBackupCodes()" class="w-[164px] h-[32px] btn-primary">
-                            <?php echo esc_html($step_three_tokens['downloadCodes']); ?>
+                            <?php echo esc_html($sitelock_2fa_step_three_tokens['downloadCodes']); ?>
                         </button>
                     </div>
                 </div>
@@ -107,24 +107,24 @@ if ($warning_message) {
             <!-- 2FA Activation -->
             <div class="twofa-activation">
                 <h2 class="title mb-2">
-                    <?php echo esc_html($step_three_tokens['activate2fa']); ?>
+                    <?php echo esc_html($sitelock_2fa_step_three_tokens['activate2fa']); ?>
                 </h2>
 
                 <?php if (isset($backup_codes) && $is_2fa_enabled ): ?>
                     <p class="text-[14px] mb-7 leading-5">
-                        <?php echo esc_html($step_three_tokens['enabled_line1']); ?><br/>
-                        <?php echo esc_html($step_three_tokens['enabled_line2']); ?>
+                        <?php echo esc_html($sitelock_2fa_step_three_tokens['enabled_line1']); ?><br/>
+                        <?php echo esc_html($sitelock_2fa_step_three_tokens['enabled_line2']); ?>
                     </p>
                 <?php endif; ?>
 
                 <?php if (!isset($backup_codes) && $is_2fa_enabled ): ?>
                     <ul class="font-normal leading-5 text-[14px] mb-7 mt-3">
                         <?php 
-                        $activation_steps = $step_three_tokens['activationSteps'];
-                        if (is_array($activation_steps)) {
-                            foreach ($activation_steps as $point) : 
-                                if (is_string($point)) : ?>
-                                    <li class="mb-3"><?php echo wp_kses_post($point); ?></li>
+                        $sitelock_activation_steps = $sitelock_2fa_step_three_tokens['activationSteps'];
+                        if (is_array($sitelock_activation_steps)) {
+                            foreach ($sitelock_activation_steps as $sitelock_point) :
+                                if (is_string($sitelock_point)) : ?>
+                                    <li class="mb-3"><?php echo wp_kses_post($sitelock_point); ?></li>
                                 <?php endif;
                             endforeach;
                         }
@@ -135,23 +135,23 @@ if ($warning_message) {
                 <!-- Disable the 2FA -->
                 <div class="mb-5">
                     <button type="button" name="disable_2fa" id="twofa-disable-confirmation" class="w-[120px] h-[32px] btn-secondary">
-                        <?php echo esc_html($step_three_tokens['disabled2FA']); ?>
+                        <?php echo esc_html($sitelock_2fa_step_three_tokens['disabled2FA']); ?>
                     </button>
                 </div>
             </div>
         </div>
         <!-- 2FA Disable Confirmation Modal -->
         <?php
-        $modal_id            = 'twofa-disable-confirmation-modal';
-        $title               = $sitelock_language_tokens['login_security_list_settings']['2fa_disable_modal']['title'];
-        $warning_text        = $sitelock_language_tokens['two_factor_authentication_settings_steps']['confirmDisable'];
-        $message_text        = $sitelock_language_tokens['two_factor_authentication_settings_steps']['confirmMessage'];
-        $show_list           = false;
-        $show_input          = false;
-        $confirm_button_id   = 'confirm-disable-2fa';
-        $confirm_button_type = 'submit';
-        $cancel_button_text  = $sitelock_language_tokens['login_security_list_settings']['2fa_disable_modal']['cancelButton'];
-        $confirm_button_text = $sitelock_language_tokens['login_security_list_settings']['2fa_disable_modal']['confirmButton'];
+        $sitelock_2fa_modal_id            = 'twofa-disable-confirmation-modal';
+        $sitelock_2fa_title               = $sitelock_language_tokens['login_security_list_settings']['2fa_disable_modal']['title'];
+        $sitelock_2fa_warning_text        = $sitelock_language_tokens['two_factor_authentication_settings_steps']['confirmDisable'];
+        $sitelock_2fa_message_text        = $sitelock_language_tokens['two_factor_authentication_settings_steps']['confirmMessage'];
+        $sitelock_2fa_show_list           = false;
+        $sitelock_2fa_show_input          = false;
+        $sitelock_2fa_confirm_button_id   = 'confirm-disable-2fa';
+        $sitelock_2fa_confirm_button_type = 'submit';
+        $sitelock_2fa_cancel_button_text  = $sitelock_language_tokens['login_security_list_settings']['2fa_disable_modal']['cancelButton'];
+        $sitelock_2fa_confirm_button_text = $sitelock_language_tokens['login_security_list_settings']['2fa_disable_modal']['confirmButton'];
 
         include __DIR__ . '/sitelock-admin-disable-2fa-modal.php';
         ?>

@@ -8,13 +8,15 @@ require_once plugin_dir_path(__DIR__) . 'vendor/autoload.php'; // OTPHP etc.
 
 use OTPHP\TOTP;
 
+/**
+ */
 class Sitelock_2FA
 {
     // Define the maximum number of allowed 2FA reattempts before lockout
     private const MAX_2FA_ATTEMPTS     = 3;
-    private const MAX_ATTEMPTS_TIMEOUT = 60; 
+    private const MAX_ATTEMPTS_TIMEOUT = 60;
     private const MIN_2FA_SESSION_TIMEOUT = 10;
-    private $session_token_cache = null; 
+    private $session_token_cache = null;
     
     /**
      * Static cache for provider IPs to avoid repeated file reads.
@@ -30,6 +32,9 @@ class Sitelock_2FA
 
         // Clear pending user cookie on logout
         add_action('wp_logout', 'sitelock_clear_pending_user_cookie');
+
+        // Verify session timeout on login page
+        add_filter('wp_login_errors', [$this, 'checkForTimeoutError']);
     }
     
     /**
@@ -47,6 +52,100 @@ class Sitelock_2FA
         }
         
         return self::$cached_provider_ips;
+    }
+
+    private function get_input_param_raw($key, $prefer = 'request')
+    {
+        $value = null;
+
+        if ($prefer === 'post' || $prefer === 'request') {
+            $value = filter_input(INPUT_POST, $key);
+            if (($value === null || $value === false) && isset($GLOBALS['_POST'][$key])) {
+                $value = $GLOBALS['_POST'][$key];
+            }
+        }
+
+        if (($prefer === 'get' || $prefer === 'request') && ($value === null || $value === false)) {
+            $value = filter_input(INPUT_GET, $key);
+            if (($value === null || $value === false) && isset($GLOBALS['_GET'][$key])) {
+                $value = $GLOBALS['_GET'][$key];
+            }
+        }
+
+        if ($prefer === 'request' && $value === null && isset($GLOBALS['_REQUEST'][$key])) {
+            $value = $GLOBALS['_REQUEST'][$key];
+        }
+
+        return $value;
+    }
+
+    private function getPostTextParam($key, $default = '')
+    {
+        $value = $this->get_input_param_raw($key, 'post');
+        if ($value === null) {
+            return $default;
+        }
+
+        return sanitize_text_field(wp_unslash($value));
+    }
+
+    private function get_request_url_param($key, $default = '')
+    {
+        $value = $this->get_input_param_raw($key, 'request');
+        if ($value === null || $value === '' || !is_scalar($value)) {
+            return $default;
+        }
+
+        return esc_url_raw(wp_unslash((string) $value));
+    }
+
+    private function isRequestFlagEnabled($key, $enabled_value = '1')
+    {
+        $value = $this->get_input_param_raw($key, 'request');
+        if ($value === null || $value === '') {
+            return false;
+        }
+
+        return (string) $value === (string) $enabled_value;
+    }
+
+    private function trigger_wp_login_action($user_login, $user)
+    {
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Using core WordPress hook.
+        do_action('wp_login', $user_login, $user);
+    }
+
+    private function apply_wp_login_redirect_filter($redirect_to, $user)
+    {
+        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Using core WordPress filter.
+        $redirect_to = apply_filters('login_redirect', $redirect_to, '', $user);
+
+        return apply_filters('sitelock_2fa_login_redirect', $redirect_to, $user);
+    }
+
+    private function log_totp_verification_error($user_id, \Exception $exception)
+    {
+        if (!(defined('WP_DEBUG') && WP_DEBUG) || !function_exists('sitelock_log')) {
+            return;
+        }
+
+        sitelock_log(
+            'error',
+            'TOTP verification error',
+            sprintf(
+                'Sitelock_2FA TOTP verification error for user %d: %s in %s:%d',
+                (int) $user_id,
+                $exception->getMessage(),
+                $exception->getFile(),
+                $exception->getLine()
+            ),
+            [
+                'user_id' => (int) $user_id,
+                'file'    => $exception->getFile(),
+                'line'    => $exception->getLine(),
+            ],
+            __CLASS__
+        );
     }
 
     public function enqueue_assets()
@@ -74,43 +173,6 @@ class Sitelock_2FA
         ]);
     }
 
-    /**
-     * Check if 2FA is valid for a user.
-     */
-    private function is_2fa_valid($user_id)
-    {
-        // Retrieve the user's 2FA secret and validate the TOTP code
-        $totp_secret = get_user_meta($user_id, 'sitelock_2fa_secret', true);
-        if (empty($totp_secret)) {
-            return false;
-        }
-
-        // Validate TOTP code
-        $totp = TOTP::create($totp_secret);
-        $totp->setLabel(get_userdata($user_id)->user_email);
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- This is intentional as the interim-login parameter is not critical.
-        $provided_code = isset($_POST['totp_code']) ? sanitize_text_field(wp_unslash($_POST['totp_code'])) : '';
-        if (!empty($provided_code) && $totp->verify($provided_code)) {
-            return true;
-        }
-
-        // Validate recovery code
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- This is intentional as the interim-login parameter is not critical.
-        $provided_recovery_code = isset($_POST['recovery_code']) ? sanitize_text_field(wp_unslash($_POST['recovery_code'])) : '';
-        if (!empty($provided_recovery_code)) {
-            $recovery_codes = get_user_meta($user_id, 'sitelock_2fa_recovery_codes', true);
-            if (is_array($recovery_codes) && in_array($provided_recovery_code, $recovery_codes, true)) {
-                // Remove the used recovery code to prevent reuse
-                $updated_recovery_codes = array_diff($recovery_codes, [$provided_recovery_code]);
-                update_user_meta($user_id, 'sitelock_2fa_recovery_codes', $updated_recovery_codes);
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public function render_2fa_page()
     {
         $settings = get_option('sitelock_2fa_settings', []);
@@ -118,27 +180,24 @@ class Sitelock_2FA
             sitelock_clear_pending_user_cookie();
             
             if (is_user_logged_in()) {
-                // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Processing form data without nonce verification.
-                $redirect_to = ! empty( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : admin_url();
+                $redirect_to = $this->get_request_url_param('redirect_to', admin_url());
                 wp_safe_redirect($redirect_to);
             } else {
                 wp_safe_redirect(wp_login_url());
             }
-            exit;
+            $this->terminate_request();
         }
 
         $totp_locked = false;
+        $user_id     = 0;
 
         // Retrieve 2FA rate limit data
         $data = $this->sitelock_get_2fa_rate();
 
-        if (is_array($data)) {
-            if ((int)$data['failed'] >= self::MAX_2FA_ATTEMPTS) {
-                $remaining = (int)$data['lockout'] - time();
-
-                if ($remaining > 0) {
-                    $totp_locked = true;
-                }
+        if (is_array($data) && (int) $data['failed'] >= self::MAX_2FA_ATTEMPTS) {
+            $remaining = (int) $data['lockout'] - time();
+            if ($remaining > 0) {
+                $totp_locked = true;
             }
         }
 
@@ -153,8 +212,8 @@ class Sitelock_2FA
             $this->handle_post_request($user_id);
         }
 
-        // Load and clear any previous errors
-        $errors = $this->load_errors_from_transients($user_id);
+        // Load and clear any previous errors.
+        $errors = $this->load_errors_from_transients();
 
         // Enqueue assets (CSS + JS)
         $this->enqueue_assets();
@@ -172,8 +231,9 @@ class Sitelock_2FA
     {
         $user_id = sitelock_get_pending_user_id();
         if (empty($user_id)) {
-            wp_safe_redirect(sitelock_build_url_with_query_params(wp_login_url()));
-            exit;
+            $redirect_url = add_query_arg('sitelock_timeout', 'true', wp_login_url());
+            wp_safe_redirect(sitelock_build_url_with_query_params($redirect_url));
+            $this->terminate_request();
         }
 
         return (int)$user_id;
@@ -213,10 +273,7 @@ class Sitelock_2FA
 
         // 2. Client Fingerprint Key (Fallback/Long-term)
         $ip = Sitelock_IP_Utility::get_client_ip($this->get_provider_ips());
-        //$ua = isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '';
-
         if (!empty($ip)) {
-            //$fingerprint = hash('sha256', $ip . $ua);
             $fingerprint = hash('sha256', $ip);
             $keys['ip'] = 'sitelock_2fa_rate_' . $fingerprint;
         }
@@ -280,7 +337,7 @@ class Sitelock_2FA
                     'lockout_period'    => self::MAX_ATTEMPTS_TIMEOUT,
                 ];
 
-                include plugin_dir_path(__DIR__) . 'pages/2fa-lockout-template.php';
+                include_once plugin_dir_path(__DIR__) . 'pages/2fa-lockout-template.php';
                 exit;
             }
 
@@ -296,14 +353,14 @@ class Sitelock_2FA
 
     private function handle_post_request($user_id)
     {
-        $nonce = isset($_POST['sitelock_2fa_nonce']) ? sanitize_text_field(wp_unslash($_POST['sitelock_2fa_nonce'])) : '';
+        $nonce = $this->getPostTextParam('sitelock_2fa_nonce');
         if (!wp_verify_nonce($nonce, 'sitelock_2fa_verify')) {
             wp_die('Invalid request. Please try again.');
         }
 
         // Extract user codes
-        $totp_code     = isset($_POST['totp_code']) ? sanitize_text_field(wp_unslash($_POST['totp_code'])) : '';
-        $recovery_code = isset($_POST['recovery_code']) ? str_replace(' ', '', sanitize_text_field(wp_unslash($_POST['recovery_code']))) : '';
+        $totp_code     = $this->getPostTextParam('totp_code');
+        $recovery_code = str_replace(' ', '', $this->getPostTextParam('recovery_code'));
 
         // Load secrets
         $secret        = get_user_meta($user_id, 'sitelock_2fa_secret', true);
@@ -328,18 +385,7 @@ class Sitelock_2FA
                 $this->terminate_request();
             }
         } catch (\Exception $e) {
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-                error_log(
-                    sprintf(
-                        'Sitelock_2FA TOTP verification error for user %d: %s in %s:%d',
-                        (int) $user_id,
-                        $e->getMessage(),
-                        $e->getFile(),
-                        $e->getLine()
-                    )
-                );
-            }
+            $this->log_totp_verification_error($user_id, $e);
         }
 
         $session_token = $this->get_pending_session_token();
@@ -365,8 +411,8 @@ class Sitelock_2FA
                      if(!empty($session_token)) {
                          $hash          = hash('sha256', $session_token);
                          set_transient(
-                            "sitelock_2fa_recovery_error_$hash", 
-                            'We could not process your recovery code due to a temporary error. Please try again.', 
+                            "sitelock_2fa_recovery_error_$hash",
+                            'We could not process your recovery code due to a temporary error. Please try again.',
                             MINUTE_IN_SECONDS
                         );
                      }
@@ -423,7 +469,7 @@ class Sitelock_2FA
         $this->terminate_request();
     }
 
-    private function load_errors_from_transients($user_id)
+    private function load_errors_from_transients()
     {
         $errors = ['totp' => '', 'recovery' => ''];
 
@@ -449,7 +495,7 @@ class Sitelock_2FA
 
     private function render_template($data)
     {
-        include plugin_dir_path(__DIR__) . 'pages/2fa-verify-template.php';
+        include_once plugin_dir_path(__DIR__) . 'pages/2fa-verify-template.php';
         $this->terminate_request();
     }
 
@@ -477,21 +523,16 @@ class Sitelock_2FA
         // Set authenticated user
         wp_set_current_user($user_id);
         wp_set_auth_cookie($user_id);
-        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Using core WordPress filter.
-        do_action('wp_login', $user->user_login, $user);
+        $this->trigger_wp_login_action($user->user_login, $user);
 
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce is verified elsewhere in the code.
-        $is_interim = (!empty($_REQUEST['interim-login'])) && $_REQUEST['interim-login'] == 1;
+        $is_interim = $this->isRequestFlagEnabled('interim-login');
 
         // Check for redirect_to in request
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Processing form data without nonce verification.
-        $redirect_source = ! empty( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : admin_url();
+        $redirect_source = $this->get_request_url_param('redirect_to', admin_url());
         $redirect_to     = sitelock_build_url_with_query_params( $redirect_source, ['redirect_to'] );
 
         $redirect_to = wp_validate_redirect($redirect_to, admin_url());
-        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Using core WordPress filter.
-        $redirect_to = apply_filters('login_redirect', $redirect_to, '', $user);
-        $redirect_to = apply_filters('sitelock_2fa_login_redirect', $redirect_to, $user);
+        $redirect_to = $this->apply_wp_login_redirect_filter($redirect_to, $user);
 
         if (empty($redirect_to)) {
             $redirect_to = admin_url();
@@ -500,8 +541,9 @@ class Sitelock_2FA
         if ($is_interim) {
             ?>
             <!DOCTYPE html>
-            <html>
+            <html lang="en">
             <head>
+                <title>Authentication</title>
                 <meta name="robots" content="noindex, nofollow">
             </head>
             <body>
@@ -547,7 +589,7 @@ class Sitelock_2FA
                                     // Try Native WP Close
                                     if (parentWin.wp && parentWin.wp.authCheck && parentWin.wp.authCheck.close) {
                                         parentWin.wp.authCheck.close();
-                                    } 
+                                    }
                                     
                                     // Trigger jQuery Event
                                     if (parentWin.jQuery) {
@@ -605,6 +647,15 @@ class Sitelock_2FA
 
         // Fallback to a default logo URL or site name
         return esc_url(plugin_dir_url(dirname(__FILE__)) . 'assets/images/logo.svg');
+    }
+
+    public function checkForTimeoutError($errors)
+    {
+        if ((string) $this->get_input_param_raw('sitelock_timeout', 'get') === 'true') {
+            $errors->add('sitelock_timeout', esc_html('Your session has expired, please try again.'));
+        }
+
+        return $errors;
     }
 
 }

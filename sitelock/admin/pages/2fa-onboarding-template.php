@@ -3,11 +3,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$user = wp_get_current_user();
-$user_2fa_status = sitelock_get_user_2fa_status($user);
-$grace_period_expired = $user_2fa_status['grace_period_expired'];
-$remaining_days = $user_2fa_status['remaining_days'];
-$custom_header_width = 'w-[420px]';
+$sitelock_user = wp_get_current_user();
+$sitelock_user_2fa_status = sitelock_get_user_2fa_status($sitelock_user);
+$sitelock_grace_period_expired = $sitelock_user_2fa_status['grace_period_expired'];
+$sitelock_remaining_days = $sitelock_user_2fa_status['remaining_days'];
+$sitelock_custom_header_width = 'w-[420px]';
 
 $title = __('Two-Factor Authentication Setup', 'sitelock-wordpress-plugin');
 include dirname(__DIR__) . '/partials/2fa/header.php';
@@ -16,7 +16,7 @@ include dirname(__DIR__) . '/partials/2fa/header.php';
 <h2 class="text-2xl font-normal text-[30px] mb-6"><?php esc_html_e('Two-Factor Authentication', 'sitelock-wordpress-plugin'); ?></h2>
 <p class="text-center text-[14px] leading-relaxed mb-8">
     <?php 
-    if ($grace_period_expired) {
+    if ($sitelock_grace_period_expired) {
         echo wp_kses_post(sprintf(
             __('For security, <strong>2FA is required</strong> on all accounts.<br>Please complete setup now to continue.', 'sitelock-wordpress-plugin')
         ));
@@ -27,10 +27,10 @@ include dirname(__DIR__) . '/partials/2fa/header.php';
             _n(
                 'For security, <strong>2FA is required</strong> on all accounts.<br>Please complete setup within the next <strong>%d day</strong>.',
                 'For security, <strong>2FA is required</strong> on all accounts.<br>Please complete setup within the next <strong>%d days</strong>.',
-                $remaining_days,
+                $sitelock_remaining_days,
                 'sitelock-wordpress-plugin'
             ),
-            $remaining_days
+            $sitelock_remaining_days
         ));
     }
     ?>
@@ -41,11 +41,11 @@ include dirname(__DIR__) . '/partials/2fa/header.php';
         <?php esc_html_e('Set Up 2FA', 'sitelock-wordpress-plugin'); ?>
     </a>
     
-    <?php if (!$grace_period_expired): ?>
+    <?php if (!$sitelock_grace_period_expired): ?>
         <?php 
-        $skip_url = wp_nonce_url(add_query_arg(['action' => 'sitelock_2fa_skip']), 'sitelock_2fa_skip_action'); 
+        $sitelock_skip_url = wp_nonce_url(add_query_arg(['action' => 'sitelock_2fa_skip']), 'sitelock_2fa_skip_action');
         ?>
-        <a href="<?php echo esc_url($skip_url); ?>" class="w-full h-[32px] btn-secondary">
+        <a href="<?php echo esc_url($sitelock_skip_url); ?>" class="w-full h-[32px] btn-secondary">
             <?php esc_html_e('Skip for Now', 'sitelock-wordpress-plugin'); ?>
         </a>
     <?php endif; ?>

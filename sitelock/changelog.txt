@@ -1,5 +1,12 @@
 == Changelog ==
 
+= 5.1.2 =
+_Release Date June 16, 2026_
+
+* Perf: Faster admin dashboard and backend operations
+* Fix: Enhanced login lockout experience with clearer status messaging
+* Fix: Improved reliability when saving connection and security settings
+
 = 5.1.1 =
 _Release Date April 7, 2026_
 

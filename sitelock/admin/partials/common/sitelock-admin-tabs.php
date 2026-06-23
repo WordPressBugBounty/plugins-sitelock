@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <!-- Tab Section -->
 <div class="flex justify-between mb-8 page-tabs-sec">
     <nav id="page-tabs-wrapper" class="flex items-center justify-between">

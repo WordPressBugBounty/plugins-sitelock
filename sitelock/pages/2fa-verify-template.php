@@ -20,38 +20,39 @@ include __DIR__ . '/partials/header.php';
                     </div>
                 <?php endif; ?>
                 <?php
-                $is_recovery = !empty($data['sitelock_2fa_recovery_error']);
-                $totp_class  = $is_recovery ? 'hidden' : '';
-                $rec_class   = $is_recovery ? '' : 'hidden';
+                $sitelock_verify_is_recovery = !empty($data['sitelock_2fa_recovery_error']);
+                $sitelock_verify_totp_class  = $sitelock_verify_is_recovery ? 'hidden' : '';
+                $sitelock_verify_rec_class   = $sitelock_verify_is_recovery ? '' : 'hidden';
                 ?>
-                <p class="sitelock-sub <?php echo esc_attr($totp_class); ?>" id="sitelock-2fa-text"><?php echo esc_html($sitelock_language_tokens['two_factor_authentication']['totpText']); ?></p>
-                <p class="sitelock-sub <?php echo esc_attr($rec_class); ?>" id="sitelock-recovery-text"><?php echo esc_html($sitelock_language_tokens['two_factor_authentication']['backupCodeText']); ?></p>
+                <p class="sitelock-sub <?php echo esc_attr($sitelock_verify_totp_class); ?>" id="sitelock-2fa-text"><?php echo esc_html($sitelock_language_tokens['two_factor_authentication']['totpText']); ?></p>
+                <p class="sitelock-sub <?php echo esc_attr($sitelock_verify_rec_class); ?>" id="sitelock-recovery-text"><?php echo esc_html($sitelock_language_tokens['two_factor_authentication']['backupCodeText']); ?></p>
             </header>
 
             <div class="sitelock-card__body">
                
                 <?php
                 // Preserve existing query parameters
-                $action_url = add_query_arg($_GET, sitelock_build_url_with_query_params(add_query_arg('action', 'sitelock-2fa', wp_login_url())));
+                 // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Processing form data without nonce verification.
+                $sitelock_verify_action_url = add_query_arg($_GET, sitelock_build_url_with_query_params(add_query_arg('action', 'sitelock-2fa', wp_login_url())));
                 ?>
-                <form id="sitelock-2fa-form" action="<?php echo esc_url($action_url); ?>" method="post" novalidate>
+                <form id="sitelock-2fa-form" action="<?php echo esc_url($sitelock_verify_action_url); ?>" method="post" novalidate>
                     <?php wp_nonce_field('sitelock_2fa_verify', 'sitelock_2fa_nonce'); ?>
 
-                    <div class="sitelock-field -mt-8 <?php echo esc_attr($totp_class); ?>" id="totp-group">
+                    <div class="sitelock-field -mt-8 <?php echo esc_attr($sitelock_verify_totp_class); ?>" id="totp-group">
                         <fieldset class="sitelock-2fa-fieldset">
                             <legend class="sitelock-2fa-label"></legend>
                             <div class="sitelock-2fa-inputs">
-                                <?php for ($i = 1; $i <= 6; $i++): ?>
+                                <?php for ($sitelock_verify_index = 1; $sitelock_verify_index <= 6; $sitelock_verify_index++): ?>
                                     <input
                                         type="text"
-                                        id="totp_code_<?php echo esc_attr($i); ?>"
+                                        id="totp_code_<?php echo esc_attr($sitelock_verify_index); ?>"
                                         maxlength="1"
                                         inputmode="numeric"
                                         pattern="\d"
                                         class="sitelock-input sitelock-2fa-box"
                                         required
                                         aria-required="true"
-                                        aria-label="Digit <?php echo esc_attr($i); ?> of 6"
+                                        aria-label="Digit <?php echo esc_attr($sitelock_verify_index); ?> of 6"
                                     />
                                 <?php endfor; ?>
                             </div>
@@ -60,8 +61,8 @@ include __DIR__ . '/partials/header.php';
                         </fieldset>
                     </div>
                    
-                    <div class="sitelock-recovery-field -mt-8 <?php echo esc_attr($rec_class); ?>" id="recovery-group">  
-                        <?php if ($is_recovery): ?>
+                    <div class="sitelock-recovery-field -mt-8 <?php echo esc_attr($sitelock_verify_rec_class); ?>" id="recovery-group">
+                        <?php if ($sitelock_verify_is_recovery): ?>
                             <span class="sitelock-recovery-error hidden"></span>
                         <?php endif; ?>                      
                         <input 

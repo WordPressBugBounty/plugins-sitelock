@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -353,7 +354,7 @@ class Sitelock_Admin
             [$this, 'sitelock_activity_logs_page']
         );
 
-        $sitelock_two_fa_settings               = get_option('sitelock_2fa_settings');
+            $sitelock_two_fa_settings               = get_option('sitelock_2fa_settings', []);
         $sitelock_two_fa_settings['enable_2fa'] = isset($sitelock_two_fa_settings['enable_2fa']) ? $sitelock_two_fa_settings['enable_2fa'] : false;
         if ($sitelock_two_fa_settings['enable_2fa']) {
             $hook = add_submenu_page(
@@ -485,9 +486,9 @@ class Sitelock_Admin
         $user_2fa_status = sitelock_get_user_2fa_status($user);
         $has_2fa = $user_2fa_status['has_2fa'];
         $grace_period_expired = $user_2fa_status['grace_period_expired'];
-
         // Handle "Skip for Now" Action
-        if (isset($_GET['action']) && $_GET['action'] === 'sitelock_2fa_skip' && wp_verify_nonce($_GET['_wpnonce'], 'sitelock_2fa_skip_action')) {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Processing form data without nonce verification.
+        if (isset($_GET['action']) && sanitize_text_field(wp_unslash($_GET['action'])) === 'sitelock_2fa_skip' && isset($_GET['_wpnonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'sitelock_2fa_skip_action')) {
             // ONLY allowed if grace period is NOT expired
             if (!$grace_period_expired) {
                 // Set a cookie (or transient) to skip for (e.g.) 1 day
@@ -667,6 +668,15 @@ class Sitelock_Admin
         // Ensure jQuery is loaded for inline scripts in setting.php
         wp_enqueue_script('jquery');
 
+         // Validate JS
+         wp_enqueue_script(
+            'jquery-validate',
+            plugin_dir_url(__FILE__) . 'js/jquery.validate.min.js',
+            [],
+            '1.0.0',
+            true
+        );
+
         // Admin JS
         wp_enqueue_script(
             'sitelock-give-feedback',
@@ -726,10 +736,17 @@ class Sitelock_Admin
             if (!$nonce || !wp_verify_nonce($nonce, 'sitelock_login_security_action')) {
                 wp_die(esc_html($this->sitelock_language_tokens['var']['loginSecurityFailed']));
             }
+        } elseif ($tab === 'connection') {
+            $nonce = isset($_POST['sitelock_connection_settings_nonce']) ? sanitize_text_field(wp_unslash($_POST['sitelock_connection_settings_nonce'])) : '';
+            if (!$nonce || !wp_verify_nonce($nonce, 'sitelock_connection_settings_action')) {
+                wp_die(esc_html($this->sitelock_language_tokens['var']['invalidTabSpecified']));
+            }
         } else {
             // Fallback for invalid or missing tab
             wp_die(esc_html($this->sitelock_language_tokens['var']['invalidTabSpecified']));
         }
+
+
 
         // website security settings
         if (isset($_POST['tab']) && $_POST['tab'] === 'sitelock_website_security') {
@@ -960,7 +977,7 @@ class Sitelock_Admin
                 if (! empty($prepare_args)) {
                     // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
                     $query = "SELECT COUNT(*) FROM $table_escaped $where_clause";
-                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.Security.EscapeOutput.UnsafeQuery
+                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
                     $filtered_total_items = $wpdb->get_var($wpdb->prepare(esc_sql($query), ...$prepare_args));
                 } else {
                     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -1212,13 +1229,13 @@ class Sitelock_Admin
 
     public function sitelock_upgrade_page()
     {
-        // Use a hidden parent slug to prevent showing in menu
+        // Use a hidden parent slug to prevent showing in menu.
         add_submenu_page(
-            null, // No parent menu
+            '', // Hidden page: empty slug is safe across WP/PHP versions.
             'Upgrade', // Page title
-            null,       // Menu title (not used here)
-            'manage_options',       // Capability
-            'sitelock-upgrade',       // Slug
+            '', // Hidden from menu
+            'manage_options', // Capability
+            'sitelock-upgrade', // Slug
             [$this, 'sitelock_upgrade_page_callback'] // Callback function
         );
     }

@@ -1,5 +1,5 @@
 <?php
-
+defined('ABSPATH') || exit;
 function sitelock_filesystem_is_writable($file)
 {
     global $wp_filesystem;

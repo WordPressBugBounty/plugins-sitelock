@@ -1,4 +1,7 @@
 <?php
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
+}
 /**
  * The class responsible for all methods related to using our external API
  */

@@ -1,5 +1,5 @@
 <?php
-
+defined('ABSPATH') || exit;
 class SiteLock_Block_Admin_Username
 {
 

@@ -9,8 +9,8 @@ $sitelock_language_tokens = sitelock_get_language_tokens();
 include __DIR__ . '/partials/header.php';
 
 // Default to 60 minutes if not set (fallback)
-$remaining_seconds = isset($data['lockout_remaining']) ? (int)$data['lockout_remaining'] : 3600;
-$lockout_period = isset($data['lockout_period']) ? (int)$data['lockout_period'] : 3600;
+$sitelock_remaining_seconds = isset($data['lockout_remaining']) ? (int)$data['lockout_remaining'] : 3600;
+$sitelock_lockout_period = isset($data['lockout_period']) ? (int)$data['lockout_period'] : 3600;
 ?>
 
 <header class="sitelock-card__head">
@@ -33,7 +33,7 @@ $lockout_period = isset($data['lockout_period']) ? (int)$data['lockout_period'] 
             <?php 
             /* translators: %d: lockout period in minutes */
             // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment
-            echo wp_kses_post(sprintf(__('For your security, access to your account is <strong>temporarily locked for %d minutes</strong>. You will be able to try again after this time has passed.', 'sitelock-wordpress-plugin'), $lockout_period)); 
+            echo wp_kses_post(sprintf(__('For your security, access to your account is <strong>temporarily locked for %d minutes</strong>. You will be able to try again after this time has passed.', 'sitelock-wordpress-plugin'), $sitelock_lockout_period));
             ?>
         </p>
     </div>
@@ -42,7 +42,7 @@ $lockout_period = isset($data['lockout_period']) ? (int)$data['lockout_period'] 
         <p>
             <?php esc_html_e('Time remaining:', 'sitelock-wordpress-plugin'); ?> 
             <strong id="sitelock-countdown">
-                <?php echo esc_html(gmdate('i:s', $remaining_seconds)); ?>
+                <?php echo esc_html(gmdate('i:s', $sitelock_remaining_seconds)); ?>
             </strong>
         </p>
     </div>
@@ -56,7 +56,7 @@ $lockout_period = isset($data['lockout_period']) ? (int)$data['lockout_period'] 
 
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
-        var remaining = <?php echo (int)$remaining_seconds; ?>;
+        var remaining = <?php echo (int)$sitelock_remaining_seconds; ?>;
         var display = document.getElementById('sitelock-countdown');
         var retryContainer = document.getElementById('sitelock-retry-container');
         

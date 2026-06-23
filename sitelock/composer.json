@@ -1,0 +1,42 @@
+{
+  "name": "sudhakar/sitelock-unit-test",
+  "autoload": {
+    "psr-4": {
+      "Sudhakar\\SitelockUnitTest\\": "src/",
+      "Sitelock\\": "includes/"
+    }
+  },
+  "authors": [
+    {
+      "name": "sudhakar-selvaraj",
+      "email": "sudhakar.selvaraj@sectigo.com"
+    }
+  ],
+  "require": {
+    "bjeavons/zxcvbn-php": "^1.4",
+    "spomky-labs/otphp": "10.0.3",
+    "bacon/bacon-qr-code": "^2.0",
+    "firebase/php-jwt": "^6.11"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^3.9",
+    "phpunit/phpunit": "^9.6",
+    "squizlabs/php_codesniffer": "^3.10",
+    "wp-coding-standards/wpcs": "^3.1",
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "audit": {
+      "block-insecure": false
+    }
+  },
+  "scripts": {
+    "lint": "phpcs --standard=phpcs.xml.dist",
+    "lint:php": "phpcs --standard=phpcs.xml.dist",
+    "test:local": "../scripts/run-tests-local.sh --suite unit",
+    "test:local:integration": "../scripts/run-tests-local.sh --suite integration"
+  }
+}

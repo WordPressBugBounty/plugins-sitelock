@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <div id="login-security" class="simple-box border-[#DDDDDD] bg-[#fff] mb-6">
     <!-- Standard header -->
     <div class="header flex items-center justify-between px-3 sm:px-5 py-3">

@@ -1,20 +1,31 @@
 <?php
+defined('ABSPATH') || exit;
 /**
  * Class SiteLock_Admin_Monitor
  * Monitors unexpected admin additions/removals and logs them.
  */
 class SiteLock_Admin_Monitor
 {
-    public const OPTION_SNAPSHOT_KEY = 'sitelock_admin_snapshot';
-    public const LOG_TABLE           = 'sitelock_admin_logs';
-    public function __construct()
+    public const OPTION_SNAPSHOT_KEY     = 'sitelock_admin_snapshot';
+    public const LOG_TABLE                = 'sitelock_admin_logs';
+
+    private $wpdb;
+
+    public function __construct($wpdb = null)
     {
+        if ($wpdb !== null) {
+            $this->wpdb = $wpdb;
+        } else {
+            global $wpdb;
+            $this->wpdb = $wpdb;
+        }
         add_action('init', [$this, 'maybe_schedule_cron']);
         add_action('sitelock_check_admins_cron', [$this, 'check_admin_users']);
 
         add_action('user_register', [$this, 'log_user_addition'], 10, 1);
         add_action('set_user_role', [$this, 'log_role_change'], 10, 3);
         add_action('delete_user', [$this, 'log_user_deletion'], 10, 3);
+        add_action('upgrader_process_complete', [$this, 'sitelock_after_update'], 10, 2 );
     }
 
     public static function on_activation()
@@ -35,9 +46,13 @@ class SiteLock_Admin_Monitor
             is_suspicious BOOLEAN DEFAULT 0,
             details TEXT,
             caller_file VARCHAR(255),
-            logged_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            logged_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_user_id (user_id),
+            INDEX idx_logged_at (logged_at),
+            INDEX idx_action (action)
         ) $charset_collate;";
 
+        # This is misuse of require_once 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta($sql);
 
@@ -154,7 +169,7 @@ class SiteLock_Admin_Monitor
 
     public function log_exists_recently($user_id, $cutoff_time, $action = null)
     {
-        global $wpdb;
+        $wpdb = $this->wpdb;
 
         // Validate inputs
         $user_id = intval($user_id);
@@ -221,7 +236,7 @@ class SiteLock_Admin_Monitor
                 );
             } else {
                 // Update existing log entry from role_changed to user_created
-                global $wpdb;
+                $wpdb  = $this->wpdb;
                 $table = $wpdb->prefix . self::LOG_TABLE;
                 // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
                 $wpdb->update(
@@ -319,7 +334,7 @@ class SiteLock_Admin_Monitor
 
     private function log_event($user, $action, $old_role = null, $new_role = null, $is_suspicious = false, $caller_file = 'unknown')
     {
-        global $wpdb;
+        $wpdb = $this->wpdb;
         $table   = $wpdb->prefix . self::LOG_TABLE;
         $action  = sanitize_text_field($action);
         $details = json_encode([
@@ -382,6 +397,54 @@ class SiteLock_Admin_Monitor
                 ['table_name' => $table, 'db_error' => $wpdb->last_error],
                 __CLASS__
             );
+        }
+    }
+
+    public function sitelock_after_update( $upgrader_object, $options ) {
+        if ( $options['action'] === 'update' && $options['type'] === 'plugin' ) {
+            $this->log_upgrade_db();
+        }
+    }
+
+    public function log_upgrade_db() {
+        $wpdb = $this->wpdb;
+
+        $installed_version = get_option('sitelock_db_version','');
+        $current_version = '5.1.2'; // Update this version as needed
+
+        if ($installed_version) {
+            return;
+        }
+
+        $table_name = esc_sql($wpdb->prefix . self::LOG_TABLE); // Sanitize table name
+
+        // Add indexes safely
+        $this->logs_add_index_if_missing($table_name, 'user_id');
+        $this->logs_add_index_if_missing($table_name, 'logged_at');
+        $this->logs_add_index_if_missing($table_name, 'action');
+
+        // Update the database version
+        update_option('sitelock_db_version', $current_version);
+    }
+
+    public function logs_add_index_if_missing($table, $column) {
+        $wpdb = $this->wpdb;
+
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        $index_exists = $wpdb->get_var($wpdb->prepare("SHOW INDEX FROM {$table} WHERE Column_name = %s",$column));
+
+        if (!$index_exists) {
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, PluginCheck.Security.DirectDB.UnescapedDBParameter
+            $result = $wpdb->query("ALTER TABLE {$table} ADD INDEX ({$column})");
+            if ($result === false) {
+                sitelock_log(
+                    'error',
+                    'Index Creation Failed',
+                    "Failed to add index on column {$column} for table {$table}: {$wpdb->last_error}",
+                    ['table_name' => $table, 'column' => $column, 'db_error' => $wpdb->last_error],
+                    __CLASS__
+                );
+            }
         }
     }
 }

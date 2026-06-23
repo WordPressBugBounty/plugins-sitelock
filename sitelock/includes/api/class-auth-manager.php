@@ -223,7 +223,7 @@ class AuthManager
      *
      * @since   5.0.0
      */
-    private function exchange_LK_for_JWT($license_key)
+    public function exchange_LK_for_JWT($license_key)
     {
         $token_exchange_endpoint = sitelock_api_url() . '/_services/oauth/token';
         $code_verifier           = $this->get_verification_code(true);

@@ -1,4 +1,5 @@
 <?php
+defined('ABSPATH') || exit;
 $sitelock_security_enhancements_options = get_option('sitelock_security_settings', []);
 $sitelock_security_2fa_options          = get_option('sitelock_2fa_settings', []);
 $sitelock_login_lockout_enabled         = get_option('sitelock_login_lockout_enabled');

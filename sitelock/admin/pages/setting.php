@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 $sitelock_security_settings_raw = get_option('sitelock_security_settings', []);
 $sitelock_security_enhancements_options = is_array($sitelock_security_settings_raw) ? $sitelock_security_settings_raw : [];
 $sitelock_connection_status             = $this->api->auth->get_auth_key();

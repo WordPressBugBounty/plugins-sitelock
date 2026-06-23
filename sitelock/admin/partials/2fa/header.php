@@ -7,12 +7,12 @@ if (!defined('ABSPATH')) {
  * Standard 2FA Page Header
  * Variables expected: 
  * - $title: Page title
- * - $wrapper_class: (Optional) CSS class for the wrapper
+ * - $sitelock_wrapper_class: (Optional) CSS class for the wrapper
  */
 
-$icon_url = includes_url('images/w-logo-blue.png');
+$sitelock_icon_url = includes_url('images/w-logo-blue.png');
 // Use robust relative paths from the current file location
-$admin_css_dir = plugins_url('../../css/', __FILE__);
+$sitelock_admin_css_dir = plugins_url('../../css/', __FILE__);
 
 ?>
 <!DOCTYPE html>
@@ -38,8 +38,8 @@ $admin_css_dir = plugins_url('../../css/', __FILE__);
     ?>
 </head>
 <body class="sitelock-2fa-onboarding">
-    <div class="sitelock-onboarding-wrapper <?php echo esc_attr($wrapper_class ?? ''); ?>">
+    <div class="sitelock-onboarding-wrapper <?php echo esc_attr($sitelock_wrapper_class ?? ''); ?>">
         <div class="sitelock-logo w-[64px]">
-            <img src="<?php echo esc_url($icon_url); ?>" alt="WordPress Logo">
+            <img src="<?php echo esc_url($sitelock_icon_url); ?>" alt="WordPress Logo">
         </div>
-        <div class="sitelock-card rounded-md <?php echo esc_attr(isset($custom_header_width) ? $custom_header_width : 'max-w-[648px]'); ?> p-6">
+        <div class="sitelock-card rounded-md <?php echo esc_attr(isset($sitelock_custom_header_width) ? $sitelock_custom_header_width : 'max-w-[648px]'); ?> p-6">

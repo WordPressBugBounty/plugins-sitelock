@@ -1130,6 +1130,22 @@
     }
   }
 
+  .error {
+    color: #db1010;              /* WordPress admin red */
+    font-size: 13px;
+    margin-top: 4px;
+    display: block;
+}
+
+input.error {
+    border-color: #db1010 !important;
+    background-color: #fff6f6;
+}
+
+input.valid {
+    border-color: #00aa6b;       /* WP success green */
+}
+
   /* Upgrade Page CSS ends */
 }
 

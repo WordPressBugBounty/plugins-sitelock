@@ -9,9 +9,9 @@ if (!defined('ABSPATH')) {
         </div>
     </div>
     <?php 
-    if (isset($extra_footer)) {
+    if (isset($sitelock_extra_footer)) {
         // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- This variable contains trusted HTML/Scripts constructed internally.
-        echo $extra_footer;
+        echo $sitelock_extra_footer;
     }
     // Manual script inclusion
     wp_print_scripts(['sitelock-2fa-setup-js']);

@@ -8,22 +8,22 @@ if (!defined('ABSPATH')) {
  * 
  * Variables expected:
  * - $backup_codes: Array of plain-text backup codes
- * - $is_wizard: (Optional) Boolean, true for full-page wizard context
+ * - $sitelock_2fa_is_wizard: (Optional) Boolean, true for full-page wizard context
  */
 
 $sitelock_language_tokens = sitelock_get_language_tokens();
-$step_three_tokens = $sitelock_language_tokens['two_factor_authentication_settings_steps']['stepThree'];
+$sitelock_recovery_step_three_tokens = $sitelock_language_tokens['two_factor_authentication_settings_steps']['stepThree'];
 ?>
 
 <div class="sitelock-2fa-step sitelock-2fa-step-3 text-left">
-    <p class="sitelock-step-title mb-2 text-left text-[16px] font-normal"><?php echo esc_html($step_three_tokens['title']); ?></p>
-    <p class="sitelock-step-desc mb-6 text-[14px] leading-relaxed text-left"><?php echo esc_html($step_three_tokens['description']); ?></p>
+    <p class="sitelock-step-title mb-2 text-left text-[16px] font-normal"><?php echo esc_html($sitelock_recovery_step_three_tokens['title']); ?></p>
+    <p class="sitelock-step-desc mb-6 text-[14px] leading-relaxed text-left"><?php echo esc_html($sitelock_recovery_step_three_tokens['description']); ?></p>
     <?php 
-    $notice = $step_three_tokens['recoveryCodeNoticeLine1'];
-    $time_str = !empty($code_expiration) ? sprintf('%d minutes', $code_expiration) : '30 minutes';
-    $notice = str_replace('##remaining-time##', '<strong>' . $time_str . '</strong>', $notice);
-    $notice = str_replace('#b#', '<strong>', $notice);
-    $notice = str_replace('#/b#', '</strong>', $notice);
+    $sitelock_recovery_notice = $sitelock_recovery_step_three_tokens['recoveryCodeNoticeLine1'];
+    $sitelock_recovery_time_str = !empty($code_expiration) ? sprintf('%d minutes', $code_expiration) : '30 minutes';
+    $sitelock_recovery_notice = str_replace('##remaining-time##', '<strong>' . $sitelock_recovery_time_str . '</strong>', $sitelock_recovery_notice);
+    $sitelock_recovery_notice = str_replace('#b#', '<strong>', $sitelock_recovery_notice);
+    $sitelock_recovery_notice = str_replace('#/b#', '</strong>', $sitelock_recovery_notice);
     ?>
 
     <div class="flex items-center max-w-[870px] border border-[#FFD601] px-4 py-3 rounded relative overflow-hidden mb-4">
@@ -36,26 +36,27 @@ $step_three_tokens = $sitelock_language_tokens['two_factor_authentication_settin
             </svg>
         </div>
         <div class="text-sm leading-5 break-words items-center pl-2">
-            <?php echo wp_kses_post($notice); ?>
+            <?php echo wp_kses_post($sitelock_recovery_notice); ?>
         </div>
     </div>
     
-    <div class="sitelock-recovery-code-box <?php echo !empty($is_wizard) ? 'text-center' : ''; ?>">
-        <i class="block mb-4 italic font-semibold text-[14px]"><?php echo esc_html($step_three_tokens['storeCodes']); ?></i>
+    <div class="sitelock-recovery-code-box <?php echo !empty($sitelock_2fa_is_wizard) ? 'text-center' : ''; ?>">
+        <i class="block mb-4 italic font-semibold text-[14px]"><?php echo esc_html($sitelock_recovery_step_three_tokens['storeCodes']); ?></i>
         
         <div class="flex justify-center mb-6">
             <ul id="backup-codes" class="grid gap-3 w-full max-w-[250px]">
             <?php 
             if (!empty($backup_codes)) {
-                foreach ($backup_codes as $code) {
-                    $display_code = chunk_split($code, 4, ' ');
-                    echo '<li class="bg-[#F7F7F7] px-4 py-2 border rounded font-code-save text-[16px] flex items-center justify-center font-mono" data-code="' . esc_attr($code) . '">' . esc_html($display_code) . '</li>';
+                foreach ($backup_codes as $sitelock_recovery_code) {
+                    $sitelock_recovery_display_code = chunk_split($sitelock_recovery_code, 4, ' ');
+                    echo '<li class="bg-[#F7F7F7] px-4 py-2 border rounded font-code-save text-[16px] flex items-center justify-center font-mono" data-code="' . esc_attr($sitelock_recovery_display_code) . '">' . esc_html($sitelock_recovery_display_code) . '</li>';
                 }
             }
             else 
             {
-                $redirect_to = !empty($_REQUEST['redirect_to']) ? esc_url_raw($_REQUEST['redirect_to']) : esc_url(admin_url());
-                wp_safe_redirect($redirect_to);
+                // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Processing form data without nonce verification.
+                $sitelock_recovery_redirect_to = !empty($_REQUEST['redirect_to']) ? esc_url_raw(wp_unslash($_REQUEST['redirect_to'])) : esc_url(admin_url());
+                wp_safe_redirect($sitelock_recovery_redirect_to);
                 exit;
             }
             ?>
@@ -64,7 +65,7 @@ $step_three_tokens = $sitelock_language_tokens['two_factor_authentication_settin
 
         <div class="sitelock-recovery-actions gap-4">
             <button type="button" onclick="downloadBackupCodes()" class="sitelock-btn-download w-[164px] h-[32px] btn-secondary">
-                <?php echo esc_html($step_three_tokens['downloadCodes']); ?>
+                <?php echo esc_html($sitelock_recovery_step_three_tokens['downloadCodes']); ?>
             </button>
             
             <p class="text-[14px] text-left max-w-[500px] mt-4 leading-relaxed">

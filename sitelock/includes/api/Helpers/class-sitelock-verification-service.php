@@ -1,9 +1,11 @@
 <?php
+defined('ABSPATH') || exit;
 require_once SITELOCK_PLUGIN_DIR . 'includes/api/Helpers/class-api-helper.php';
 require_once SITELOCK_PLUGIN_DIR . 'includes/api/class-auth-manager.php';
 
 use Firebase\JWT\JWK;
 use Firebase\JWT\JWT;
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 JWT::$leeway = 60;
 
 class SiteLock_Verification_Service
@@ -209,9 +211,24 @@ class SiteLock_Verification_Service
 
     /**
      * Check if request is HTTPS.
+     *
+     * Returns true unconditionally for local development environments
+     * (WP_ENVIRONMENT_TYPE === 'local' or a localhost/127.0.0.1 host),
+     * so the verify endpoint works over plain HTTP.
      */
     private function is_https()
     {
+        if (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'local') {
+            return true;
+        }
+
+        $host = isset($_SERVER['HTTP_HOST']) ? strtolower($_SERVER['HTTP_HOST']) : '';
+        // Strip optional port suffix before comparing.
+        $host_without_port = preg_replace('/:\d+$/', '', $host);
+        if ($host_without_port === 'localhost' || $host_without_port === '127.0.0.1') {
+            return true;
+        }
+
         return is_ssl() || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
     }
 
@@ -220,9 +237,19 @@ class SiteLock_Verification_Service
      */
     private function is_allowed_ip()
     {
+        // Skip IP restriction in local development environments.
+        if (function_exists('wp_get_environment_type') && wp_get_environment_type() === 'local') {
+            return true;
+        }
+
         $remote_ip = '';
         if (!empty($_SERVER['REMOTE_ADDR'])) {
             $remote_ip = sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR']));
+        }
+
+        // Also skip for loopback addresses (covers cases where WP_ENVIRONMENT_TYPE is not set).
+        if ($remote_ip === '127.0.0.1' || $remote_ip === '::1') {
+            return true;
         }
 
         // 1. Check direct SiteLock allowed IPs (exact match)

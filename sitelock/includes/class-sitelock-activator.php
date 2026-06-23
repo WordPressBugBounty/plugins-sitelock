@@ -34,6 +34,19 @@ class Sitelock_Activator
         if (empty($wp_filesystem)) {
             require_once ABSPATH . 'wp-admin/includes/file.php';
             WP_Filesystem();
+            // Probe the transport: WP_Filesystem() itself does not throw — the TypeError
+            // only fires when a method is called on an FTP transport with no valid connection.
+            // Catch it here and reinitialize with 'direct'.
+            try {
+                if (!empty($wp_filesystem)) {
+                    $wp_filesystem->is_dir(ABSPATH);
+                }
+            } catch (TypeError $e) {
+                $force_direct = function () { return 'direct'; };
+                add_filter('filesystem_method', $force_direct);
+                WP_Filesystem();
+                remove_filter('filesystem_method', $force_direct);
+            }
         }
 
         // 1. Clean up main .htaccess

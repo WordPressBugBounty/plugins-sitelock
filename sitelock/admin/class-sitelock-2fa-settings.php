@@ -17,7 +17,7 @@ class Sitelock_2FA_Settings
 {
     private $settings;
 
-    public const TOTP_ISSUER = 'SitelockSecurity';
+    public const TOTP_ISSUER = 'SiteLock WP';
 
     /**
      * Constructor for the SiteLock 2FA Settings class.
@@ -91,7 +91,18 @@ class Sitelock_2FA_Settings
         }
 
         // Assign TOTP object with issuer and account name
-        $totp->setLabel($user->user_email);
+        $home_url = home_url();
+        if (function_exists('wp_parse_url')) {
+            $domain = wp_parse_url($home_url, PHP_URL_HOST);
+        } else {
+            $parsed = parse_url($home_url);
+            $domain = $parsed['host'] ?? '';
+        }
+
+        $site_label    = $domain ?: $home_url;
+        $account_label = !empty($user->user_login) ? $user->user_login : $user->user_email;
+        $label         = sprintf('%s - %s', $site_label, $account_label);
+        $totp->setLabel($label);
         $totp->setIssuer(self::TOTP_ISSUER);
 
         $totp_uri = $totp->getProvisioningUri();
@@ -182,6 +193,7 @@ class Sitelock_2FA_Settings
         global $wpdb;
 
         // Query to find all transients matching the pattern
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $transients = $wpdb->get_col(
             $wpdb->prepare(
                 "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",

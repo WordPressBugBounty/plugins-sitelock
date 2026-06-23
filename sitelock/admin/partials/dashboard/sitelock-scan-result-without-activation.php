@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <div class="<?php echo esc_attr($sitelock_token_last_key == $sitelock_i ? 'not-last-child:border-b' : 'border-b') ?> border-[#EEEEEE] px-3 sm:px-0">
     <div class="grid grid-cols-12 gap-2 md:gap-3 py-[10px]">
         <!-- Plus/minus toggle button -->

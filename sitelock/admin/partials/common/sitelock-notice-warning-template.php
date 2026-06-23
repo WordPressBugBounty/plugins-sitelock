@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <div>
     <p class="text-[14px]"><?php echo wp_kses_post($sitelock_warning_message); ?></p>
     <?php

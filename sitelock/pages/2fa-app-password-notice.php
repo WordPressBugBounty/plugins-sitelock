@@ -1,3 +1,4 @@
+<?php defined('ABSPATH') || exit; ?>
 <div class="application-passwords-section">
     <h2><?php esc_html_e('Application Passwords', 'sitelock-wordpress-plugin'); ?></h2>
     <p><?php esc_html_e('Application Passwords allow you to authenticate via non-interactive systems, such as XML-RPC or the REST API, without providing your actual password. Application Passwords can be easily revoked. They cannot be used for traditional logins to your website.', 'sitelock-wordpress-plugin'); ?></p>

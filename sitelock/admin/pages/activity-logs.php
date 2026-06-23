@@ -1,4 +1,5 @@
 <?php 
+defined('ABSPATH') || exit;
 $sitelock_language_tokens = sitelock_get_language_tokens();
 ?>
 

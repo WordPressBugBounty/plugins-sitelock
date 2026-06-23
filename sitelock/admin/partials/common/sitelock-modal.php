@@ -1,4 +1,4 @@
-
+<?php defined( 'ABSPATH' ) || exit; ?>
 <!-- Modal Structure -->
 <div id="modalOverlay" class="modal-overlay">
   <div class="modal p-6">

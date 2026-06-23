@@ -1,3 +1,4 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
 <div id="sitelock-2fa-warning" class="notice notice-warning"
     style="margin-top: 20px; padding: 10px; border-left: 4px solid #ffba00; background: #fffbe6;">
     <p><strong><?php echo esc_html($message) ?></strong></p>

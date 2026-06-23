@@ -1,4 +1,5 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 $sitelock_site_id = get_option('sitelock_site_id', '');
 ?>
 

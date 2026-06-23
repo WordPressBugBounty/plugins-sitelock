@@ -1,5 +1,5 @@
 <?php
-
+defined('ABSPATH') || exit;
 /**
  * The core plugin class.
  *
@@ -56,7 +56,7 @@ class Sitelock
     public function __construct()
     {
         $this->plugin_name = 'sitelock';
-        $this->version     = '5.0.0';
+        $this->version     = '5.1.2';
 
         $this->load_dependencies();
         $this->set_locale();
@@ -90,6 +90,11 @@ class Sitelock
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-sitelock-loader.php';
 
         /**
+         * Composer Autoloader
+         */
+        require_once plugin_dir_path(dirname(__FILE__)) . 'vendor/autoload.php';
+
+        /**
          * The class responsible for defining internationalization functionality
          * of the plugin.
          */
@@ -111,6 +116,15 @@ class Sitelock
          */
         require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-sitelock-public.php';
 
+        /**
+         * The class responsible for all methods related to using our external API
+         */
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/api/class-sitelock-api.php';
+
+        /**
+         * Global functions (misnamed as admin functions)
+         */
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/functions-sitelock-admin.php';
         // Include the 2fa class files
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-sitelock-2fa-settings.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-sitelock-2fa.php';
@@ -169,12 +183,56 @@ class Sitelock
      * @since    1.9.0
      * @access   private
      */
-    private function define_admin_hooks()
+    /**
+     * Register all of the hooks related to the admin area functionality
+     * of the plugin.
+     *
+     * @since    1.9.0
+     * @access   private
+     */
+    protected function define_admin_hooks()
     {
-        $plugin_admin = new Sitelock_Admin($this->get_plugin_name(), $this->get_version());
+        if ($this->should_load_admin_class()) {
+            $plugin_admin = new Sitelock_Admin($this->get_plugin_name(), $this->get_version());
 
-        $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
-        $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
+            $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
+            $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
+        }
+    }
+
+    /**
+     * Check if we should load the main admin class.
+     * This ensures backend logic (save_post, ajax, etc.) works while skipping frontend views.
+     *
+     * @return bool
+     */
+    protected function should_load_admin_class()
+    {
+        if (is_admin()) {
+            return true;
+        }
+
+        if (defined('DOING_AJAX') && DOING_AJAX) {
+            return true;
+        }
+
+        if (defined('DOING_CRON') && DOING_CRON) {
+            return true;
+        }
+
+        if (defined('REST_REQUEST') && REST_REQUEST) {
+            return true;
+        }
+
+        if (defined('XMLRPC_REQUEST') && XMLRPC_REQUEST) {
+            return true;
+        }
+
+        if (defined('WP_CLI') && WP_CLI) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -243,31 +301,113 @@ class Sitelock
      * @since    1.9.0
      * @access   private
      */
-    private function initialize_custom_class()
+    /**
+     * Register all of the hooks related to the admin area functionality
+     * of the plugin.
+     *
+     * @since    1.9.0
+     * @access   private
+     */
+    protected function initialize_custom_class()
     {
-        // Register a new action on the 'plugins_loaded' hook
-        add_action('plugins_loaded', function () {
-            new SiteLock_Admin_Monitor();
-        });
+        // 1. SiteLock_Admin_Monitor: Admin-only or Cron (admin changes can happen in cron) or REST (creating users)
+        // We'll restrict to is_admin(), Cron, or REST.
+        if (is_admin() || (defined('DOING_CRON') && DOING_CRON) || (defined('REST_REQUEST') && REST_REQUEST)) {
+            add_action('plugins_loaded', function () {
+                new SiteLock_Admin_Monitor();
+            });
+        }
 
-        new SiteLock_Hardening();
+        // 2. SiteLock_Hardening: Admin-only + Cron
+        // Hardening settings are managed in admin. .htaccess rules might need update via cron?
+        if (is_admin() || (defined('DOING_CRON') && DOING_CRON)) {
+            new SiteLock_Hardening();
+        }
 
-        add_action('plugins_loaded', function () {
-            new Sitelock_Login_Logger();
-        });
+        // 3. Login Security Classes (Logger, Block Username, Password Strength, Force Logout, Login Lockout)
+        // These need to run on:
+        // - Admin (settings, profile updates)
+        // - Login pages (wp-login.php)
+        // - Registration/Signup pages
+        // - REST/XMLRPC (for auth checks)
+        // - Logged in users (Force Logout needs to check session)
 
-        add_action('plugins_loaded', function () {
-            new SiteLock_Block_Admin_Username();
-        });
+        if ($this->should_load_login_security()) {
+            add_action('plugins_loaded', function () {
+                new Sitelock_Login_Logger();
+            });
 
-        new Sitelock_2FA_Settings();
+            add_action('plugins_loaded', function () {
+                new SiteLock_Block_Admin_Username();
+            });
 
-        new Sitelock_2FA();
+            new Sitelock_Password_Strength();
 
-        new Sitelock_Password_Strength();
+            new Sitelock_Force_Logout();
 
-        new Sitelock_Force_Logout();
+            new Sitelock_Login_Lockout();
 
-        new Sitelock_Login_Lockout();
+            new Sitelock_2FA_Settings();
+
+            new Sitelock_2FA();
+        }
+    }
+
+    /**
+     * Check if we should load login security related classes.
+     *
+     * @return bool
+     */
+    protected function should_load_login_security()
+    {
+        // Admin context
+        if (is_admin()) {
+            return true;
+        }
+
+        // Login related pages
+        if ($this->is_login_related_page()) {
+            return true;
+        }
+
+        // Authenticated API requests
+        if ((defined('REST_REQUEST') && REST_REQUEST) || (defined('XMLRPC_REQUEST') && XMLRPC_REQUEST)) {
+            return true;
+        }
+
+        // WP-CLI
+        if (defined('WP_CLI') && WP_CLI) {
+            return true;
+        }
+
+        // Logged in users (for session timeouts, admin bar notices handled by these classes if any)
+        if (defined('LOGGED_IN_COOKIE') && isset($_COOKIE[LOGGED_IN_COOKIE])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if current page is login/registration related.
+     *
+     * @return bool
+     */
+    protected function is_login_related_page()
+    {
+        $pagenow = $GLOBALS['pagenow'] ?? '';
+
+        // Standard WP login/register
+        if (in_array($pagenow, ['wp-login.php', 'wp-register.php'])) {
+            return true;
+        }
+
+        // 2FA Setup page (frontend view)
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Processing form data without nonce verification.
+        if (!empty($_GET['sitelock-2fa-setup'])) {
+            return true;
+        }
+
+        return false;
     }
 }

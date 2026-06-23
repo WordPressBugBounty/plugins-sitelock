@@ -168,7 +168,8 @@ function sitelock_bytes_to_mb($bytes)
  */
 function sitelock_get_site_hostname($siteroot = false): string
 {
-    // return "domain" value from testing.json
+    // return "domain" value from testing.json -- never do this! 
+    
     if (($test_domain = sitelock_get_test_var('domain')) !== null) {
         return $test_domain;
     }

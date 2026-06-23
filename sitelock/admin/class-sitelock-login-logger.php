@@ -32,9 +32,9 @@ class Sitelock_Login_Logger
             logged_at DATETIME,
             status ENUM('success', 'failure') DEFAULT 'success',
             user_agent TEXT,
-            INDEX (user_id),
-            INDEX (logged_at),
-            INDEX (status)
+            INDEX idx_user_id (user_id),
+            INDEX idx_logged_at (logged_at),
+            INDEX idx_status (status)
         ) {$charset_collate};";
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';

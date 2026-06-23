@@ -15,11 +15,32 @@ class Sitelock_Hardening
     private $wp_filesystem;
     private $htaccess_backup_limit = 5; // Configurable backup limit
     private $sitelock_language_tokens;
+    private $loopback_pre_accessible = null;
 
     public function __construct()
     {
-        $settings = get_option('sitelock_security_settings', []);
-        $this->settings = is_array($settings) ? $settings : [];
+        global $wp_filesystem;
+        if (empty($wp_filesystem)) {
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+            WP_Filesystem();
+        }
+        // Probe the transport with a harmless operation. WP_Filesystem() itself never
+        // throws — the TypeError only surfaces when a method is actually called on an
+        // FTP transport that has no valid connection (PHP 8.0+ strict typing).
+        // Catching it here lets us fall back to 'direct' before any real work starts.
+        try {
+            if (!empty($wp_filesystem)) {
+                $wp_filesystem->is_dir(ABSPATH);
+            }
+        } catch (TypeError $e) {
+            $force_direct = function () { return 'direct'; };
+            add_filter('filesystem_method', $force_direct);
+            WP_Filesystem();
+            remove_filter('filesystem_method', $force_direct);
+        }
+        $this->wp_filesystem = $wp_filesystem;
+        // $this->settings will be lazy-loaded via get_settings()
+        $this->settings = null;
         $this->htaccess_path         = ABSPATH . '.htaccess';
         $this->uploads_htaccess_path = ABSPATH . 'wp-content/uploads/.htaccess';
 
@@ -32,7 +53,6 @@ class Sitelock_Hardening
         add_action('admin_init', [$this, 'register_security_settings']);
         add_action('add_option_sitelock_security_settings', [$this, 'update_security_rules'], 10, 2);
         add_action('update_option_sitelock_security_settings', [$this, 'update_security_rules'], 10, 2);
-        add_action('add_option_sitelock_security_settings', [$this, 'update_security_rules'], 10, 2);
 
         add_action('admin_notices', [$this, 'display_permission_errors']);
     }
@@ -52,8 +72,24 @@ class Sitelock_Hardening
             require_once ABSPATH . 'wp-admin/includes/file.php';
         }
 
-        if (WP_Filesystem()) {
+        WP_Filesystem();
+
+        // Probe the transport: WP_Filesystem() itself does not throw — the TypeError
+        // only fires when a method is called on an FTP transport with no valid connection.
+        // Catch it here and reinitialize with 'direct'.
+        try {
             global $wp_filesystem;
+            if (!empty($wp_filesystem)) {
+                $wp_filesystem->is_dir(ABSPATH);
+            }
+        } catch (TypeError $e) {
+            $force_direct = function () { return 'direct'; };
+            add_filter('filesystem_method', $force_direct);
+            WP_Filesystem();
+            remove_filter('filesystem_method', $force_direct);
+        }
+
+        if (!empty($wp_filesystem)) {
             $this->wp_filesystem = $wp_filesystem;
             return true;
         }
@@ -77,6 +113,9 @@ class Sitelock_Hardening
 
     public function register_security_settings()
     {
+        // Fix autoload for these options
+        $this->fix_option_autoload();
+
         register_setting('sitelock_security_group', 'sitelock_security_settings', [$this, 'sanitize_settings']);
         register_setting('sitelock_security_group', 'sitelock_blocked_directories', [
             'type'              => 'array',
@@ -98,7 +137,8 @@ class Sitelock_Hardening
 
         foreach ($options as $key => $label) {
             add_settings_field($key, esc_html($label), function () use ($key) {
-                $value = isset($this->settings[$key]) ? esc_attr($this->settings[$key]) : '';
+                $settings = $this->get_settings();
+                $value = isset($settings[$key]) ? esc_attr($settings[$key]) : '';
                 echo "<input type='checkbox' name='" . esc_attr("sitelock_security_settings[$key]") . "' value='1' " . checked(1, $value, false) . '>';
             }, 'security-plugin', 'security_section');
         }
@@ -309,6 +349,49 @@ class Sitelock_Hardening
     }
 
     /**
+     * Get settings, lazy-loading if necessary.
+     *
+     * @return array
+     */
+    private function get_settings()
+    {
+        if ($this->settings === null) {
+            $settings = get_option('sitelock_security_settings', []);
+            $this->settings = is_array($settings) ? $settings : [];
+        }
+        return $this->settings;
+    }
+
+    /**
+     * Fix option autoload to 'no'.
+     */
+    private function fix_option_autoload()
+    {
+        $options_to_fix = ['sitelock_security_settings', 'sitelock_blocked_directories'];
+        
+        foreach ($options_to_fix as $option_name) {
+             // Check if option exists and is autoloaded
+             $alloptions = wp_load_alloptions();
+             if (isset($alloptions[$option_name])) {
+                 // It's currently autoloaded. We need to set it to 'no'.
+                 // wp_set_option_autoload was introduced in 6.4.
+                 if (function_exists('wp_set_option_autoload')) {
+                     wp_set_option_autoload($option_name, 'no');
+                 } else {
+                     // Fallback for older WP versions
+                     $value = get_option($option_name);
+                     delete_option($option_name);
+                     add_option($option_name, $value, '', 'no');
+                 }
+                 
+                 // Remove from cache to ensure next get_option fetches freshly (though non-autoloaded won't show in alloptions)
+                 wp_cache_delete($option_name, 'options');
+                 wp_cache_delete('alloptions', 'options');
+             }
+        }
+    }
+
+    /**
      * Main orchestrator for applying Apache security rules.
      * Determines which .htaccess files need updating based on changed settings.
      *
@@ -317,6 +400,9 @@ class Sitelock_Hardening
      */
     private function apply_apache_security($changed_keys = null)
     {
+        // Ensure settings are loaded
+        $this->get_settings();
+
         // Define which settings affect which file
         $main_relevant_keys    = ['disable_dir_listing', 'xss_sqli_protection', 'limit_php_execution'];
         $uploads_relevant_keys = ['blocked_directories'];
@@ -396,6 +482,9 @@ class Sitelock_Hardening
      */
     private function apply_main_htaccess_rules()
     {
+        // Ensure settings are loaded
+        $this->get_settings();
+
         if (!$this->init_filesystem()) {
             return false;
         }
@@ -524,7 +613,7 @@ class Sitelock_Hardening
             );
             return true;
         } else {
-            
+            $this->pre_check_loopback(); // Cache loopback accessibility before modifying .htaccess
             insert_with_markers($this->htaccess_path, 'SitelockRules', $new_rules);
             
             // Validate .htaccess changes (hybrid: Apache + HTTP)
@@ -596,6 +685,9 @@ class Sitelock_Hardening
      */
     private function apply_uploads_htaccess_rules()
     {
+        // Ensure settings are loaded
+        $this->get_settings();
+
         if (!$this->init_filesystem()) {
             return false;
         }
@@ -707,7 +799,7 @@ class Sitelock_Hardening
             );
             return true;
         } else {
-            
+            $this->pre_check_loopback(); // Cache loopback accessibility before modifying .htaccess
             insert_with_markers($this->uploads_htaccess_path, 'SitelockRules', $uploads_htaccess_rules);
             
             // Validate .htaccess changes (hybrid: Apache + HTTP)
@@ -1049,6 +1141,23 @@ class Sitelock_Hardening
     }
 
     /**
+     * Check whether loopback HTTP requests reach this site, caching the result.
+     * Called before modifying .htaccess so that validate_htaccess_changes() can
+     * distinguish "loopback is simply unavailable here" from "the change broke the site".
+     *
+     * @return bool True if both home and login pages are reachable via loopback.
+     */
+    private function pre_check_loopback()
+    {
+        if ($this->loopback_pre_accessible === null) {
+            $home  = $this->validate_site_accessibility(home_url('/'));
+            $login = $this->validate_site_accessibility(wp_login_url());
+            $this->loopback_pre_accessible = $home['accessible'] && $login['accessible'];
+        }
+        return $this->loopback_pre_accessible;
+    }
+
+    /**
      * Validate site accessibility via HTTP request.
      *
      * @param string|null $url Optional URL to check. Defaults to home_url('/').
@@ -1114,6 +1223,15 @@ class Sitelock_Hardening
         }
         
         // Step 2: HTTP accessibility test (catches runtime errors)
+        // Skip HTTP test if loopback was not accessible before the change was applied.
+        // This handles local/containerised environments where wp_remote_get() cannot reach
+        // the site via loopback regardless of .htaccess content, preventing a spurious
+        // rollback of correctly written rules.
+        if ($this->loopback_pre_accessible === false) {
+            $validation_results['overall_success'] = true;
+            return $validation_results;
+        }
+
         // Wait a moment for Apache to reload configuration
         sleep(2);
         

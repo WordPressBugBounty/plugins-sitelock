@@ -1,10 +1,10 @@
 === SiteLock Security – WP Hardening, Login Security & Malware Scans ===
 Contributors: SiteLockSecurity, SiteLock, tlow
 Tags: wordpress-security, malware-scan, vulnerability-scanner, login-security, site-health
-Requires at least: 3.8
-Tested up to: 6.9
+Requires at least: 5.6
+Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 5.1.1
+Stable tag: 5.1.2
 Language: English
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -190,6 +190,13 @@ An on-demand check for key items — useful after you update plugins/themes or c
 
 == Changelog ==
 
+= 5.1.2 =
+_Release Date June 16, 2026_
+
+* Perf: Faster admin dashboard and backend operations
+* Fix: Enhanced login lockout experience with clearer status messaging
+* Fix: Improved reliability when saving connection and security settings
+
 = 5.1.1 =
 _Release Date April 7, 2026_
 
@@ -256,55 +263,3 @@ _Release Date November 4, 2025_
 **Migration / Upgrade Notes**
 
 - After updating, go to: SiteLock > Settings > SiteLock Plan & License and enter your new license key (required going forward).
-
-= 4.2.4 =
-_Release Date July 31, 2024_
-
-* This release improves compatibility with WordPress 6.6.
-* Now requires a minimum PHP version of 7.2.
-
-= 4.2.3 =
-_Release Date October 12, 2023_
-
-* This release improves compatibility with WordPress 6.3.
-* Now requires a minimum PHP version of 7.0.
-
-= 4.2.2 =
-_Release Date October 28, 2022_
-
-* Security updates.
-
-= 4.2.0 =
-_Release Date July 6, 2022_
-
-* Updated to support WordPress 6.0.
-* SiteLock WordPress Plugin provides complete website security management without leaving WordPress.
-
-= 4.1.0 =
-_Release date: November 9, 2020_
-
-* Updated to support PHP 7.4 and WordPress 5.5.
-* Support for new SiteLock API improvements.
-* Better error handling for sites without an active subscription.
-* Fixed PHP notices.
-* Regained access to our account, so we can continue providing updates!
-
-= 4.0.5 =
-_Release date: April 20, 2017_
-
-* Resolved minor PHP warning message.
-
-= 4.0.4 =
-_Release date: December 8, 2016_
-
-* Resolves bug with badge settings.
-
-= 4.0.3 =
-_Release date: December 6, 2016_
-
-* This release improves compatibility with WordPress 4.7.
-
-= 4.0.2 =
-_Release date: December 3, 2016_
-
-* Restores missing file needed for source code scan.
